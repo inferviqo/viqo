@@ -1,0 +1,17 @@
+{
+  "name": "@inferviqo/viqo",
+  "version": "0.1.0",
+  "description": "Viqo — local development install wrapping the agentic coding CLI",
+  "private": true,
+  "bin": {
+    "viqo": "./bin/viqo"
+  },
+  "scripts": {
+    "install:local": "bash scripts/install-local.sh",
+    "link:compat": "bash scripts/link-compat.sh",
+    "configure": "bash scripts/configure-user-settings.sh"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-code": "^2.1.201"
+  }
+}

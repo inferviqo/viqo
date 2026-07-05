@@ -1,0 +1,6 @@
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.inferviqo.com",
+    "VIQO_BASE_URL": "https://api.inferviqo.com"
+  }
+}

@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+resolve_script_dir() {
+  local source="${BASH_SOURCE[0]}"
+  while [[ -L "$source" ]]; do
+    local dir
+    dir="$(cd -P "$(dirname "$source")" && pwd)"
+    source="$(readlink "$source")"
+    [[ "$source" != /* ]] && source="$dir/$source"
+  done
+  cd -P "$(dirname "$source")" && pwd
+}
+
+SCRIPT_DIR="$(resolve_script_dir)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# shellcheck source=../scripts/load-config.sh
+source "$REPO_ROOT/scripts/load-config.sh"
+load_viqo_config "$REPO_ROOT"
+
+CLAUDE_BIN="$REPO_ROOT/node_modules/.bin/claude"
+if [[ ! -x "$CLAUDE_BIN" ]]; then
+  CLAUDE_BIN="$(command -v claude || true)"
+fi
+
+if [[ -z "$CLAUDE_BIN" || ! -x "$CLAUDE_BIN" ]]; then
+  echo "Viqo CLI dependency not found. From the repo root run: npm install && npm run install:local" >&2
+  exit 1
+fi
+
+export VIQO_REPO_ROOT="$REPO_ROOT"
+exec "$CLAUDE_BIN" "$@"

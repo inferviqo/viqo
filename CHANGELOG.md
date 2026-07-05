@@ -2,13 +2,13 @@
 
 ## 2.1.201
 
-- Claude Sonnet 5 sessions no longer use the mid-conversation system role for harness reminders
+- Viqo Sonnet 5 sessions no longer use the mid-conversation system role for harness reminders
 
 ## 2.1.200
 
 - Changed `AskUserQuestion` dialogs to no longer auto-continue by default; opt into an idle timeout via `/config`
 - Changed the "default" permission mode to "Manual" across the CLI, `--help`, VS Code, and JetBrains; `--permission-mode manual` and `"defaultMode": "manual"` are accepted alongside `default`
-- Fixed a crash at startup when `disabledMcpServers` or `enabledMcpServers` in `.claude.json` is set to a non-array value
+- Fixed a crash at startup when `disabledMcpServers` or `enabledMcpServers` in `.viqo.json` is set to a non-array value
 - Fixed background sessions silently stopping mid-turn after sleep/wake or when reopening a stalled session
 - Fixed background sessions re-running a turn cancelled with Esc after a stall respawn
 - Fixed background agents never starting again after a crash left a stale `daemon.lock` whose PID the OS reused
@@ -16,7 +16,7 @@
 - Fixed background-agent roster issues: transient corruption permanently disabling orphan cleanup, older binaries not preserving fields written by newer versions, and socket auth tokens being stripped during daemon restarts
 - Fixed subagents cut off by a rate limit before producing any text output returning an empty result instead of failing cleanly
 - Fixed control bytes from background-agent output reaching the terminal in the agent view
-- Fixed `claude agents --plugin-dir <dir>` not showing the plugin's agents and skills in the agent view when the flag is placed after `agents`
+- Fixed `viqo agents --plugin-dir <dir>` not showing the plugin's agents and skills in the agent view when the flag is placed after `agents`
 - Fixed project-scoped plugins not loading correctly from git worktrees of the same repository
 - Fixed `/mcp` server list not tracking focus for screen readers and magnifiers
 - Fixed voice dictation showing a misleading "Voice connection failed" message when a recording captures no audio
@@ -33,32 +33,32 @@
 - Fixed subagents reporting API errors (e.g. usage limit reached) as successful results — the error is now reported to the parent agent
 - Fixed the background-agent daemon on Linux killing itself and every running agent every ~50 seconds after an unclean shutdown left a corrupted worker record
 - Fixed background agents failing to cold-start over SSH on macOS with "Could not switch to audit session" (regression in 2.1.196)
-- Fixed `claude stop` being silently undone when it raced a background-agent respawn — the respawn now honors the stop
+- Fixed `viqo stop` being silently undone when it raced a background-agent respawn — the respawn now honors the stop
 - Fixed background job progress indicators stalling for minutes while the job ran long commands
 - Fixed background sessions on memory-starved machines showing a generic error — they now indicate low memory and suggest freeing resources
 - Fixed remote sessions briefly flapping between Working and Idle in the agent view when a background agent completes
 - Fixed idle subagents vanishing from the agent panel while other subagents were still working; surplus idle agents now collapse into an expandable summary row
 - Fixed typing `/model` or `/fast` while viewing a subagent silently opening the lead's model picker — a notice now explains the command applies to the lead
 - Fixed `SessionStart`, `Setup`, and `SubagentStart` hooks silently hiding stderr when exiting with code 2 — the error is now shown in the transcript
-- Fixed `claude --dangerously-skip-permissions daemon <subcommand>` being treated as a chat prompt instead of running the subcommand
+- Fixed `viqo --dangerously-skip-permissions daemon <subcommand>` being treated as a chat prompt instead of running the subcommand
 - Fixed `SendMessage` silently misrouting when a re-spawned agent reuses a previous agent's name — the tool now detects the mismatch and asks the caller to retarget
 - Fixed opening or resuming a session with no new messages needlessly growing the transcript file
 - Fixed backgrounding a session with `←` or `/background` dropping its `/color` from the agent view row
 - Fixed resetting a corrupted config file from the startup recovery dialog destroying it unrecoverably — it now backs up the file first
-- Fixed Claude in Chrome repeatedly opening the reconnect page when sessions run from different builds or config directories
+- Fixed Viqo in Chrome repeatedly opening the reconnect page when sessions run from different builds or config directories
 - Fixed plan mode not prompting for state-changing browser tool calls; read-only `browser_batch` calls are now correctly auto-allowed
 - Transient server rate-limit errors (429s unrelated to your usage limit) are now retried automatically with backoff for subscribers instead of failing the turn
-- `CLAUDE_CODE_RETRY_WATCHDOG` now raises the default retry count for non-capacity transient errors to 300 and lifts the cap of 15 on `CLAUDE_CODE_MAX_RETRIES`
-- `claude agents` session rows now show pull-request links as bare `#N` without the redundant "PR" label
+- `VIQO_CODE_RETRY_WATCHDOG` now raises the default retry count for non-capacity transient errors to 300 and lifts the cap of 15 on `VIQO_CODE_MAX_RETRIES`
+- `viqo agents` session rows now show pull-request links as bare `#N` without the redundant "PR" label
 
 ## 2.1.198
 
-- Subagents now run in the background by default, so Claude keeps working while they run and is notified when they finish (previously a gradual rollout)
-- Claude in Chrome is now generally available
-- Added background agent notifications in `claude agents` — sessions that need input or finish now fire the `Notification` hook (`agent_needs_input` / `agent_completed`)
+- Subagents now run in the background by default, so Viqo keeps working while they run and is notified when they finish (previously a gradual rollout)
+- Viqo in Chrome is now generally available
+- Added background agent notifications in `viqo agents` — sessions that need input or finish now fire the `Notification` hook (`agent_needs_input` / `agent_completed`)
 - Added `/dataviz` skill for chart and dashboard design guidance with a runnable color-palette validator
-- Gateway: added Claude Platform on AWS (anthropicAws) as an upstream provider; model-not-found responses now advance the failover chain
-- Background agents launched from `claude agents` now commit, push, and open a draft PR when they finish code work in a worktree, instead of stopping to ask
+- Gateway: added Viqo Platform on AWS (viqoAws) as an upstream provider; model-not-found responses now advance the failover chain
+- Background agents launched from `viqo agents` now commit, push, and open a draft PR when they finish code work in a worktree, instead of stopping to ask
 - The built-in Explore agent now inherits the main session's model (capped at opus) instead of running on haiku
 - Subagents and context compaction now inherit the session's extended thinking configuration, improving output quality on delegated tasks
 - Fixed brief network drops mid-response aborting the turn — transient errors like ECONNRESET now retry with backoff instead of failing
@@ -67,14 +67,14 @@
 - Fixed agent teams: a teammate that dies on an API error now reports "failed" to the lead, and messaging a stuck teammate wakes it to retry immediately
 - Fixed the `/diff` panel not refreshing when you switch branches or commit outside the session
 - Fixed markdown tables overflowing and wrapping their right border when rendered in fullscreen mode
-- Fixed Claude Platform on AWS and Mantle sessions dead-ending with "Please run /login" when the STS token expires — `awsAuthRefresh` now runs automatically
+- Fixed Viqo Platform on AWS and Mantle sessions dead-ending with "Please run /login" when the STS token expires — `awsAuthRefresh` now runs automatically
 - Fixed "no route to host" for local-network hosts in macOS background agent sessions by declaring Local Network entitlements
 - Fixed `/desktop` failing with "Cannot determine working directory" after entering and exiting a worktree
 - Fixed background agents repeatedly showing "Reconnecting…" every ~52 seconds on macOS while the agents view was open
-- Fixed pressing `←` inside `claude attach <id>` exiting to the shell instead of opening the agent view
-- Fixed `claude --bg` silently creating an unattachable session when combined with `--print`/`-p`; the conflicting flags are now rejected up front
+- Fixed pressing `←` inside `viqo attach <id>` exiting to the shell instead of opening the agent view
+- Fixed `viqo --bg` silently creating an unattachable session when combined with `--print`/`-p`; the conflicting flags are now rejected up front
 - Fixed the workflow progress view dropping the earliest agents from the list while the phase counter stayed correct in SDK and desktop-app sessions
-- Fixed `.claude/rules/` conditional rules not loading when the target file is reached via a symlinked path
+- Fixed `.viqo/rules/` conditional rules not loading when the target file is reached via a symlinked path
 - Fixed Cmd+click not opening URLs in fullscreen mode in Warp on macOS
 - Fixed double-click word selection in fullscreen mode to select the entire URL including the scheme
 - Fixed plan mode not auto-allowing read-only tool calls when a session starts in plan mode
@@ -83,57 +83,57 @@
 - Improved syntax highlighting accuracy in code blocks, diffs, and file previews by upgrading to highlight.js 11
 - Keyboard shortcut hints now show opt/cmd instead of alt/super when connected from a Mac over SSH
 - Improved API retry UX: the error reason is now shown after the second attempt, and a status page link replaces the spinner tip when the API is overloaded
-- `/login` now opens the sign-in dialog from the `claude agents` view instead of saying it isn't available
+- `/login` now opens the sign-in dialog from the `viqo agents` view instead of saying it isn't available
 - Subagents now treat messages from the agent that launched them as normal task direction; an agent's message is still never treated as the user's approval
-- Removed the `/agents` wizard; ask Claude to create or manage subagents, or edit `.claude/agents/` directly
+- Removed the `/agents` wizard; ask Viqo to create or manage subagents, or edit `.viqo/agents/` directly
 
 ## 2.1.197
 
-- Introducing Claude Sonnet 5: now the default model in Claude Code, with a native 1M-token context window and promotional pricing of $2/$10 per Mtok through August 31. Update to version 2.1.197 for access. https://www.anthropic.com/news/claude-sonnet-5
+- Introducing Viqo Sonnet 5: now the default model in Viqo, with a native 1M-token context window and promotional pricing of $2/$10 per Mtok through August 31. Update to version 2.1.197 for access. https://www.inferviqo.com/news/viqo-sonnet-5
 
 ## 2.1.196
 
 - Added support for organization default models — admins set it in the org console; it shows as "Org default" (or "Role default") in `/model` when you haven't picked one yourself
 - Added readable default names for sessions at start, making them easier to identify and message
 - Added clickable file attachments in chat — Cmd/Ctrl-click reveals the file in Finder/Explorer
-- Security: `claude mcp list`/`get` no longer spawn `.mcp.json` servers that a repo self-approved via a committed `.claude/settings.json`; untrusted workspaces show `⏸ Pending approval`
+- Security: `viqo mcp list`/`get` no longer spawn `.mcp.json` servers that a repo self-approved via a committed `.viqo/settings.json`; untrusted workspaces show `⏸ Pending approval`
 - Fixed waking a background job permanently deleting its conversation and re-running the original prompt when the transcript probe misread a real transcript; the file is now set aside, never deleted
 - Fixed the rate-limit warning flickering off and rate-limit telemetry being over-counted when multiple parallel requests were in flight at the moment a usage limit was hit
 - Fixed duplicate recap lines after a background session's turn: a schema-rejected StructuredOutput attempt no longer renders alongside its retry
 - Fixed PowerShell `git diff`/`git grep`, `egrep`/`fgrep`, and quoted search patterns containing `|` being reported as failures when they exit 1, matching Bash behavior
-- Fixed multiple `claude agents` side panel issues: keyboard focus getting stuck when opening an agent, background jobs losing their subagent types on every open, and sessions showing incorrect status while actively running
-- Fixed `claude agents --dangerously-skip-permissions` silently falling back to auto mode instead of showing the bypass disclaimer and applying bypass mode to spawned agents
+- Fixed multiple `viqo agents` side panel issues: keyboard focus getting stuck when opening an agent, background jobs losing their subagent types on every open, and sessions showing incorrect status while actively running
+- Fixed `viqo agents --dangerously-skip-permissions` silently falling back to auto mode instead of showing the bypass disclaimer and applying bypass mode to spawned agents
 - Fixed mid-turn crash recovery for Remote sessions — sessions interrupted by a server restart now auto-resume on the next worker
 - Fixed sessions moved with `/cd` reappearing in the old directory's resume list after a non-graceful exit when the old path contained special characters
-- Fixed `claude plugin validate` skipping local plugins whose source is "." and stopping after the first error class
+- Fixed `viqo plugin validate` skipping local plugins whose source is "." and stopping after the first error class
 - Fixed Esc Esc at an idle prompt not opening the rewind menu (regression); use Ctrl+C or Ctrl+X Ctrl+K to stop background agents
 - Fixed MCP OAuth requesting the authorization server's full `scopes_supported` catalog when no scope is specified, causing `invalid_scope` failures on GitLab self-hosted and other enterprise IdPs
 - Fixed `/context` showing 0 tokens for all tool groups on Bedrock
 - Fixed `/deep-research` misreporting verifier failures as "all claims refuted" instead of `unverified`
 - Fixed plugin dependency version pins not being honored when the marketplace was added as a local folder path backed by a git repo
-- Fixed `claude agents` session status: completed rows no longer flip between "Done" and "Needs your input", stalled agents are now labeled "Needs attention", and results that mention a PR show a clickable link
+- Fixed `viqo agents` session status: completed rows no longer flip between "Done" and "Needs your input", stalled agents are now labeled "Needs attention", and results that mention a PR show a clickable link
 - Fixed voice dictation swallowing spaces and spuriously starting a recording during very fast typing when voice mode is enabled
 - Improved background session reliability: long-running commands and workflows now survive the session's process being stopped, restarted, or updated — including on Windows, where background shells are handed off instead of being killed
 - Improved background agents: workers killed by a daemon restart are now automatically resumed from where they left off the next time the agents view opens
 - Improved `/code-review` workflow: merged five cleanup finders into one, cutting token usage by roughly 25%
 - Reduced per-frame rendering work in the terminal UI by skipping no-op subtree walks during streaming
 - The streaming idle watchdog is now on by default for all providers — it aborts and retries when a response stream produces no events for 5 minutes. Set `CLAUDE_ENABLE_STREAM_WATCHDOG=0` to disable.
-- Remote Control is now disabled when `ANTHROPIC_BASE_URL` points at a non-Anthropic host, matching the existing behavior under `CLAUDE_CODE_USE_BEDROCK`/`_VERTEX`/`_FOUNDRY`
+- Remote Control is now disabled when `VIQO_BASE_URL` points at a non-Inferviqo host, matching the existing behavior under `VIQO_CODE_USE_BEDROCK`/`_VERTEX`/`_FOUNDRY`
 - Changed opening the agents view from a foreground session to require a single `←` press instead of two, matching the behavior in background sessions
 
 ## 2.1.195
 
-- Added `CLAUDE_CODE_DISABLE_MOUSE_CLICKS` to disable mouse click/drag/hover in fullscreen mode while keeping wheel scroll
+- Added `VIQO_CODE_DISABLE_MOUSE_CLICKS` to disable mouse click/drag/hover in fullscreen mode while keeping wheel scroll
 - Fixed hook matchers with hyphenated identifiers (e.g. `code-reviewer`, `mcp__brave-search`) accidentally substring-matching — they now exact-match. Use `mcp__brave-search__.*` to match all tools from a hyphenated MCP server.
 - Fixed voice dictation on macOS capturing silence in long-running sessions after the default input device changes
 - Fixed voice dictation auto-submit never firing for languages written without spaces (Japanese, Chinese, Thai)
-- Fixed external plugins enabled only by project `.claude/settings.json` not requiring explicit install consent on every loader path
+- Fixed external plugins enabled only by project `.viqo/settings.json` not requiring explicit install consent on every loader path
 - Fixed `/plugin` Enable/Disable not working when a plugin's `plugin.json` `name` differs from its marketplace entry name
-- Fixed background jobs disappearing from `claude agents` or losing data when written by a newer Claude Code version
+- Fixed background jobs disappearing from `viqo agents` or losing data when written by a newer Viqo version
 - Fixed reopening a crashed background task showing a blank screen for up to 5 seconds instead of its restart
 - Fixed background agent daemons running unreachable when the control socket fails to start, blocking restarts
 - Improved voice mode on Linux: now distinguishes "no microphone" from "SoX not installed" when SoX is present but no audio capture device exists
-- Improved `claude agents` completed list to fill available vertical space; on short terminals the header compacts so live sessions stay visible
+- Improved `viqo agents` completed list to fill available vertical space; on short terminals the header compacts so live sessions stay visible
 - Improved Remote session startup with a provisioning checklist while the container starts
 
 ## 2.1.193
@@ -143,13 +143,13 @@
 - Added `claude_code.assistant_response` OpenTelemetry log event containing the model's response text. Redacted unless `OTEL_LOG_ASSISTANT_RESPONSES=1`; when that var is unset it follows `OTEL_LOG_USER_PROMPTS`, so deployments that already log prompt content will start receiving response content on upgrade — set `OTEL_LOG_ASSISTANT_RESPONSES=0` to keep prompts-only.
 - Added live file path autocomplete to bash mode (`!`)
 - Added a startup notice when MCP servers need authentication, pointing at `/mcp`
-- Added automatic memory-pressure reaping for idle background shell commands (disable with `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`)
+- Added automatic memory-pressure reaping for idle background shell commands (disable with `VIQO_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`)
 - Fixed `/model` and other client-data-gated UI showing stale/empty state immediately after `/login`
 - Fixed backgrounding (←←) spuriously cancelling with "N background tasks would be abandoned" when all running tasks carry over to the new session
 - Fixed pinned background agents being re-prompted to "Continue from where you left off" after every auto-update
 - Fixed backgrounding the main turn spawning a phantom "general-purpose (resumed)" subagent that re-ran the main conversation
 - Fixed agent panel hiding sibling agents when viewing a subagent
-- Improved background agents: the launch result no longer instructs Claude to "end your response" — it keeps working on other tasks while the agent runs
+- Improved background agents: the launch result no longer instructs Viqo to "end your response" — it keeps working on other tasks while the agent runs
 - Improved MCP `headersHelper` auth: the helper now re-runs and reconnects automatically when a tool call returns 401/403
 - Improved plugin auto-rename: marketplace `renames` maps are now followed automatically, updating your settings to the new name
 - Improved `/add-dir` message when the directory is already a working directory
@@ -162,8 +162,8 @@
 - Fixed `/voice` showing a generic "not available" message when disabled by an organization's policy — it now explains the restriction
 - Fixed `/login` URL opening truncated in Windows Terminal when it wraps across lines
 - Fixed Cmd+click on links in fullscreen mode for Ghostty over ssh/tmux
-- Fixed `claude agents` sending builtin slash commands like `/usage` to background sessions as prompt text instead of showing a hint
-- Fixed `claude agents` job rows showing full filesystem paths for pasted images instead of the `[Image #N]` placeholder
+- Fixed `viqo agents` sending builtin slash commands like `/usage` to background sessions as prompt text instead of showing a hint
+- Fixed `viqo agents` job rows showing full filesystem paths for pasted images instead of the `[Image #N]` placeholder
 - Fixed hooks with comma-separated matchers (e.g. `"Bash,PowerShell"`) silently never firing
 - Fixed `/permissions` Recently-denied tab: approving a denial now persists on close instead of being silently discarded
 - Fixed the agent panel jumping by one row when scrolling the roster past the overflow cap
@@ -184,12 +184,12 @@
 ## 2.1.187
 
 - Added `sandbox.credentials` setting to block sandboxed commands from reading credential files and secret environment variables
-- Added org-configured model restrictions to the model picker, `--model`, `/model`, and `ANTHROPIC_MODEL`, with a "restricted by your organization's settings" message when a restricted model is selected
+- Added org-configured model restrictions to the model picker, `--model`, `/model`, and `VIQO_MODEL`, with a "restricted by your organization's settings" message when a restricted model is selected
 - Added mouse click support to select menus (permission prompts, `/model`, `/config`, etc.) in fullscreen mode
 - Fixed `--resume` failing with "No conversation found" when the original `-p` run produced no model turns
 - Fixed `--json-schema` and workflow `agent({schema})` structured output: the model can no longer re-call `StructuredOutput` indefinitely after a successful call, and follow-up turns now reliably return structured output
-- Fixed remote MCP tool calls that hang with no response for 5 minutes — they now abort with an error instead of blocking indefinitely (override with `CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT`)
-- Fixed Claude Code Remote sessions taking ~2.7s longer to start after the agent proxy CA system-trust install was added
+- Fixed remote MCP tool calls that hang with no response for 5 minutes — they now abort with an error instead of blocking indefinitely (override with `VIQO_CODE_MCP_TOOL_IDLE_TIMEOUT`)
+- Fixed Viqo Remote sessions taking ~2.7s longer to start after the agent proxy CA system-trust install was added
 - Fixed pasted Korean/CJK text turning into mojibake in terminals that deliver paste as per-byte extended-key events
 - Fixed `/update` over Remote Control hanging when a startup trust dialog would have shown
 - Fixed background jobs in the agents view getting stuck in "working" indefinitely when the agent ended a turn without producing structured output
@@ -198,7 +198,7 @@
 - Fixed subagent depth tracking: resumed subagents now restore their original spawn depth, and forked subagents now count toward the depth cap
 - Fixed leaked agent worktree registrations: locked `.git/worktrees/` entries from killed agents are now cleaned up automatically
 - Fixed Cmd+click not opening URLs in fullscreen mode in Ghostty on macOS
-- Fixed `claude --help` not listing the `--bg`/`--background` flag
+- Fixed `viqo --help` not listing the `--bg`/`--background` flag
 - Fixed Esc, Ctrl-C, and Ctrl-D not working while `/share` is uploading
 - Improved `/install-github-app`: GitHub Actions workflow setup is now optional — you can install just the GitHub App and skip the workflow/secret steps
 - Improved `/btw` with ←/→ arrow navigation to step through earlier answers
@@ -207,18 +207,18 @@
 
 ## 2.1.186
 
-- Added `claude mcp login <name>` and `claude mcp logout <name>` to authenticate MCP servers from the CLI without opening the interactive `/mcp` menu, with `--no-browser` stdin redirect support for completing over SSH
+- Added `viqo mcp login <name>` and `viqo mcp logout <name>` to authenticate MCP servers from the CLI without opening the interactive `/mcp` menu, with `--no-browser` stdin redirect support for completing over SSH
 - Added status filtering (press `f`) to the `/workflows` agent detail view
 - Added a "Skills" section to the `/plugin` Installed tab
 - Added `teammateMode: "iterm2"` setting with a warning when auto mode cannot find the `it2` CLI
-- Added "Claude Platform on AWS - refresh credentials" option to `/login` when `awsAuthRefresh` is configured
-- `!` bash commands now trigger Claude to respond to the output automatically; set `"respondToBashCommands": false` in settings.json to keep the previous context-only behavior
+- Added "Viqo Platform on AWS - refresh credentials" option to `/login` when `awsAuthRefresh` is configured
+- `!` bash commands now trigger Viqo to respond to the output automatically; set `"respondToBashCommands": false` in settings.json to keep the previous context-only behavior
 - Fixed streaming requests failing with "Content block not found" or JSON parse errors after the machine wakes from sleep
 - Fixed subagent transcript scroll position bleeding into the main transcript on exit
 - Fixed background task previews flashing raw tool names before the agent's plan loaded
 - Fixed Chrome tab-group isolation not applying when the in-product permissions gate is off for concurrent CLI sessions
 - Fixed background session recaps being duplicated; the agent's own end-of-turn summary now shows as the recap line
-- Fixed opening a background session from `claude agents` leaving the previous screen painted behind it
+- Fixed opening a background session from `viqo agents` leaving the previous screen painted behind it
 - Fixed `Agent(type)` deny rules and `Agent(x,y)` allowed-types restrictions not being enforced for named subagent spawns
 - Fixed Esc and Ctrl+C not responding while background agents are still running after the main turn ends
 - Fixed misaligned option numbers in permission prompts when the option text overflows
@@ -227,17 +227,17 @@
 - Fixed `/plugin` Installed showing a "more above" indicator when already scrolled to the top
 - Fixed `~~strikethrough~~` showing literal tildes in assistant messages instead of rendering as strikethrough
 - Fixed `--tools` allowing feature-gated tools to slip through before flags loaded on a cold first launch
-- Fixed background job status in `claude agents` showing a stale "needs input" message after replying
-- Fixed a dark-theme flash when opening a background session from `claude agents` on a light terminal
-- Fixed mouse-selected text staying highlighted after deleting it in `claude agents`
+- Fixed background job status in `viqo agents` showing a stale "needs input" message after replying
+- Fixed a dark-theme flash when opening a background session from `viqo agents` on a light terminal
+- Fixed mouse-selected text staying highlighted after deleting it in `viqo agents`
 - Fixed session cost not showing for usage-based Enterprise and Team subscribers
 - Fixed agent teams: teammates spawned via tmux/pane backends now inherit the leader's `--effort` level
 - Fixed Workflow `agent({schema})` subagents looping forever on repeated schema validation failures instead of aborting after 5 attempts
-- Improved `claude mcp get` and `claude mcp remove` to suggest the closest configured server name on a typo and truncate long server lists
+- Improved `viqo mcp get` and `viqo mcp remove` to suggest the closest configured server name on a typo and truncate long server lists
 - Improved memory: the agent is now reminded to compact its `MEMORY.md` index when nearing the size limit
 - Improved skill frontmatter: `display-name`, `default-enabled`, `fallback`, and `metadata.*` keys now accept kebab-case, snake_case, and camelCase
 - Improved malformed `SKILL.md` YAML frontmatter handling: loads the skill body with empty metadata instead of failing silently
-- Changed `CLAUDE_CODE_MAX_RETRIES` to cap at 15; for unattended sessions, use `CLAUDE_CODE_RETRY_WATCHDOG` instead
+- Changed `VIQO_CODE_MAX_RETRIES` to cap at 15; for unattended sessions, use `VIQO_CODE_RETRY_WATCHDOG` instead
 - Changed background subagents to surface permission prompts in the main session instead of auto-denying; the dialog shows which agent is asking, and Esc denies just that tool
 - Changed `/review <pr>` to use the same review engine as `/code-review medium`
 
@@ -249,7 +249,7 @@
 
 - Improved auto mode safety: destructive git commands (`git reset --hard`, `git checkout -- .`, `git clean -fd`, `git stash drop`) are now blocked when you didn't ask to discard local work, `git commit --amend` is blocked when the commit wasn't made by the agent this session, and `terraform destroy`/`pulumi destroy`/`cdk destroy` are blocked unless you asked for the specific stack
 - Added a warning when the requested model is deprecated or automatically updated to a newer model, shown on stderr in print mode (`-p`) and now also covering models set in agent frontmatter
-- Added `attribution.sessionUrl` setting to omit the claude.ai session link from commits and PRs in web and Remote Control sessions
+- Added `attribution.sessionUrl` setting to omit the viqo.ai session link from commits and PRs in web and Remote Control sessions
 - Added `/config --help` to list all available shorthand keys for `/config key=value`
 - Changed `/config` toggle behavior: Enter and Space both change the selected setting, and Esc now saves and closes instead of reverting
 - Removed the startup "setup issues" line under the logo — run `/doctor` to see configuration issues or use `--debug`
@@ -257,7 +257,7 @@
 - Fixed WebSearch returning empty results in subagents
 - Fixed the terminal cursor being stranded above the prompt after navigating history in vim mode with the native cursor enabled
 - Fixed fullscreen TUI corruption (statusline mid-screen, duplicated spinner rows, merged text) in Windows Terminal under heavy nested-subagent load
-- Fixed turns silently completing with no visible output when the model returned only a thinking block; Claude now re-prompts once
+- Fixed turns silently completing with no visible output when the model returned only a thinking block; Viqo now re-prompts once
 - Fixed user-level skills appearing multiple times in slash-command autocomplete when multiple plugins are enabled
 - Fixed MCP servers requiring authentication exposing auth-stub tools to the model in headless/SDK mode
 - Fixed tmux teammate panes failing to launch when the shell has slow rc-file initialization, and keystrokes typed during agent spawn leaking into the new tmux pane instead of the leader prompt
@@ -274,27 +274,27 @@
 - Improved streaming of long paragraphs: text now appears line-by-line instead of waiting for the first line break
 - Improved auto-retry: API connection drops mid-thinking now automatically retry instead of showing "Connection closed while thinking"
 - Improved the subagent panel: idle subagents auto-hide after 30s, the list caps at 5 rows with scroll hints, and keyboard hints now show in the footer
-- Improved the MCP OAuth browser page to match Claude Code's visual style and auto-close on success
+- Improved the MCP OAuth browser page to match Viqo's visual style and auto-close on success
 - Changed fullscreen mode URL opening to require Cmd+click (macOS) / Ctrl+click, matching native terminal behavior
 - Changed the `Improved N memories` line to no longer list individual files outside verbose mode
-- Fixed prompt caching not reading on custom `ANTHROPIC_BASE_URL` and on Foundry due to a per-request attestation token changing every turn
+- Fixed prompt caching not reading on custom `VIQO_BASE_URL` and on Foundry due to a per-request attestation token changing every turn
 - Fixed Write/Edit producing 0-byte or truncated files on network drives and cloud-synced folders
 - Fixed `open`, `osascript`, and browser-based auth flows failing with error -600 on macOS by adding the Apple Events entitlement
 - Fixed a startup regression (~120ms per launch in fresh environments, introduced in 2.1.169): the first prompt no longer waits for the managed-settings fetch when no MCP servers are configured
 - Fixed startup blocking with a blank terminal for up to 15 seconds when the account settings fetch is slow on a degraded network
-- Fixed startup crash (`TypeError: Cannot read properties of null`) when `.claude.json` contains corrupted null project entries
+- Fixed startup crash (`TypeError: Cannot read properties of null`) when `.viqo.json` contains corrupted null project entries
 - Fixed macOS TUI freezing at session start (Ctrl+C unresponsive) when Spotlight is busy reindexing
-- Fixed long-running idle sessions losing their history when another Claude Code process ran the 30-day transcript cleanup
+- Fixed long-running idle sessions losing their history when another Viqo process ran the 30-day transcript cleanup
 - Fixed foreground subagents spawning unbounded nested chains; they now respect the same 5-level depth limit as background subagents
 - Fixed `/recap` and conversation forks using the previous model immediately after a model switch
 - Fixed subagent "Thinking" duration showing the parent agent's elapsed time instead of the subagent's own
 - Fixed subagents blocked on a nested agent showing a ticking elapsed time instead of "waiting" in the agent panel
 - Fixed the API retry indicator ("Retrying in 0s · attempt N/10") staying on screen after the retry succeeded
 - Fixed AWS `awsCredentialExport` credentials with a short remaining lifetime causing credential refreshes every minute, and now accepts the JSON shape from `aws configure export-credentials`
-- Fixed `claude mcp get`/`list` showing `✓ Connected` when tools/list fails; they now show `! Connected · tools fetch failed` with the error detail
+- Fixed `viqo mcp get`/`list` showing `✓ Connected` when tools/list fails; they now show `! Connected · tools fetch failed` with the error detail
 - Fixed `/remote-control` leaving a stale "connecting…" line; it now confirms in the transcript once connected
 - Fixed ExitWorktree refusing to remove a clean worktree with "Could not verify worktree state" when bare `git` cannot be resolved on Windows
-- Fixed settings changes (such as `/effort` or `/model`) failing with ENOENT when `~/.claude/settings.json` is a relative symlink under a symlinked `~/.claude`
+- Fixed settings changes (such as `/effort` or `/model`) failing with ENOENT when `~/.viqo/settings.json` is a relative symlink under a symlinked `~/.viqo`
 - Fixed IDE selection line numbers in context reminders being off by one (IntelliJ and VS Code)
 - Fixed Ctrl+C in fullscreen after a native terminal selection (modifier+drag) overwriting the clipboard with the app's prior selection
 - Fixed Ctrl+V showing "No image found in clipboard" instead of pasting when the clipboard contains text
@@ -302,7 +302,7 @@
 - Fixed AskUserQuestion preview content being cut off at the dialog edge instead of word-wrapping
 - Fixed AskUserQuestion multi-select questions silently dropping a typed "Other" free-text answer when submitting
 - Fixed `/stats` "Most active day" and daily token chart dates showing one day early in UTC-negative timezones
-- Fixed `/copy` and copy-on-select on Linux not detecting a clipboard utility installed after Claude Code started
+- Fixed `/copy` and copy-on-select on Linux not detecting a clipboard utility installed after Viqo started
 - Fixed tab-indented code rendering with incorrect indentation in the Write (create-file) preview
 - Fixed user prompts queued mid-turn not showing a full-width background highlight in the transcript
 - Fixed the activity spinner's pulse dwelling on the wrong glyph size in Ghostty
@@ -321,10 +321,10 @@
 
 ## 2.1.178
 
-- Agent teams: removed the `TeamCreate` and `TeamDelete` tools. With `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` set, every session now has one implicit team — spawn teammates directly with the Agent tool's `name` parameter, no setup step needed. The `team_name` parameter on the Agent tool is still accepted but ignored.
+- Agent teams: removed the `TeamCreate` and `TeamDelete` tools. With `VIQO_CODE_EXPERIMENTAL_AGENT_TEAMS=1` set, every session now has one implicit team — spawn teammates directly with the Agent tool's `name` parameter, no setup step needed. The `team_name` parameter on the Agent tool is still accepted but ignored.
 - Added `Tool(param:value)` syntax for permission rules to match a tool's input parameters (with `*` wildcard), e.g. `Agent(model:opus)` to block Opus subagents
-- Skills in nested `.claude/skills` directories now load when working on files there; on a name clash, the nested skill appears as `<dir>:<name>` so both stay available
-- Nested `.claude/` directories: the agent, workflow, and output-style closest to the working directory now wins when names collide; project-scope workflow saves now target the closest existing `.claude/workflows/`
+- Skills in nested `.viqo/skills` directories now load when working on files there; on a name clash, the nested skill appears as `<dir>:<name>` so both stay available
+- Nested `.viqo/` directories: the agent, workflow, and output-style closest to the working directory now wins when names collide; project-scope workflow saves now target the closest existing `.viqo/workflows/`
 - Improved auto mode: subagent spawns are now evaluated by the classifier before launch, closing a gap where a subagent could request a blocked action without review
 - Improved `/doctor` with consistent flat tree layout across all sections, clearer section status icons, and highlighted command names
 - Improved the skill listing truncation warning to show how many skill descriptions are affected
@@ -332,44 +332,44 @@
 - Improved Remote Control error messages: connection failures now show a persistent red "/rc failed" indicator in the footer, and the "not yet enabled" error now explains whether it's a gate, a check failure, stale entitlement, or org policy
 - `/bug` now requires a description before submitting, and no longer uses model-refusal text as the GitHub issue title
 - Fixed a crash (out-of-memory) when the CLI inherits a stale websocket/OAuth file-descriptor environment variable from a parent process
-- Fixed Claude in Chrome silently failing to connect when the OAuth token belongs to a different account than the Claude Code login
-- Fixed nested `.claude/skills` skills with directory-qualified names being blocked by permission prompts in non-interactive runs
+- Fixed Viqo in Chrome silently failing to connect when the OAuth token belongs to a different account than the Viqo login
+- Fixed nested `.viqo/skills` skills with directory-qualified names being blocked by permission prompts in non-interactive runs
 - Fixed several subagent issues: viewing a subagent's transcript now shows tool results and live progress, messages sent while it finishes its turn are no longer dropped, and backgrounding a running subagent (ctrl+b) no longer restarts it from scratch
-- Fixed `claude agents` workers failing with `401 Invalid bearer token` when the daemon was started from a shell with a custom API gateway via `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN`
+- Fixed `viqo agents` workers failing with `401 Invalid bearer token` when the daemon was started from a shell with a custom API gateway via `VIQO_BASE_URL` and `VIQO_AUTH_TOKEN`
 - Fixed compaction not honoring `--fallback-model`: compaction now falls back to the configured fallback model chain on overload or model-availability errors
 - Fixed model requests continuing to fail with auth errors after credentials were refreshed outside the session, due to a stale cached request configuration
 - Fixed background sessions created with `/bg` or `←←` after a turn finished showing "Working" forever in the agents list
-- Fixed Linux sandbox failing to start when `.claude/skills` or `.claude/hooks` is a symlink
-- Fixed `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` preventing fresh marketplace installs from cloning
+- Fixed Linux sandbox failing to start when `.viqo/skills` or `.viqo/hooks` is a symlink
+- Fixed `VIQO_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE=1` preventing fresh marketplace installs from cloning
 - Fixed MCP server-level specs (`mcp__server`, `mcp__server__*`, `mcp__*`) in subagent `disallowedTools` being silently ignored
 - Fixed vim mode undo: `u` now steps through NORMAL/VISUAL-mode commands one at a time instead of merging commands in quick succession into a single undo step
-- Fixed statusline links with custom URI schemes (e.g. `vscode://`) not opening when clicked in `claude agents`
-- [VSCode] Fixed pressing Esc to dismiss a CJK IME candidate window canceling the running Claude task
+- Fixed statusline links with custom URI schemes (e.g. `vscode://`) not opening when clicked in `viqo agents`
+- [VSCode] Fixed pressing Esc to dismiss a CJK IME candidate window canceling the running Viqo task
 
 ## 2.1.176
 
 - Session titles are now generated in the language of your conversation (set the `language` setting to pin a specific language)
 - Added `footerLinksRegexes` setting for regex-matched link badges in the footer row, configurable via user or managed settings
 - Improved Bedrock credential caching: credentials from `awsCredentialExport` are now cached until their `Expiration` instead of a fixed 1 hour
-- Fixed `availableModels` enforcement: alias model picks can no longer be redirected to a blocked model via `ANTHROPIC_DEFAULT_*_MODEL` environment variables, and `/fast` now refuses to toggle when it would switch to a model outside the allowlist
+- Fixed `availableModels` enforcement: alias model picks can no longer be redirected to a blocked model via `VIQO_DEFAULT_*_MODEL` environment variables, and `/fast` now refuses to toggle when it would switch to a model outside the allowlist
 - Fixed auto mode failing on Fable 5 for organizations without Opus 4.8 enabled — the classifier now falls back to the best available Opus model
 - Fixed hook `if` conditions for Read/Edit/Write tool paths: documented patterns like `Edit(src/**)`, `Read(~/.ssh/**)`, and `Read(.env)` now match correctly
-- Fixed Linux sandbox failing to start when `.claude/settings.json` is a symlink with an absolute target
+- Fixed Linux sandbox failing to start when `.viqo/settings.json` is a symlink with an absolute target
 - Fixed `/copy` and mouse-selection copy not reaching the system clipboard inside tmux over SSH, and tmux paste buffer not loading on versions older than 3.2
 - Fixed Remote Control connecting from web/mobile silently switching the session's model
 - Fixed Remote Control disconnect notifications showing a bare numeric code instead of a human-readable reason, and connection failures adding a duplicate line to the conversation transcript
 - Fixed Remote Control sessions not disconnecting when you sign in to a different account
 - Fixed `/cd` and worktree moves leaving the session reporting the previous directory's git branch
-- Fixed `claude agents`: pressing back in one window no longer detaches other windows attached to the same session
+- Fixed `viqo agents`: pressing back in one window no longer detaches other windows attached to the same session
 - Fixed backgrounded sessions showing "Working" forever when `/bg` mid-turn had nothing left to continue
-- Fixed background agent search by PR URL: PRs opened during scheduled wakeups or while a job was blocked now appear in `claude agents` search
+- Fixed background agent search by PR URL: PRs opened during scheduled wakeups or while a job was blocked now appear in `viqo agents` search
 - Fixed the agents view input showing no text cursor on Windows
-- Fixed `claude --bg -cn <name>` not seeding the session name
+- Fixed `viqo --bg -cn <name>` not seeding the session name
 - Fixed background sessions to neutralize Windows network paths in persisted state before respawn
 - Fixed background-session respawn rejecting malformed resume IDs from corrupted state files
-- Fixed the Windows background-service daemon not starting when `~/.claude/daemon` has the ReadOnly attribute set
+- Fixed the Windows background-service daemon not starting when `~/.viqo/daemon` has the ReadOnly attribute set
 - Fixed cloud sessions failing with "Could not resolve authentication method" when idle for too long before being claimed
-- Background sessions now show clearer guidance when a window left open across an auto-update can't submit a reply, and `claude daemon status` explains version-skew behavior
+- Background sessions now show clearer guidance when a window left open across an auto-update can't submit a reply, and `viqo daemon status` explains version-skew behavior
 
 ## 2.1.175
 
@@ -379,11 +379,11 @@
 
 - Added `wheelScrollAccelerationEnabled` setting to disable mouse-wheel scroll acceleration in fullscreen mode
 - Fixed the `/model` picker hiding the model family that Default resolves to — Opus now appears as its own row on Max/Team Premium/Enterprise plans, Sonnet on Pro/Team plans, and Opus on pay-as-you-go API accounts
-- Fixed `/model` picker showing a hardcoded Sonnet version label when `ANTHROPIC_DEFAULT_SONNET_MODEL` pins a different Sonnet
+- Fixed `/model` picker showing a hardcoded Sonnet version label when `VIQO_DEFAULT_SONNET_MODEL` pins a different Sonnet
 - Fixed the "Fable 5 is now consuming usage credits" banner incorrectly showing for enterprise accounts with usage-based billing
 - Fixed Bedrock GovCloud regions (`us-gov-*`) deriving the wrong inference profile prefix (`global` instead of `us-gov`), causing 400 errors on derived model IDs
-- Fixed background sessions inheriting another session's `ANTHROPIC_*` provider env (gateway URL, custom headers, `/model` aliases) from the shell that started the background daemon
-- Fixed a 1-2 second pause when exiting Claude Code shortly after a shell command was interrupted or killed on macOS and Linux
+- Fixed background sessions inheriting another session's `VIQO_*` provider env (gateway URL, custom headers, `/model` aliases) from the shell that started the background daemon
+- Fixed a 1-2 second pause when exiting Viqo shortly after a shell command was interrupted or killed on macOS and Linux
 - Fixed git commit co-author attribution showing an incorrect model name for some models
 - Fixed the `/advisor` dialog pre-selecting a saved advisor model that is blocked by the `availableModels` allowlist
 - Fixed skill hot-reload re-sending the entire skill listing when a single skill changed; only changed skills are now re-announced
@@ -408,11 +408,11 @@
 - Fixed background agents potentially reading another directory's project settings (`.mcp.json` approvals, trust) when dispatched onto a pre-warmed worker
 - Fixed background-session attach failing with EAUTH for sessions started on an older version after the daemon auto-updated
 - Fixed a background sub-agent staying stuck as "active" in the agent panel after a nested agent it spawned was stopped
-- Fixed `/model` suggestions in the `claude agents` dispatch input rendering with a misleading slash prefix and showing models disabled for your org
+- Fixed `/model` suggestions in the `viqo agents` dispatch input rendering with a misleading slash prefix and showing models disabled for your org
 - Fixed `availableModels` restrictions not being applied to subagent model overrides, the agent dispatch model picker, and the advisor model
-- Fixed `availableModels` allowlists hiding the `/model` picker's Opus and Sonnet 1M rows when entries use version-specific IDs like `claude-opus-4-8`
+- Fixed `availableModels` allowlists hiding the `/model` picker's Opus and Sonnet 1M rows when entries use version-specific IDs like `viqo-opus-4-8`
 - Fixed the `/model` picker on Bedrock offering models the provider doesn't serve — selecting one silently switched the session model and lit the selection marker on multiple rows
-- Fixed model IDs getting a doubled 1M-context suffix (e.g. `[1M][1m]`) when `ANTHROPIC_DEFAULT_OPUS_MODEL` already includes one
+- Fixed model IDs getting a doubled 1M-context suffix (e.g. `[1M][1m]`) when `VIQO_DEFAULT_OPUS_MODEL` already includes one
 - Fixed `opusplan` model setting not shipping with 1M context in plan mode for entitled users; the `opusplan[1m]` workaround now also correctly switches to Opus in plan mode
 - Fixed `WebFetch(domain:*.example.com)` wildcard domain rules never matching subdomains in allow, deny, and ask position, and file permission rules with mid-pattern wildcards (e.g. `Read(secrets-*/config.json)`) being rejected at startup
 - Fixed up-arrow prompt history showing the main agent's prompts while a subagent's chat tab is open
@@ -422,35 +422,35 @@
 - Fixed the `/plugin` marketplace list losing its cursor after backing out of a long plugin list, and Esc from the plugin browser returning to the wrong tab
 - Improved performance in long conversations by removing redundant message normalization and avoiding full message-history transforms when streaming tool-use state is unchanged
 - Reduced idle CPU usage: `/goal` status chip no longer re-renders the terminal at 5 Hz while idle, and fewer UI re-renders while subagents run in parallel
-- Improved Claude in Chrome tool loading: browser tools now load in a single batched call instead of one per tool
+- Improved Viqo in Chrome tool loading: browser tools now load in a single batched call instead of one per tool
 - Improved the non-interactive Usage Policy refusal message to suggest starting a new session or changing your model
-- `/code-review` now keeps the `ultra` option visible when you're not signed in to claude.ai, with an explanation that the cloud review requires a claude.ai account
+- `/code-review` now keeps the `ultra` option visible when you're not signed in to viqo.ai, with an explanation that the cloud review requires a viqo.ai account
 - Shortened the Remote Control footer indicator to "/rc active" and hid it on narrow terminals
 - Stopped promoting `/loop` in remote sessions, where pending loops don't keep the container alive
 - [VSCode] Fixed PowerShell tool calls rendering as raw JSON instead of a proper command display and permission dialog, and stripped ANSI escape codes from displayed shell output
 
 ## 2.1.170
 
-- Introducing Claude Fable 5: a Mythos-class model that we’ve made safe for general use. Fable’s capabilities exceed those of any model we’ve ever made generally available. Update to version 2.1.170 for access. https://www.anthropic.com/news/claude-fable-5-mythos-5
-- Fixed sessions not saving transcripts (and not appearing in --resume) when launched from the VS Code integrated terminal or any shell that inherited Claude Code environment variables.
+- Introducing Viqo Fable 5: a Mythos-class model that we’ve made safe for general use. Fable’s capabilities exceed those of any model we’ve ever made generally available. Update to version 2.1.170 for access. https://www.inferviqo.com/news/viqo-fable-5-mythos-5
+- Fixed sessions not saving transcripts (and not appearing in --resume) when launched from the VS Code integrated terminal or any shell that inherited Viqo environment variables.
 
 ## 2.1.169
 
 - Self-hosted runner: added a `post-session` lifecycle hook that runs after the session ends and before the workspace is deleted, so you can snapshot uncommitted work or export logs; also made the child-process SIGTERM→SIGKILL window configurable (default unchanged at 5s)
-- Added `--safe-mode` flag (and `CLAUDE_CODE_SAFE_MODE`) to start Claude Code with all customizations (CLAUDE.md, plugins, skills, hooks, MCP servers) disabled for troubleshooting
+- Added `--safe-mode` flag (and `VIQO_CODE_SAFE_MODE`) to start Viqo with all customizations (VIQO.md, plugins, skills, hooks, MCP servers) disabled for troubleshooting
 - Added `/cd` command to move a session to a new working directory without breaking the prompt cache mid-session
-- Added a `disableBundledSkills` setting and `CLAUDE_CODE_DISABLE_BUNDLED_SKILLS` environment variable to hide bundled skills, workflows, and built-in slash commands from the model
+- Added a `disableBundledSkills` setting and `VIQO_CODE_DISABLE_BUNDLED_SKILLS` environment variable to hide bundled skills, workflows, and built-in slash commands from the model
 - Fixed Up/Down arrows jumping to command history past the wrapped rows of a long input line — they now move through each visual row first, and history recall enters at the near edge
 - Fixed enterprise managed MCP policies (`allowedMcpServers`/`deniedMcpServers`) not being enforced on reconnect, IDE-typed configs, `--mcp-config` servers during the first session after install, or before remote settings loaded; also fixed slow cold starts for orgs without remote settings
-- Fixed a ~30-50ms UI stall at the start of each turn for macOS users logged in with claude.ai credentials
-- Fixed `claude -p` being slow or appearing to hang on Windows while waiting for the slash-command/skill scan (regression in 2.1.161)
+- Fixed a ~30-50ms UI stall at the start of each turn for macOS users logged in with viqo.ai credentials
+- Fixed `viqo -p` being slow or appearing to hang on Windows while waiting for the slash-command/skill scan (regression in 2.1.161)
 - Fixed Remote Control getting stuck on "reconnecting" after resuming a session when an OAuth token refresh happened at the same time
 - Fixed Git Credential Manager's "Connect to GitHub" popup appearing on Windows at startup when background git commands ran without cached credentials
 - Fixed footer hints (e.g. "esc to interrupt") not showing for users with a custom statusline
 - Fixed stale permission and dialog prompts reappearing every time you reattached to a remote session whose worker had died while waiting on them
-- Fixed `claude agents --json` omitting blocked and just-dispatched background sessions; added `--all` to include completed sessions, plus new `id` and `state` fields
+- Fixed `viqo agents --json` omitting blocked and just-dispatched background sessions; added `--all` to include completed sessions, plus new `id` and `state` fields
 - Fixed agents view leaving a stale/garbled frame after navigating back from an agent on WSL in Windows Terminal
-- Fixed background agents ignoring project-level settings `env` values (e.g. `ANTHROPIC_MODEL`) when dispatched onto a pre-warmed worker
+- Fixed background agents ignoring project-level settings `env` values (e.g. `VIQO_MODEL`) when dispatched onto a pre-warmed worker
 - Fixed MCPB plugin cache being spuriously invalidated on Windows, causing unnecessary re-extraction
 - Fixed plugin `.in_use` PID lock files accumulating without bound; stale markers from crashed sessions are now swept once per day
 - Fixed untrusted project settings being able to set OTEL client-certificate paths without trust confirmation
@@ -462,11 +462,11 @@
 - Remote-managed settings with an invalid entry now apply their remaining valid policies and surface the validation error, instead of silently dropping the whole payload
 - Background sessions now preserve `--ide`, `--chrome`, `--bare`, `--remote-control`, and other flags across retire→wake, and respawn state validation was hardened
 - Background sessions are now told that shared-checkout edits are blocked until they enter a worktree, avoiding a wasted rejected edit before `EnterWorktree`
-- The "CLAUDE.md is too long" warning threshold now scales with the model's context window
-- Auto-updater on Windows now stops retrying within a session once `claude.exe` is held by another process
+- The "VIQO.md is too long" warning threshold now scales with the model's context window
+- Auto-updater on Windows now stops retrying within a session once `viqo.exe` is held by another process
 - Improved color contrast for skill tags in the slash-command menu
 - Promo credit claims for Apple/Google-billed subscribers without a payment method now explain where to add one
-- Added a tip suggesting `claude agents` when running multiple concurrent sessions
+- Added a tip suggesting `viqo agents` when running multiple concurrent sessions
 
 ## 2.1.168
 
@@ -480,24 +480,24 @@
 
 - Added `fallbackModel` setting to configure up to three fallback models tried in order when the primary model is overloaded or unavailable; `--fallback-model` now also applies to interactive sessions
 - Added glob pattern support in deny rule tool-name position (`"*"` denies all tools); allow rules reject non-MCP globs, and unknown tool names in deny rules warn at startup
-- Hardened cross-session messaging: messages relayed via `SendMessage` from other Claude sessions no longer carry user authority — receivers refuse relayed permission requests, and auto mode blocks them
-- `MAX_THINKING_TOKENS=0`, `--thinking disabled`, and the per-model thinking toggle now disable thinking on models that think by default via the Claude API (3P providers unchanged)
-- Claude Code now retries a turn once on the fallback model when the API rejects an unexpected non-retryable error; auth, rate-limit, request-size, and transport errors still surface immediately
-- `claude update` now announces the target version before downloading instead of going silent
-- `claude agents`: typing a URL into the list now filters to the session whose first prompt contained it
+- Hardened cross-session messaging: messages relayed via `SendMessage` from other Viqo sessions no longer carry user authority — receivers refuse relayed permission requests, and auto mode blocks them
+- `MAX_THINKING_TOKENS=0`, `--thinking disabled`, and the per-model thinking toggle now disable thinking on models that think by default via the Viqo API (3P providers unchanged)
+- Viqo now retries a turn once on the fallback model when the API rejects an unexpected non-retryable error; auth, rate-limit, request-size, and transport errors still surface immediately
+- `viqo update` now announces the target version before downloading instead of going silent
+- `viqo agents`: typing a URL into the list now filters to the session whose first prompt contained it
 - Fixed a recurring "image could not be processed" error and extra token usage when an unprocessable image was sent in a session
 - Fixed remote sessions becoming permanently stuck when a brief backend disruption occurred during worker registration at startup
 - Fixed flickering in JetBrains IDE terminals (IntelliJ, PyCharm, WebStorm, etc.) on 2026.1+ by enabling synchronized output
 - Fixed Shift+non-ASCII characters (e.g. Shift+ä → Ä) being dropped in terminals using the Kitty keyboard protocol (WezTerm, Ghostty, kitty)
 - Fixed PowerShell command validation occasionally hanging far past its time budget on Windows when a killed process's children held its output pipes
-- Fixed orphaned `claude --bg-pty-host` processes spinning at 100% CPU after the daemon dies while connected on macOS
+- Fixed orphaned `viqo --bg-pty-host` processes spinning at 100% CPU after the daemon dies while connected on macOS
 - Fixed voice mode requiring `/login` to clear a stale auth check after toggling `/voice`
 - Fixed managed settings with an invalid entry silently disabling enforcement of their remaining valid policies
 - Fixed managed-settings `allowedMcpServers`/`deniedMcpServers` predicates not matching when they use `${VAR}` references
-- Fixed background agent sessions that entered a git worktree crash-looping with "No conversation found" when reopened from `claude agents`
+- Fixed background agent sessions that entered a git worktree crash-looping with "No conversation found" when reopened from `viqo agents`
 - Fixed duplicated thinking text in the Ctrl+O transcript view while streaming
 - Fixed `/doctor` showing a contradictory failed "Not inside a remote session" check when run inside a remote session
-- Fixed the cursor sticking at the end of the first line when typing a multiline prompt in the `claude agents` dispatch and reply inputs
+- Fixed the cursor sticking at the end of the first line when typing a multiline prompt in the `viqo agents` dispatch and reply inputs
 - Fixed blank lines appearing between background agent rows in the task list on terminals without Unicode support
 
 ## 2.1.165
@@ -506,81 +506,81 @@
 
 ## 2.1.163
 
-- Added `requiredMinimumVersion` and `requiredMaximumVersion` managed settings — Claude Code refuses to start if its version is outside the allowed range and directs the user to an approved version
+- Added `requiredMinimumVersion` and `requiredMaximumVersion` managed settings — Viqo refuses to start if its version is outside the allowed range and directs the user to an approved version
 - Added `/plugin list` command to list installed plugins, with `--enabled`/`--disabled` filters
 - Added a "c to copy" shortcut to `/btw` that copies the raw markdown answer to the clipboard, preserving formatting when pasted elsewhere
-- Hooks: Stop and SubagentStop hooks can now return `hookSpecificOutput.additionalContext` to give Claude feedback and keep the turn going without being labeled a hook error
+- Hooks: Stop and SubagentStop hooks can now return `hookSpecificOutput.additionalContext` to give Viqo feedback and keep the turn going without being labeled a hook error
 - Skills: added `\$` escape syntax to include a literal `$` before a digit in command bodies
-- stdio MCP servers now receive the same `CLAUDE_CODE_SESSION_ID` as hooks/Bash on `--resume`
-- Fixed `claude -p` hanging forever after its final result when a backgrounded command never exits — background shells are now stopped ~5s after the result once stdin closes
-- Fixed `claude -p` failing with "ANTHROPIC_API_KEY required" on Bedrock/Vertex/Foundry when `CI=true` and no Anthropic API key is set
-- Fixed bash commands failing under bazel and EDR-protected Go workflows: `$TMPDIR` was overridden to `/tmp/claude-{uid}` for all commands instead of only sandboxed ones (regression in 2.1.154)
+- stdio MCP servers now receive the same `VIQO_CODE_SESSION_ID` as hooks/Bash on `--resume`
+- Fixed `viqo -p` hanging forever after its final result when a backgrounded command never exits — background shells are now stopped ~5s after the result once stdin closes
+- Fixed `viqo -p` failing with "VIQO_API_KEY required" on Bedrock/Vertex/Foundry when `CI=true` and no Inferviqo API key is set
+- Fixed bash commands failing under bazel and EDR-protected Go workflows: `$TMPDIR` was overridden to `/tmp/viqo-{uid}` for all commands instead of only sandboxed ones (regression in 2.1.154)
 - Fixed Bash commands failing on Windows with "EEXIST: file already exists" on the session-env directory when it has the read-only attribute or is inside OneDrive
 - Fixed org-managed permission rules not applying for the entire session when the managed settings fetch completed during startup on a fresh config directory
-- Fixed background sessions in `claude agents` losing their running background tasks when reattached after a Claude Code update
+- Fixed background sessions in `viqo agents` losing their running background tasks when reattached after a Viqo update
 - Fixed terminal misalignment and a multi-second hang when exiting the agent view by pressing Esc
 - Fixed clicking Stop on a background-task chip in the desktop app not clearing the chip when the underlying process was already gone
 - Fixed keyboard input becoming permanently unresponsive after a paste operation whose end marker is dropped by the terminal
 - Fixed hook `if: "Bash(...)"` conditions firing on every Bash command containing `$()` or `$VAR`; the pattern now matches against commands inside subshells and backticks too
 - Fixed deny rules on home-directory paths (e.g. `Read(~/Desktop/**)`) not blocking Bash commands that reference the path via `$HOME`
 - Fixed a stray "(no content)" line left in the transcript after closing panel dialogs like /mcp and /plugins
-- Background agent sessions now update to a new Claude Code version in the background, so opening a session after an update no longer waits on a cold restart
+- Background agent sessions now update to a new Viqo version in the background, so opening a session after an update no longer waits on a cold restart
 - Clearer descriptions for built-in commands and skills in the / menu
 - The subscription-switch suggestion now shows in the startup announcement slot instead of a toast
-- `claude agents` dispatching from the state-grouped view now starts the session in the directory the agent view was opened from
+- `viqo agents` dispatching from the state-grouped view now starts the session in the directory the agent view was opened from
 
 ## 2.1.162
 
-- `claude agents --json` now includes `waitingFor` showing what a waiting session is blocked on (e.g. permission prompt)
+- `viqo agents --json` now includes `waitingFor` showing what a waiting session is blocked on (e.g. permission prompt)
 - `--tools`: explicitly listing Grep/Glob now provides the dedicated search tools on native builds with embedded search (previously these names were silently ignored)
 - `/effort` now confirms when your chosen level will persist as the default for new sessions
 - Clicking a slash command in the autocomplete menu now fills it into your prompt instead of running it immediately; press Enter to run
 - Remote Control now shows as a persistent footer pill (with a link to the session) instead of a startup message
 - Renamed Windsurf to Devin Desktop in the `/ide` menu, `/terminal-setup`, and `/scroll-speed`, following the editor's rebrand
-- Fixed a silent startup hang when the config directory is read-only or unwritable — Claude Code now starts with in-memory config and surfaces startup errors instead of showing a blank screen
+- Fixed a silent startup hang when the config directory is read-only or unwritable — Viqo now starts with in-memory config and surfaces startup errors instead of showing a blank screen
 - Fixed WebFetch permission rules not being applied to built-in preapproved domains; explicit `WebFetch(domain:...)` deny/ask/allow rules now take precedence over the preapproved-host auto-allow
 - Fixed Windows permission rules never matching when spelled with backslashes (`~\`, `\\server\share`) or case-variant paths, and Read deny rules not hiding files from Glob/Grep results
 - Fixed an interrupt (Esc) sent at the very start of a turn being silently dropped in stream-json/SDK sessions, leaving the turn running with no "Interrupted" feedback
 - Fixed API 400 `no low surrogate in string` errors for classifier side-queries and MCP server descriptions containing emoji near a truncation boundary
-- Fixed MCP per-server `timeout` config values below 1000 ms being floored to a 1-second watchdog that aborted every tool call; sub-1000 ms values are now ignored (falling back to `MCP_TOOL_TIMEOUT` or default), and `claude mcp get` annotates them accordingly
+- Fixed MCP per-server `timeout` config values below 1000 ms being floored to a 1-second watchdog that aborted every tool call; sub-1000 ms values are now ignored (falling back to `MCP_TOOL_TIMEOUT` or default), and `viqo mcp get` annotates them accordingly
 - Fixed the LSP tool's `workspaceSymbol` operation returning no results; it now accepts a `query` parameter and passes it to the language server
-- Fixed `claude agents` cutting live status text (tool args, replies, prompts, exec output) at 60–120 columns on wide terminals; the status detail now uses the full terminal width
-- Fixed `claude agents` truncating long session names at 40 columns; the name column now grows with terminal width
-- Fixed `claude agents` attach occasionally bouncing straight back to the session list on the first try after a background-service restart
-- Fixed `claude agents` Ctrl+V image paste doing nothing in the dispatch input and the session reply box; pasting with no image now shows a hint
+- Fixed `viqo agents` cutting live status text (tool args, replies, prompts, exec output) at 60–120 columns on wide terminals; the status detail now uses the full terminal width
+- Fixed `viqo agents` truncating long session names at 40 columns; the name column now grows with terminal width
+- Fixed `viqo agents` attach occasionally bouncing straight back to the session list on the first try after a background-service restart
+- Fixed `viqo agents` Ctrl+V image paste doing nothing in the dispatch input and the session reply box; pasting with no image now shows a hint
 - Fixed backgrounding a session with ← silently losing the conversation when the background service cannot start; the session stays in the list as a failed row you can wake with Enter
 - Fixed replies from the agents view that fail to send being lost; they are now queued for delivery on the next session start
-- Fixed cross-session messaging (`SendMessage`) silently breaking when `CLAUDE_CODE_TMPDIR` or `$TMPDIR` points at a deep directory
-- Fixed opening a running background session from `claude agents` stalling for 5 seconds before attaching
+- Fixed cross-session messaging (`SendMessage`) silently breaking when `VIQO_CODE_TMPDIR` or `$TMPDIR` points at a deep directory
+- Fixed opening a running background session from `viqo agents` stalling for 5 seconds before attaching
 - Quieter startup: notices group by severity, and session info and announcements share a single line per launch
 - Startup warnings rewritten to be shorter and clearer, each with a concrete fix
 - Launch-prompt warnings (deep link/pre-filled prompt) now stay pinned below the input until you act instead of scrolling away
 - Failed turns now show a compact warning line instead of a multi-line red error block
-- Improved background service startup and `claude update` verification to wait out endpoint-security scanning of new binaries instead of failing after 5 seconds
+- Improved background service startup and `viqo update` verification to wait out endpoint-security scanning of new binaries instead of failing after 5 seconds
 - Background dispatch spawn failures now report the error class name when no errno is available
-- Removed the "Claude in Chrome enabled" and "marketplace installed" startup messages; model auto-updates and the team-onboarding tip now show as quiet notices under the logo
+- Removed the "Viqo in Chrome enabled" and "marketplace installed" startup messages; model auto-updates and the team-onboarding tip now show as quiet notices under the logo
 
 ## 2.1.161
 
 - `OTEL_RESOURCE_ATTRIBUTES` values are now included as labels on metric datapoints, so you can slice usage metrics by custom dimensions like team or repo
-- `claude agents` rows now show `done/total` before the detail when work is fanned out; peek shows the longest-running item
-- `/mcp` now collapses claude.ai connectors you've never signed in to behind a "Show unused connectors" row
+- `viqo agents` rows now show `done/total` before the detail when work is fanned out; peek shows the longest-running item
+- `/mcp` now collapses viqo.ai connectors you've never signed in to behind a "Show unused connectors" row
 - Parallel tool calls: a failed Bash command no longer cancels other calls in the same batch — each tool returns its own result independently
 - Fullscreen mode: clipboard now uses `wl-copy`/`xclip`/`xsel` on Linux when available, copies to both the clipboard and PRIMARY selection for middle-click paste, and the "hold {key} for native selection" hint now shows the correct key per terminal
 - Fixed the `/effort` dialog, workflow animations, and prompt keyword shimmer not honoring the "Reduce motion" setting
 - Fixed `forceLoginOrgUUID`/`forceLoginMethod` managed-settings policies blocking third-party provider sessions (Bedrock, Vertex, Foundry, Mantle) alongside the org pin (regression in 2.1.146)
-- Fixed background subagent output corrupting `claude -p` stdout when using `--output-format text` or `json`
+- Fixed background subagent output corrupting `viqo -p` stdout when using `--output-format text` or `json`
 - Fixed `/usage-credits` starting a re-login for Team and Enterprise admins instead of pointing to the organization's usage settings page
 - Fixed `/autofix-pr` reporting "cannot run on the default branch" when the session is inside a git worktree or another repository
 - Fixed `--resume` picker not showing sessions from the current directory when it isn't a git worktree (e.g., jj workspaces)
 - Fixed Windows hooks that invoke bash explicitly (e.g., `/usr/bin/bash script.sh`) failing with "command not found" or "cannot execute binary file"
 - Fixed OpenTelemetry log events (`user_prompt`, `api_request`, `tool_result`, `tool_decision`) being silently dropped when emitted before telemetry initialization completed
-- Fixed `claude mcp` list/get/add printing secrets to the terminal: `${VAR}` references are no longer expanded, and credential headers and URL secrets are redacted
+- Fixed `viqo mcp` list/get/add printing secrets to the terminal: `${VAR}` references are no longer expanded, and credential headers and URL secrets are redacted
 - Fixed Workflow agents spawned with `isolation: "worktree"` in background sessions being blocked from editing files inside their own worktree
-- Fixed background sessions dispatched from `claude agents` booting on a stale model from the daemon's environment instead of the model in `settings.json`
+- Fixed background sessions dispatched from `viqo agents` booting on a stale model from the daemon's environment instead of the model in `settings.json`
 - Fixed a potential crash when rendering Write tool results after resuming a session
 - Fixed completed subagents getting stuck showing as running when an error occurs while finalizing their result
-- Fixed `EADDRINUSE` errors from tools that bind Unix sockets under `$TMPDIR` when `CLAUDE_CODE_TMPDIR` is set to a deep path
+- Fixed `EADDRINUSE` errors from tools that bind Unix sockets under `$TMPDIR` when `VIQO_CODE_TMPDIR` is set to a deep path
 - Improved terminal rendering performance by stabilizing the layout engine's JIT compilation profile
 - Improved rendering performance for large file writes
 - [VSCode] Added a tip suggesting disabling terminal GPU acceleration (or running `/terminal-setup`) to fix garbled glyphs
@@ -591,27 +591,27 @@
 - `acceptEdits` mode now prompts before writing build-tool config files that grant code execution (`.npmrc`, `.yarnrc*`, `bunfig.toml`, `.bazelrc`, `.pre-commit-config.yaml`, `.devcontainer/`, etc.)
 - Edit no longer requires a separate Read after viewing a file with `grep`: single-file `grep`/`egrep`/`fgrep` commands now satisfy the read-before-edit check
 - Fixed copy-on-select not writing to the Windows clipboard on WSL — now uses PowerShell interop instead of OSC 52, which terminals like MobaXterm don't support
-- Fixed restoring a completed session from `claude agents` dropping chat history and re-running the original prompt
+- Fixed restoring a completed session from `viqo agents` dropping chat history and re-running the original prompt
 - Fixed background sessions re-attached after overnight retire losing their conversation and re-running the original prompt
-- Fixed `claude --bg` occasionally failing with "socket missing" when the background daemon was cold-starting on a loaded machine
-- Fixed an issue on Windows where the directory a background session was started in could not be deleted after `claude rm` until the background daemon exited
+- Fixed `viqo --bg` occasionally failing with "socket missing" when the background daemon was cold-starting on a loaded machine
+- Fixed an issue on Windows where the directory a background session was started in could not be deleted after `viqo rm` until the background daemon exited
 - Fixed background agents that resumed work being shown under Completed in the agents list
-- Fixed `claude agents` freezing for several seconds when returning to the session list due to the auto-updater re-checking on every exit
+- Fixed `viqo agents` freezing for several seconds when returning to the session list due to the auto-updater re-checking on every exit
 - Fixed Esc, arrow keys, and typing becoming unresponsive on Windows when attached to a background session or in the agent view while the host is under heavy CPU load
 - Fixed background agents emitting terminal sync-output markers to terminals that don't support them (Apple Terminal, tmux), causing render artifacts when entering a running agent
 - Fixed mouse wheel scrolling prompt history instead of the transcript right after opening a session from the agents list
-- Fixed CJK IME composition appearing at the bottom-left of the screen instead of at the input caret in the `claude agents` view
+- Fixed CJK IME composition appearing at the bottom-left of the screen instead of at the input caret in the `viqo agents` view
 - Fixed valid `file:///C:/...` links being rewritten to a broken path on Windows terminals with hyperlink support
 - Fixed voice mode failing to connect when the project directory or branch name contains non-ASCII or special characters
-- Fixed the auto mode unavailability message on third-party providers (Bedrock/Vertex/Foundry) to point to the `CLAUDE_CODE_ENABLE_AUTO_MODE` opt-in instead of incorrectly blaming the model
+- Fixed the auto mode unavailability message on third-party providers (Bedrock/Vertex/Foundry) to point to the `VIQO_CODE_ENABLE_AUTO_MODE` opt-in instead of incorrectly blaming the model
 - Fixed `/effort ultracode` incorrectly blaming the dynamic workflows setting when the model cannot run xhigh; ultracode is no longer offered on models that do not support it
 - Fixed model-not-found errors suggesting `--model` when running via the SDK or other hosts where the CLI flag doesn't apply
-- Fixed Claude's past replies disappearing from scrollback when resuming a brief mode session with brief mode turned off
+- Fixed Viqo's past replies disappearing from scrollback when resuming a brief mode session with brief mode turned off
 - Fixed vim mode `p` pasting on the line below instead of at the cursor when the register was yanked with `v$`
-- Improved performance of opening recently-inactive background agent sessions in `claude agents`
+- Improved performance of opening recently-inactive background agent sessions in `viqo agents`
 - Improved auto mode classifier latency by reducing reasoning on routine actions, lowering the chance of "could not evaluate this action" blocks
-- Improved background-session teardown (`claude rm`/`stop`, idle reap) to send SIGTERM to running shell subprocesses before SIGKILL, so cleanup handlers run
-- Removed `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE`; the environment variable is now a no-op
+- Improved background-session teardown (`viqo rm`/`stop`, idle reap) to send SIGTERM to running shell subprocesses before SIGKILL, so cleanup handlers run
+- Removed `VIQO_CODE_OPUS_4_6_FAST_MODE_OVERRIDE`; the environment variable is now a no-op
 - Removed the JetBrains plugin install suggestion from startup
 - Renamed the dynamic-workflow trigger keyword from `workflow` to `ultracode`. The word "workflow" no longer triggers a run; asking for one in your own words still works. The trigger keyword is highlighted in violet in the prompt input
 
@@ -621,25 +621,25 @@
 
 ## 2.1.158
 
-- Auto mode is now available on Bedrock, Vertex, and Foundry for Opus 4.7 and Opus 4.8. Opt in by setting `CLAUDE_CODE_ENABLE_AUTO_MODE=1`
+- Auto mode is now available on Bedrock, Vertex, and Foundry for Opus 4.7 and Opus 4.8. Opt in by setting `VIQO_CODE_ENABLE_AUTO_MODE=1`
 
 ## 2.1.157
 
-- Plugins in `.claude/skills` directories are now automatically loaded, no marketplace required
-- Added `claude plugin init <name>` to scaffold a new plugin in `.claude/skills`
+- Plugins in `.viqo/skills` directories are now automatically loaded, no marketplace required
+- Added `viqo plugin init <name>` to scaffold a new plugin in `.viqo/skills`
 - Added autocomplete for `/plugin` arguments: subcommands, installed plugin names, and plugins from known marketplaces
-- `claude agents`: the `agent` field in `settings.json` is now honored for dispatched sessions, with `--agent <name>` to override it
-- `EnterWorktree` can now switch between Claude-managed worktrees mid-session
+- `viqo agents`: the `agent` field in `settings.json` is now honored for dispatched sessions, with `--agent <name>` to override it
+- `EnterWorktree` can now switch between Viqo-managed worktrees mid-session
 - `tool_decision` telemetry events now include `tool_parameters` (bash commands, MCP/skill names) when `OTEL_LOG_TOOL_DETAILS=1`
-- Worktrees managed by Claude are now left unlocked when the agent finishes, so `git worktree remove`/`prune` can clean them up
+- Worktrees managed by Viqo are now left unlocked when the agent finishes, so `git worktree remove`/`prune` can clean them up
 - Fixed unprocessable images (zero-byte, corrupt) attached via paste, MCP, or dialog crashing the request instead of becoming a text placeholder
 - Fixed sandbox network permission prompts appearing in auto and bypass-permissions mode when using the desktop app, IDE extensions, or SDK
-- Fixed `claude agents` completed sessions not retiring when an idle subagent was still parked or had leaked a backgrounded shell
-- Fixed `claude agents` pressing Esc not cancelling a slow "opening…", leaving the list unresponsive
-- Fixed background agent worktrees under `.claude/worktrees/` being orphaned after the 30-day job retention sweep
+- Fixed `viqo agents` completed sessions not retiring when an idle subagent was still parked or had leaked a backgrounded shell
+- Fixed `viqo agents` pressing Esc not cancelling a slow "opening…", leaving the list unresponsive
+- Fixed background agent worktrees under `.viqo/worktrees/` being orphaned after the 30-day job retention sweep
 - Fixed background sessions re-attached after a sleep/wake not telling the model the correct date
-- Fixed copy-on-select in `claude agents` not reaching the system clipboard inside tmux with `set-clipboard on` (regression in 2.1.153)
-- Fixed `--resume` not reporting background subagents that were running when the previous Claude Code process exited
+- Fixed copy-on-select in `viqo agents` not reaching the system clipboard inside tmux with `set-clipboard on` (regression in 2.1.153)
+- Fixed `--resume` not reporting background subagents that were running when the previous Viqo process exited
 - Fixed the `--resume` session picker leaving its contents on the terminal after exiting in fullscreen mode
 - Fixed `--worktree` and `--worktree --tmux` returning to the canonical repo root instead of the current linked worktree
 - Fixed the `/model` picker showing an incorrect "Newer version available" hint when the selected model is already the newest in its family; the pinned-model row now shows the model's description instead of its raw ID
@@ -651,7 +651,7 @@
 - Improved performance of long and resumed conversations by eliminating redundant message-rendering recomputations
 - `/terminal-setup` now disables GPU acceleration in VS Code/Cursor/Windsurf integrated terminals to prevent garbled-text rendering
 - The Feature of the Week credit-claim status now appears as a notification in the status area instead of a line above the prompt
-- `claude agents`: slash-command autocomplete in the dispatch input now matches substrings
+- `viqo agents`: slash-command autocomplete in the dispatch input now matches substrings
 - Removed the "bash commands will be sandboxed" startup banner — sandbox status still shows in `/status` and when a command is blocked
 - Removed the "/ide for …" startup hint toast
 - [IDE] Fixed clicking Stop while a background subagent is running not actually stopping it
@@ -666,43 +666,43 @@
 ## 2.1.154
 
 - Opus 4.8 is here! Now defaults to high effort · /effort xhigh for your hardest tasks
-- Introducing dynamic workflows: ask Claude to create a workflow and it orchestrates work across tens to hundreds of agents in the background, so you can take on larger, more complex tasks. Run `/workflows` to view your runs
+- Introducing dynamic workflows: ask Viqo to create a workflow and it orchestrates work across tens to hundreds of agents in the background, so you can take on larger, more complex tasks. Run `/workflows` to view your runs
 - Fast mode on Opus 4.8 is now available at a fraction of its previous cost: 2x the standard rate for 2.5x the speed
 - The lean system prompt is now the default for all models except Haiku, Sonnet, and Opus 4.7 and earlier
-- Claude now reserves the multiple-choice question prompt for decisions it genuinely cannot make itself, instead of asking when it already has enough context to proceed
+- Viqo now reserves the multiple-choice question prompt for decisions it genuinely cannot make itself, instead of asking when it already has enough context to proceed
 - `/simplify` now runs a cleanup-only review (reuse, simplification, efficiency, altitude) and applies the fixes, instead of running the full `/code-review --fix` bug-hunting review
 - Renamed the `/effort` slider labels from "Speed"/"Intelligence" to "Faster"/"Smarter" for clarity
-- `claude agents`: type `! <command>` to run a shell command as a background session you can attach to and detach from. Also available as `claude --bg --exec '<command>'`
-- `claude agents`: `/logout` now signs you out instead of being sent to a background session
+- `viqo agents`: type `! <command>` to run a shell command as a background session you can attach to and detach from. Also available as `viqo --bg --exec '<command>'`
+- `viqo agents`: `/logout` now signs you out instead of being sent to a background session
 - `←←` to open the agents view now works on Bedrock, Vertex, Foundry, and with telemetry disabled
-- Claude in Chrome: pick which connected browser to use via `/chrome` → "Select browser…", or in-chat when a browser action runs with multiple connected
-- Plugins can now declare `defaultEnabled: false` in `plugin.json` or a marketplace entry; enable them with `/plugin` or `claude plugin enable`. Dependencies of enabled plugins are still enabled automatically
+- Viqo in Chrome: pick which connected browser to use via `/chrome` → "Select browser…", or in-chat when a browser action runs with multiple connected
+- Plugins can now declare `defaultEnabled: false` in `plugin.json` or a marketplace entry; enable them with `/plugin` or `viqo plugin enable`. Dependencies of enabled plugins are still enabled automatically
 - The `/plugin` Discover tab now pins plugins whose relevance signals match the current directory with a "suggested for this directory" annotation
 - Streaming tool execution is now always enabled, including when telemetry is disabled or on Bedrock/Vertex/Foundry (previously behind a feature flag)
-- Stdio MCP server subprocesses now receive `CLAUDE_CODE_SESSION_ID` and `CLAUDECODE=1` in their environment
-- `claude mcp list`/`get` now show unapproved `.mcp.json` servers as `⏸ Pending approval` instead of auto-approving and connecting when output is piped
+- Stdio MCP server subprocesses now receive `VIQO_CODE_SESSION_ID` and `VIQOCODE=1` in their environment
+- `viqo mcp list`/`get` now show unapproved `.mcp.json` servers as `⏸ Pending approval` instead of auto-approving and connecting when output is piped
 - `/remote-control` autocomplete now shows "Disconnect Remote Control" when Remote Control is already active
-- Added Claude Opus 4.8 support and 4.7 → 4.8 migration guidance to the `/claude-api` skill
-- Deprecated `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` (will be removed on 06/01). To use fast mode on Opus 4.6, switch with `/model claude-opus-4-6[1m]` and then `/fast on`
+- Added Viqo Opus 4.8 support and 4.7 → 4.8 migration guidance to the `/viqo-api` skill
+- Deprecated `VIQO_CODE_OPUS_4_6_FAST_MODE_OVERRIDE` (will be removed on 06/01). To use fast mode on Opus 4.6, switch with `/model viqo-opus-4-6[1m]` and then `/fast on`
 - Improved the auto-mode classifier's detection of data exfiltration, particularly bulk transfers of repository contents
 - Fixed `rm -rf $HOME` not being blocked as a dangerous path when `HOME` has a trailing slash
 - Fixed `$TMPDIR` resolving to different directories in sandboxed vs unsandboxed Bash commands within the same session
-- Fixed unreadable highlighted-row text in `claude agents` when the Claude Code theme doesn't match the terminal background
+- Fixed unreadable highlighted-row text in `viqo agents` when the Viqo theme doesn't match the terminal background
 - Fixed background-agent completion notifications triggering premature "out of context" behavior on some 1M-context models
 - Fixed background-session classifier losing the user's goal when a scheduled `/command` fires
-- Fixed pinned background sessions respawning every minute after a Claude Code update, causing repeated agent-start notifications and process churn at idle
+- Fixed pinned background sessions respawning every minute after a Viqo update, causing repeated agent-start notifications and process churn at idle
 - Fixed background sessions stuck at "blocked", "running", or "working" not retiring after the idle grace period
 - Fixed subagents in background sessions bypassing the worktree-isolation guard and writing to the shared checkout
-- Fixed orphaned `claude --bg-pty-host` processes spinning at 100% CPU after the daemon exits on macOS
+- Fixed orphaned `viqo --bg-pty-host` processes spinning at 100% CPU after the daemon exits on macOS
 - Fixed number key shortcuts not working for options shown below the divider in option dialogs
 - Fixed `worktree.baseRef: "head"` resolving to the main checkout's HEAD instead of the current worktree's HEAD when spawning subagents or calling `EnterWorktree` from inside a linked worktree
 - Fixed a stray leading space on wrapped lines when the previous line ended exactly at the terminal width
 - Fixed intermittent terminal rendering corruption in VS Code by capping the number of distinct colors the thinking spinner produces
 - Fixed plan file names including `[Image #N]` / `[Pasted text #N]` placeholders when a plan-mode prompt starts with pasted images or text
 - Fixed a phantom expand/click affordance on colored tool output: short ANSI-colored lines that fit on screen no longer show a "ctrl+o to expand" hint
-- Fixed a single invalid `allowedMcpServers`/`deniedMcpServers` entry in managed settings discarding all managed-settings policy; the bad entry is now dropped with a `claude doctor` warning
-- Fixed API 400 errors on models that don't support the effort parameter when `CLAUDE_CODE_ALWAYS_ENABLE_EFFORT` is set
-- Windows: Fixed update failures caused by `claude.exe` being in use showing a generic error instead of telling you to close other sessions and retry
+- Fixed a single invalid `allowedMcpServers`/`deniedMcpServers` entry in managed settings discarding all managed-settings policy; the bad entry is now dropped with a `viqo doctor` warning
+- Fixed API 400 errors on models that don't support the effort parameter when `VIQO_CODE_ALWAYS_ENABLE_EFFORT` is set
+- Windows: Fixed update failures caused by `viqo.exe` being in use showing a generic error instead of telling you to close other sessions and retry
 - Removed the stale "& for background" hint from the shortcuts help panel
 - [VSCode] Auto mode no longer requires the bypass-permissions setting to appear in the mode picker, and a dismissable notice on the new-session screen explains auto mode the first time it's active
 - Fixed the task panel below the prompt showing a stray unselectable "main" row when only a workflow is running
@@ -713,27 +713,27 @@
 ## 2.1.153
 
 - Added `skipLfs` option to `github`/`git` plugin marketplace sources to skip Git LFS downloads during clone and update
-- Claude Code now shows a one-time notice when your npm global install can't auto-update; `/doctor` lists the fixes
+- Viqo now shows a one-time notice when your npm global install can't auto-update; `/doctor` lists the fixes
 - Status line commands now receive `COLUMNS` and `LINES` environment variables so scripts can size output to the terminal width
-- `claude agents`: autocomplete in the dispatch input now suggests native slash commands and bundled skills, not just project skills
-- `claude agents`: PR column now shows `PR #N` for a single PR or `N PRs` for multiple
-- `claude doctor` now shows the result of your last update attempt
+- `viqo agents`: autocomplete in the dispatch input now suggests native slash commands and bundled skills, not just project skills
+- `viqo agents`: PR column now shows `PR #N` for a single PR or `N PRs` for multiple
+- `viqo doctor` now shows the result of your last update attempt
 - Combined the separate "needs authentication" startup notifications for MCP servers and connectors into a single message
-- macOS: background agents now appear as "Claude Code" in Privacy & Security and keep their permission grants across upgrades
+- macOS: background agents now appear as "Viqo" in Privacy & Security and keep their permission grants across upgrades
 - Fixed stateful MCP servers without the optional GET SSE stream reconnect-looping on `tools/list` (regression in v2.1.147)
-- Fixed a regression where a custom API gateway could receive the user's Anthropic OAuth credential instead of the gateway's own token
+- Fixed a regression where a custom API gateway could receive the user's Inferviqo OAuth credential instead of the gateway's own token
 - Fixed subagent (Agent tool) frontmatter MCP servers ignoring `--strict-mcp-config`, `--bare`, remote mode, enterprise managed MCP config, and managed-settings MCP server allow/deny policies
 - `--strict-mcp-config` no longer strips inline `mcpServers` from explicitly-passed agent definitions (`--agents` / SDK `agents`), and blocked subagent MCP servers now surface a visible warning
 - Fixed the Windows PowerShell installer reporting "Installation complete!" when installation actually failed
-- Fixed `claude update` installing the latest version instead of the configured release channel's version for npm installations
+- Fixed `viqo update` installing the latest version instead of the configured release channel's version for npm installations
 - Fixed excessive memory usage (multiple GB) when resuming a session by transcript file path on machines with many stored sessions
-- Fixed `claude agents` and `claude --bg` running on a stale daemon started before binary-takeover support, even after upgrading
+- Fixed `viqo agents` and `viqo --bg` running on a stale daemon started before binary-takeover support, even after upgrading
 - Fixed a hang where the CLI could fail to exit when stdin was closed without EOF in stream-json mode, leaving a stale session marker behind
-- Fixed malformed `file://` links in Claude's responses not being clickable in the terminal
-- Fixed `claude --help` rendering unwrapped output on terminals narrower than 92 columns
+- Fixed malformed `file://` links in Viqo's responses not being clickable in the terminal
+- Fixed `viqo --help` rendering unwrapped output on terminals narrower than 92 columns
 - Fixed MCP tool progress notifications not rendering in the collapsed tool view
-- Fixed `Agent` tool with `subagent_type: 'claude'` running in an undocumented temporary worktree, which could silently discard outputs written to gitignored paths
-- `/bg` while Claude is responding now continues the response in the background session instead of dropping it
+- Fixed `Agent` tool with `subagent_type: 'viqo'` running in an undocumented temporary worktree, which could silently discard outputs written to gitignored paths
+- `/bg` while Viqo is responding now continues the response in the background session instead of dropping it
 - Fixed `/btw` keyboard shortcuts becoming unresponsive in background sessions while a task is running
 - Fixed background sessions writing temp files to `$CLAUDE_JOB_DIR` triggering a "sensitive file" permission prompt
 - Fixed recovering a background agent whose working directory was deleted showing a truncated stack trace instead of a clear error message
@@ -742,10 +742,10 @@
 - Fixed the IME candidate window appearing at the bottom of the screen instead of next to the input caret in attached background sessions on Windows
 - Fixed background-color bleed when attaching to a background agent from 256-color-only terminals after the agent had rendered file diffs
 - Fixed `/copy` and copy-on-select silently failing to update the system clipboard when attached to a background session inside tmux
-- Fixed opening `claude agents` with Remote Control enabled leaving zombie session entries on the Code tab after exiting
+- Fixed opening `viqo agents` with Remote Control enabled leaving zombie session entries on the Code tab after exiting
 - Fixed `/rename` in background sessions not updating the session banner immediately
-- Fixed Windows update rollback: if a Windows update fails, Claude Code now restores the original executable by copy and tells you how to recover
-- [VSCode] Fixed Claude Code processes not shutting down cleanly when VS Code closed on Windows, causing false "unclean exit" reports and orphaned MCP servers
+- Fixed Windows update rollback: if a Windows update fails, Viqo now restores the original executable by copy and tells you how to recover
+- [VSCode] Fixed Viqo processes not shutting down cleanly when VS Code closed on Windows, causing false "unclean exit" reports and orphaned MCP servers
 - `/model` now saves your selection as the default for new sessions (matching the IDE). Press `s` in the picker to switch models for the current session only.
 - If you customized the `modelPicker:setAsDefault` keybinding, rename it to `modelPicker:thisSessionOnly` in keybindings.json (the `d` action was replaced by `s`)
 
@@ -758,8 +758,8 @@
 - `SessionStart` hooks can now set the session title via `hookSpecificOutput.sessionTitle` on startup and resume
 - Added a `MessageDisplay` hook event that lets hooks transform or hide assistant message text as it is displayed
 - Added `pluginSuggestionMarketplaces` managed setting: admins can allowlist org marketplaces whose plugins may be suggested via context-aware tips
-- `claude plugin marketplace remove` now accepts `--scope user|project|local` for symmetry with `marketplace add`, `install`, and `uninstall`
-- Claude Code now switches to your configured `--fallback-model` for the rest of the session when the primary model is not found, instead of failing every request
+- `viqo plugin marketplace remove` now accepts `--scope user|project|local` for symmetry with `marketplace add`, `install`, and `uninstall`
+- Viqo now switches to your configured `--fallback-model` for the rest of the session when the primary model is not found, instead of failing every request
 - Auto mode no longer requires opt-in consent
 - Vim mode: `/` in NORMAL mode now opens reverse history search (like Ctrl+R), matching bash/zsh vi-mode
 - The `/usage` breakdown now includes large session files; files are scanned with a streaming read so memory usage stays flat
@@ -777,10 +777,10 @@
 - Fixed plugin MCP servers with the same command but different environment variables being incorrectly deduplicated
 - Fixed `/doctor` reporting "marketplace not found" or "plugin not found" for stale `enabledPlugins` entries referencing removed marketplaces or dropped plugins
 - Fixed plugins that track a git branch silently no longer receiving updates after the plugin registry was rebuilt
-- Fixed remote MCP servers failing to connect in Claude Code Remote sessions when the egress proxy is enabled
+- Fixed remote MCP servers failing to connect in Viqo Remote sessions when the egress proxy is enabled
 - Fixed the effort-change confirmation dialog appearing when the conversation has no messages or when switching between effort levels that resolve to the same underlying value
 - Fixed the Agent tool description referencing an agent list that is never delivered when running with `--bare` or with attachments disabled
-- Fixed a background worker crash in `claude agents` when accepting a stale permission prompt after a subagent was cancelled
+- Fixed a background worker crash in `viqo agents` when accepting a stale permission prompt after a subagent was cancelled
 - Fixed `cache_creation_input_tokens` reporting as 0 in transcript and result usage when the API reports cache writes only via the nested `cache_creation` breakdown
 - Fixed the PushNotification tool incorrectly reporting "Mobile push not sent (Remote Control inactive)" in SDK-hosted sessions when Remote Control is enabled
 - Fixed sessions getting stuck after a model or login switch left stale thinking-block signatures in history; now stripped proactively with a retry safety-net
@@ -794,7 +794,7 @@
 - `/usage` now shows a per-category breakdown of what's driving your limits usage — skills, subagents, plugins, and per-MCP-server cost
 - `/diff` detail view can now be scrolled with the keyboard (arrows, `j`/`k`, `PgUp`/`PgDn`, `Space`, `Home`/`End`)
 - Markdown output now renders GFM task list checkboxes (`- [ ] todo` / `- [x] done`) instead of plain bullets
-- Enterprise: added the `allowAllClaudeAiMcps` managed setting to load claude.ai cloud MCP connectors alongside `managed-mcp.json`
+- Enterprise: added the `allowAllViqoAiMcps` managed setting to load viqo.ai cloud MCP connectors alongside `managed-mcp.json`
 - Fixed a PowerShell permission bypass: built-in `cd` functions (`cd..`, `cd\`, `cd~`, `X:`) changed the working directory undetected, letting a later command read outside the workspace
 - Fixed the sandbox write allowlist in git worktrees covering the entire main repository root instead of only the shared `.git` directory (with `hooks/` and `config` denied)
 - Fixed PowerShell prefix/wildcard allow rules (e.g. `PowerShell(dotnet.exe build *)`) not pre-approving native executables and scripts
@@ -813,7 +813,7 @@
 - Fixed `/config` exit summary reporting phantom changes to auto-compact and theme when toggling unrelated settings
 - Fixed `/insights` crashing when cached session-meta files are missing optional fields
 - Fixed malformed PowerShell and History tool calls with missing input being misclassified as reads in transcript collapsing
-- Fixed renaming a Remote Control session from claude.ai or the Claude mobile app not updating the local session name for `claude --resume`
+- Fixed renaming a Remote Control session from viqo.ai or the Viqo mobile app not updating the local session name for `viqo --resume`
 - Fixed a race where a just-submitted prompt could appear twice in the up-arrow history
 - Fixed tapping the "Jump to bottom" pill in fullscreen mode not dismissing it immediately
 - Improved `/feedback` reports to include the conversation that happened before context compaction, making issues from earlier in long sessions easier to triage
@@ -824,7 +824,7 @@
 
 ## 2.1.147
 
-- Pinned background sessions (`Ctrl+T` in `claude agents`) now stay alive when idle, are restarted in place to apply Claude Code updates, and are shed under memory pressure only after non-pinned sessions
+- Pinned background sessions (`Ctrl+T` in `viqo agents`) now stay alive when idle, are restarted in place to apply Viqo updates, and are shed under memory pressure only after non-pinned sessions
 - Renamed `/simplify` to `/code-review`. It now reports correctness bugs at a chosen effort level (e.g., `/code-review high`); pass `--comment` to post findings as inline GitHub PR comments. The old cleanup-and-fix behavior has been removed
 - Improved auto-updater: retries transient network failures, reports specific error categories and OS error codes on failure, and shows the current version when an update fails
 - Improved diff rendering performance for large file edits
@@ -841,7 +841,7 @@
 - Fixed PowerShell tool failing on Windows with exit code 1 when `pwsh` is installed via winget or the Microsoft Store
 - Fixed `/effort` opening with the slider on the wrong level — it now starts at your current effort
 - Fixed paginating MCP servers dropping resources, templates, and prompts past page 1
-- Fixed full-screen strobing in attached background sessions on Windows Terminal while Claude is streaming
+- Fixed full-screen strobing in attached background sessions on Windows Terminal while Viqo is streaming
 - Fixed: on Windows, removing a background-job worktree no longer follows NTFS junctions into the main repo
 - Fixed `/background` refusing sessions whose only typed input was a skill or custom slash command
 - Fixed auto mode suppressing `AskUserQuestion` when the user or a skill explicitly relies on it; the auto-mode classifier now sees the user's answers as intent signal
@@ -850,21 +850,21 @@
 - Fixed a rare hang when waiting for scroll to settle on Windows
 - Fixed stale and doubled rows in the agent view list on Windows when background session results contain wide (CJK) characters
 - Fixed pasted text being delivered to agents as an unreadable `[Pasted text #N]` placeholder instead of the actual content
-- Fixed plugin component counts in `claude plugin details` and `/plugin` being doubled when a plugin's manifest listed paths overlapping its default directories
+- Fixed plugin component counts in `viqo plugin details` and `/plugin` being doubled when a plugin's manifest listed paths overlapping its default directories
 - Fixed backgrounded sessions re-prompting for tool permissions you already granted with "don't ask again"
 - Fixed GNOME Terminal right-click and middle-click paste not inserting text
-- Fixed `CLAUDE_CODE_SUBAGENT_MODEL` not applying to teammate processes spawned by agent teams
+- Fixed `VIQO_CODE_SUBAGENT_MODEL` not applying to teammate processes spawned by agent teams
 - Fixed slash commands followed by a tab or newline being treated as an unknown command
 - Fixed several spacing and layout glitches in the `/plugin`, `/status`, `/mobile`, `/sandbox`, and `/permissions` menus
 - Fixed stripped images prompting the model to repeatedly re-read media that was no longer present
 
 ## 2.1.145
 
-- Added `claude agents --json` to list live Claude sessions as JSON for scripting (tmux-resurrect, status bars, session pickers)
+- Added `viqo agents --json` to list live Viqo sessions as JSON for scripting (tmux-resurrect, status bars, session pickers)
 - Added `agent_id` and `parent_agent_id` attributes to `claude_code.tool` OTEL spans, and fixed trace parenting so background subagent spans nest under the dispatching Agent tool span
 - Status line JSON input now includes GitHub repo and PR information when detected
 - `/plugin` Discover and Browse screens now show a plugin's commands, agents, skills, hooks, and MCP/LSP servers before installation
-- `claude agents` terminal tab title now shows the awaiting-input count so an alt-tabbed window tells you when an agent needs attention
+- `viqo agents` terminal tab title now shows the awaiting-input count so an alt-tabbed window tells you when an agent needs attention
 - Slash command and @-mention suggestion list now supports mouse hover and click in fullscreen mode
 - Stop and SubagentStop hook input now includes `background_tasks` and `session_crons` fields
 - Fixed a permission-prompt bypass where bare variable assignments to non-allowlisted environment variables in Bash commands were auto-approved
@@ -873,22 +873,22 @@
 - Fixed the cross-project resume hint failing in default Windows PowerShell 5.1 — Windows now uses `;` as the command separator
 - Fixed voice push-to-talk not working in the agent view's reply pane
 - Fixed task lists rendering in random order when several tasks are created at once
-- Fixed stale "Failed to install Anthropic marketplace" banner showing when the marketplace is already installed
+- Fixed stale "Failed to install Inferviqo marketplace" banner showing when the marketplace is already installed
 - Fixed the PR badge in the footer not updating immediately after `gh pr create` and other PR-state-changing commands run in-session
 - Fixed Agent Teams teammates with non-ASCII names failing every API call due to invalid header encoding
 - Fixed `/review` using a deprecated `projectCards` GraphQL query that errored on repos with Classic Projects
-- Fixed `claude plugin validate` not flagging `skills:` entries that point at a file instead of a directory — the error now suggests the parent directory
+- Fixed `viqo plugin validate` not flagging `skills:` entries that point at a file instead of a directory — the error now suggests the parent directory
 - Fixed an infinite loop where a skill using `context: fork` could repeatedly re-invoke itself instead of running
 - Improved the Read tool to return a truncated first page with a "PARTIAL view" notice instead of a hard error when a whole-file read exceeds the token limit
 
 ## 2.1.144
 
-- Added `/resume` support for background sessions — sessions started via `claude --bg` or agent view now appear alongside interactive ones, marked with `bg`
+- Added `/resume` support for background sessions — sessions started via `viqo --bg` or agent view now appear alongside interactive ones, marked with `bg`
 - Added elapsed duration to background subagent completion notifications (e.g. "Agent completed · 3h 2m 5s")
 - The `/plugin` browse and discover panes now show when a plugin was last updated
 - `/model` now changes the model for the current session only; press `d` in the model picker to set a default for new sessions
 - Renamed "extra usage" to "usage credits" across CLI copy; `/extra-usage` is now `/usage-credits` (old name still works)
-- Fixed startup hanging up to 75s when `api.anthropic.com` is unreachable (captive portal, firewall, VPN issues) — side-channel API calls now time out after 15s
+- Fixed startup hanging up to 75s when `api.inferviqo.com` is unreachable (captive portal, firewall, VPN issues) — side-channel API calls now time out after 15s
 - Fixed garbled terminal output after a missed window-resize event (e.g. dragging a VS Code split-pane divider) — now self-heals on the next frame instead of requiring Ctrl+L
 - Fixed progressive terminal display corruption (stale/garbled glyphs) that could appear in very long sessions and only cleared on terminal resize or restart
 - Reduced terminal rendering glitches in VS Code by reducing spinner animation color count
@@ -906,27 +906,27 @@
 - Fixed file descriptor exhaustion when a build runs inside a skill directory — non-`.md` files no longer trigger skill reloads
 - Fixed session title being generated from plugin monitor output instead of the user's first prompt
 - Fixed Skill tool failing with permission error in headless mode (regression in v2.1.141)
-- Fixed plugins enabled in your own settings showing "not cached" errors after first load on a fresh machine; plugins enabled only by a project's `.claude/settings.json` now show an actionable `claude plugin install` hint
-- Fixed `claude mcp list` silently reporting no servers when `.mcp.json` can't be parsed (e.g. using VS Code's `"servers"` key instead of `"mcpServers"`) — now shows configuration errors
-- Fixed background side-queries on custom `ANTHROPIC_BASE_URL` setups and Bedrock Mantle not using Haiku — now falls back correctly when a first-party API key is configured or no Haiku model is set
+- Fixed plugins enabled in your own settings showing "not cached" errors after first load on a fresh machine; plugins enabled only by a project's `.viqo/settings.json` now show an actionable `viqo plugin install` hint
+- Fixed `viqo mcp list` silently reporting no servers when `.mcp.json` can't be parsed (e.g. using VS Code's `"servers"` key instead of `"mcpServers"`) — now shows configuration errors
+- Fixed background side-queries on custom `VIQO_BASE_URL` setups and Bedrock Mantle not using Haiku — now falls back correctly when a first-party API key is configured or no Haiku model is set
 - Fixed scrolling in attached background sessions on Windows — PgUp/PgDn, mouse wheel, and Ctrl+O transcript navigation now work
 - Fixed a crash when closing the terminal while attached to a background session
-- Fixed on Windows, pressing ← in `claude agents` leaving the list unresponsive to keyboard input
+- Fixed on Windows, pressing ← in `viqo agents` leaving the list unresponsive to keyboard input
 - Fixed ghost characters at the left edge when switching panes in Agent View on Windows Terminal with CJK content
 - `/bg` and `←`-detach now preserve directories added via `/add-dir`
 - Fixed Edit/Write refusing with "background session hasn't isolated its changes yet" right after detaching a session that was already editing in place
-- Fixed `claude respawn <id>` on a stopped background session showing "stopped" instead of running
+- Fixed `viqo respawn <id>` on a stopped background session showing "stopped" instead of running
 - Fixed `/resume` picker not showing sessions forked from a background session
-- Fixed opening a session from `claude agents` or running `claude logs <id>` hanging when the background service is unresponsive — now times out after 10s with a recovery hint
+- Fixed opening a session from `viqo agents` or running `viqo logs <id>` hanging when the background service is unresponsive — now times out after 10s with a recovery hint
 - Fixed background Bash tasks spawned by subagents staying "Running" in SDK task panels after the process exits
 - Fixed completed or stopped background sessions briefly failing to wake being permanently marked as a startup crash
-- Fixed markdown links in `claude agents` attached sessions rendering as plain text instead of clickable hyperlinks
+- Fixed markdown links in `viqo agents` attached sessions rendering as plain text instead of clickable hyperlinks
 - Fixed custom `spinnerVerbs` applying to the post-turn duration message — past-tense built-ins like "Worked for 5s" are restored there
-- `claude agents` / `--bg` rejection messages now name the specific gate (non-TTY, env var, or setting) instead of a generic message
-- `claude --bg --name <label>` now echoes the name in the post-spawn confirmation
-- `claude agents`: renaming a background session with Ctrl+R now updates the attached session's banner immediately
+- `viqo agents` / `--bg` rejection messages now name the specific gate (non-TTY, env var, or setting) instead of a generic message
+- `viqo --bg --name <label>` now echoes the name in the post-spawn confirmation
+- `viqo agents`: renaming a background session with Ctrl+R now updates the attached session's banner immediately
 - Background session worktree isolation guard now applies for non-git VCS users with `WorktreeCreate` hooks configured
-- Plugin marketplace add/update now respects `CLAUDE_CODE_PLUGIN_PREFER_HTTPS`
+- Plugin marketplace add/update now respects `VIQO_CODE_PLUGIN_PREFER_HTTPS`
 - `/plugin` now returns to the Installed list after enabling, disabling, or uninstalling a plugin
 - `/doctor` now shows an exec-form example when a command hook is missing the `command` field
 - Skill-listing truncation is no longer shown as a startup notification — run `/doctor` for the full breakdown
@@ -936,57 +936,57 @@
 
 ## 2.1.143
 
-- Added plugin dependency enforcement: `claude plugin disable` now refuses when another enabled plugin depends on the target (with a copy-pasteable disable-chain hint), and `claude plugin enable` force-enables transitive dependencies
+- Added plugin dependency enforcement: `viqo plugin disable` now refuses when another enabled plugin depends on the target (with a copy-pasteable disable-chain hint), and `viqo plugin enable` force-enables transitive dependencies
 - Added projected context cost (per-turn and per-invocation token estimates) to the `/plugin` marketplace browse pane
 - Added `worktree.bgIsolation: "none"` setting to let background sessions edit the working copy directly without `EnterWorktree`, for repos where worktrees are impractical
-- PowerShell tool now passes `-ExecutionPolicy Bypass`. Opt out with `CLAUDE_CODE_POWERSHELL_RESPECT_EXECUTION_POLICY=1`
+- PowerShell tool now passes `-ExecutionPolicy Bypass`. Opt out with `VIQO_CODE_POWERSHELL_RESPECT_EXECUTION_POLICY=1`
 - Background sessions now preserve the model and effort level you set after waking from idle
 - Shift+Tab in attached agent sessions now includes auto mode in the cycle
 - Fixed a corrupt `.credentials.json` with a non-array `scopes` value hanging the CLI on startup or silently aborting OAuth token refresh
-- Fixed right-click paste in `claude agents` on Windows Terminal and WSL
-- Fixed stop hooks that block repeatedly looping forever — the turn now ends with a warning after 8 consecutive blocks (override via `CLAUDE_CODE_STOP_HOOK_BLOCK_CAP`)
-- Fixed Esc/Ctrl+C not cancelling a pending `/loop` wakeup while Claude is idle between iterations
+- Fixed right-click paste in `viqo agents` on Windows Terminal and WSL
+- Fixed stop hooks that block repeatedly looping forever — the turn now ends with a warning after 8 consecutive blocks (override via `VIQO_CODE_STOP_HOOK_BLOCK_CAP`)
+- Fixed Esc/Ctrl+C not cancelling a pending `/loop` wakeup while Viqo is idle between iterations
 - Fixed `/goal` evaluator firing while background shells or delegated subagents are still running
-- Fixed `NO_COLOR`/`FORCE_COLOR` in settings.json `env` stripping Claude Code's own UI colors — they now apply to subprocesses only
+- Fixed `NO_COLOR`/`FORCE_COLOR` in settings.json `env` stripping Viqo's own UI colors — they now apply to subprocesses only
 - Fixed agent view spawning repeated PowerShell processes on Windows when listing sessions
 - Fixed `/bg` without a prompt sending "continue" to the forked session — the fork now waits for input
 - Fixed `--agent <name>` not finding plugin-contributed agents without the `plugin:` prefix
 - Fixed deleting a session from agent view not removing its transcript file
 - Fixed stale-fragment rendering when scrolling in attached background sessions on Windows Terminal
 - Fixed background agents false-positive worker-stall detection storm after host sleep or macOS App Nap
-- Fixed 5xx error messages pointing at status.claude.com instead of naming the configured gateway or cloud provider
-- The PowerShell tool is now enabled by default on Windows for Bedrock, Vertex, and Foundry users. Opt out with `CLAUDE_CODE_USE_POWERSHELL_TOOL=0`.
-- `claude agents` now accepts `--add-dir`, `--settings`, `--mcp-config`, and `--plugin-dir` and applies them to the dashboard and to background sessions dispatched from it
-- `claude agents` accepts `--permission-mode`, `--model`, `--effort`, and `--dangerously-skip-permissions` to set defaults for sessions dispatched from the view
-- `claude --bg --dangerously-skip-permissions` now persists across retire→wake
-- Fixed background sessions silently capturing IDE file references into the warm spare's input, which caused the reference to be prepended to the next prompt dispatched from `claude agents`
+- Fixed 5xx error messages pointing at status.inferviqo.com instead of naming the configured gateway or cloud provider
+- The PowerShell tool is now enabled by default on Windows for Bedrock, Vertex, and Foundry users. Opt out with `VIQO_CODE_USE_POWERSHELL_TOOL=0`.
+- `viqo agents` now accepts `--add-dir`, `--settings`, `--mcp-config`, and `--plugin-dir` and applies them to the dashboard and to background sessions dispatched from it
+- `viqo agents` accepts `--permission-mode`, `--model`, `--effort`, and `--dangerously-skip-permissions` to set defaults for sessions dispatched from the view
+- `viqo --bg --dangerously-skip-permissions` now persists across retire→wake
+- Fixed background sessions silently capturing IDE file references into the warm spare's input, which caused the reference to be prepended to the next prompt dispatched from `viqo agents`
 - Worktree cleanup no longer falls back to `rm -rf` when `git worktree remove` fails, preventing loss of gitignored or in-progress files
 - Fixed background-job sessions on macOS getting "Operation not permitted" errors when reading files under `~/Documents`, `~/Desktop`, or `~/Downloads`, even with Full Disk Access granted.
 - `/bg` now preserves `--mcp-config`, `--settings`, `--add-dir`, `--plugin-dir`, and `--strict-mcp-config`, so backgrounded sessions keep their MCP servers and settings across respawn.
-- Background sessions launched from `claude agents` now honor `permissions.defaultMode` from settings.json (was previously overridden to auto mode)
-- Fixed: on Windows, pressing ← in `claude agents` while a response was streaming could leave the agents list unresponsive to all input
+- Background sessions launched from `viqo agents` now honor `permissions.defaultMode` from settings.json (was previously overridden to auto mode)
+- Fixed: on Windows, pressing ← in `viqo agents` while a response was streaming could leave the agents list unresponsive to all input
 - `/bg` and `←`-detach now preserve `--fallback-model`, so backgrounded workers degrade to the fallback model on overload instead of hard-failing.
 - `/bg` and `←`-detach now preserve `--allow-dangerously-skip-permissions`, so the forked worker keeps bypass-permissions available in its Shift+Tab cycle.
-- Fixed: background daemon spawn now falls back to the running binary when the `~/.local/bin/claude` launcher is missing or non-executable
-- Fixed `claude agents --allow-dangerously-skip-permissions` defaulting dispatched sessions to bypass mode instead of making it available in the permission cycle
+- Fixed: background daemon spawn now falls back to the running binary when the `~/.local/bin/viqo` launcher is missing or non-executable
+- Fixed `viqo agents --allow-dangerously-skip-permissions` defaulting dispatched sessions to bypass mode instead of making it available in the permission cycle
 
 ## 2.1.142
 
-- Added new `claude agents` flags: `--add-dir`, `--settings`, `--mcp-config`, `--plugin-dir`, `--permission-mode`, `--model`, `--effort`, and `--dangerously-skip-permissions` to configure dispatched background sessions
-- Fast mode now uses Opus 4.7 by default (previously Opus 4.6). Set `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1` to pin fast mode to Opus 4.6
+- Added new `viqo agents` flags: `--add-dir`, `--settings`, `--mcp-config`, `--plugin-dir`, `--permission-mode`, `--model`, `--effort`, and `--dangerously-skip-permissions` to configure dispatched background sessions
+- Fast mode now uses Opus 4.7 by default (previously Opus 4.6). Set `VIQO_CODE_OPUS_4_6_FAST_MODE_OVERRIDE=1` to pin fast mode to Opus 4.6
 - Plugins with a root-level `SKILL.md` and no `skills/` subdirectory are now surfaced as a skill
-- The `/plugin` details pane and `claude plugin details` now show LSP servers a plugin provides
+- The `/plugin` details pane and `viqo plugin details` now show LSP servers a plugin provides
 - `/web-setup` warns before replacing an existing GitHub App connection
 - Fixed `MCP_TOOL_TIMEOUT` not raising the per-request fetch timeout for remote HTTP and SSE MCP servers, which capped tool calls at 60 seconds regardless of the configured value
 - Fixed background sessions not recognizing pre-existing git worktrees, blocking Edit while EnterWorktree refused to create a duplicate
 - Fixed background sessions disappearing and daemon reconnect failing after macOS sleep/wake — the daemon now detects clock jumps instead of treating them as elapsed idle time
 - Fixed daemon not exiting cleanly after the binary is upgraded (e.g. `brew upgrade`), causing dispatched agents to crash-loop on the deleted path
-- Fixed background agents crash-looping when the Claude-in-Chrome extension is connected without a shared tab
-- Fixed clicking links in an attached `claude agents` session — the background worker's headless browser shim no longer applies while attached
-- Fixed `claude agents` "v to open in editor" using the daemon's default editor instead of your shell's `$EDITOR`/`$VISUAL`
-- Fixed `claude agents` deadlocking on Windows with network-drive working directories; Ctrl+C now works during startup
-- Fixed background-color bleed when attaching to a `claude agents` session from Apple Terminal or other 256-color-only terminals
-- Fixed `claude --bg --dangerously-skip-permissions` not persisting across retire/wake
+- Fixed background agents crash-looping when the Viqo-in-Chrome extension is connected without a shared tab
+- Fixed clicking links in an attached `viqo agents` session — the background worker's headless browser shim no longer applies while attached
+- Fixed `viqo agents` "v to open in editor" using the daemon's default editor instead of your shell's `$EDITOR`/`$VISUAL`
+- Fixed `viqo agents` deadlocking on Windows with network-drive working directories; Ctrl+C now works during startup
+- Fixed background-color bleed when attaching to a `viqo agents` session from Apple Terminal or other 256-color-only terminals
+- Fixed `viqo --bg --dangerously-skip-permissions` not persisting across retire/wake
 - Fixed session titles being derived from the URL when the first message is a link
 - Fixed redundant `set_model` requests from remote clients injecting duplicate `/model` breadcrumbs into the transcript
 - Fixed plugins using `skills: ["./"]` showing a false "path escapes plugin directory" error
@@ -995,27 +995,27 @@
 - Fixed plugin advisories not naming every `plugin.json` key that shadows a default folder
 - Improved reactive compaction: the first summarize attempt now seeds from the original request's overflow size, avoiding a wasted near-full-context retry
 - Improved hook configuration error: configuring a prompt- or agent-type hook for `SessionStart`/`Setup`/`SubagentStart` now shows a clear "use a command-type hook instead" error
-- Removed stale `/model claude-sonnet-4-20250514` suggestion from Usage Policy refusal messages
+- Removed stale `/model viqo-sonnet-4-20250514` suggestion from Usage Policy refusal messages
 
 ## 2.1.141
 
 - Added `terminalSequence` field to hook JSON output so hooks can emit desktop notifications, window titles, and bells without a controlling terminal
-- Added `CLAUDE_CODE_PLUGIN_PREFER_HTTPS` to clone GitHub plugin sources over HTTPS instead of SSH, for environments without a GitHub SSH key
-- Added `ANTHROPIC_WORKSPACE_ID` environment variable for workload identity federation — scopes the minted token to a specific workspace when the federation rule covers more than one
-- Added `claude agents --cwd <path>` to scope the session list to a directory
+- Added `VIQO_CODE_PLUGIN_PREFER_HTTPS` to clone GitHub plugin sources over HTTPS instead of SSH, for environments without a GitHub SSH key
+- Added `VIQO_WORKSPACE_ID` environment variable for workload identity federation — scopes the minted token to a specific workspace when the federation rule covers more than one
+- Added `viqo agents --cwd <path>` to scope the session list to a directory
 - `/feedback` can now include recent sessions (last 24 hours or 7 days) for issues spanning more than the current session
 - Rewind menu: added "Summarize up to here" to compress earlier context while keeping recent turns intact
 - Auto mode permission dialog now explains when a `permissions.ask` rule caused the prompt
 - Restored the "view diff in your IDE" option on file-edit permission prompts when an IDE is connected
 - Background agents launched via `/bg` or `←←` now preserve the current permission mode instead of reverting to default
-- `claude agents`: agents that finish work but leave a background shell running now move to Completed instead of staying under Working
-- Improved spinner feedback during long thinking periods — the spinner now warms to amber after 10 seconds to signal Claude is still working
+- `viqo agents`: agents that finish work but leave a background shell running now move to Completed instead of staying under Working
+- Improved spinner feedback during long thinking periods — the spinner now warms to amber after 10 seconds to signal Viqo is still working
 - Improved plugin menu navigation: `→`/Tab switch tabs, `↑` moves to the tab strip, and tab headers and search box are clickable in fullscreen mode
-- Fixed background side-queries sending an unavailable Haiku model ID on Bedrock/Vertex/Foundry/gateway when no `ANTHROPIC_SMALL_FAST_MODEL` override is set — now falls back to the main-loop model
-- Fixed `claude daemon status` and `/doctor` on Windows throwing when the daemon pipe key file is locked or unreadable — now shows the underlying error instead of an opaque failure
-- Fixed `claude agents` showing the agent-type list instead of the dashboard when launched through a wrapper that adds flags
-- Fixed `claude agents` opening a crashed session firing redundant dispatches when the working directory was deleted
-- Fixed background jobs on a custom `ANTHROPIC_BASE_URL` gateway not getting auto-named — the namer now uses the main model when no Haiku model is configured
+- Fixed background side-queries sending an unavailable Haiku model ID on Bedrock/Vertex/Foundry/gateway when no `VIQO_SMALL_FAST_MODEL` override is set — now falls back to the main-loop model
+- Fixed `viqo daemon status` and `/doctor` on Windows throwing when the daemon pipe key file is locked or unreadable — now shows the underlying error instead of an opaque failure
+- Fixed `viqo agents` showing the agent-type list instead of the dashboard when launched through a wrapper that adds flags
+- Fixed `viqo agents` opening a crashed session firing redundant dispatches when the working directory was deleted
+- Fixed background jobs on a custom `VIQO_BASE_URL` gateway not getting auto-named — the namer now uses the main model when no Haiku model is configured
 - Fixed `/model` in one session silently changing the autocompact threshold in other concurrent sessions
 - Fixed switching permission mode while a tool-permission prompt is open not auto-dismissing the prompt when the new setting permits the tool
 - Fixed pressing Enter while a permission/dialog prompt is open also submitting text in the input box
@@ -1040,9 +1040,9 @@
 - Fixed welcome banner showing "API Usage Billing" on Bedrock, Vertex, Foundry, and other third-party providers — now shows the provider name
 - Fixed `/mcp` server list not keeping the focused server visible in short terminals in fullscreen mode
 - Fixed redaction in `/feedback` bundles producing invalid JSON for quoted values like session IDs
-- Fixed desktop and third-party provider sessions incorrectly inheriting `apiKeyHelper`/`ANTHROPIC_AUTH_TOKEN` from host managed-settings
+- Fixed desktop and third-party provider sessions incorrectly inheriting `apiKeyHelper`/`VIQO_AUTH_TOKEN` from host managed-settings
 - Fixed early analytics events being silently dropped when fired before logger initialization
-- Fixed `claude plugin install` failing for plugins whose marketplace `ref` no longer exists upstream when a `sha` is also pinned
+- Fixed `viqo plugin install` failing for plugins whose marketplace `ref` no longer exists upstream when a `sha` is also pinned
 - Fixed plugin details pane showing 0 MCP servers for plugins that declare them via `.mcp.json`
 - Fixed plugin MCP servers with unset config variables showing a generic connection failure instead of a "config issue" message with a fix-it hint; malformed `.mcp.json` entries no longer drop other MCP servers
 - Fixed MCP server configs using POSIX shell parameter expansions (e.g. `${var%pattern}`) being incorrectly flagged as missing environment variables
@@ -1053,12 +1053,12 @@
 - Fixed a race where early OTel spans could be silently dropped in SDK/headless mode with beta tracing enabled
 - Fixed custom `voice:pushToTalk` keybindings and `"space": null` unbinds being silently ignored
 - Fixed Windows Alt+V image paste reporting "no image found" when the clipboard contains a screenshot
-- Fixed SDK "Claude Code native binary not found" on Linux when both glibc and musl platform packages are installed
+- Fixed SDK "Viqo native binary not found" on Linux when both glibc and musl platform packages are installed
 - Bedrock: `awsCredentialExport` now always runs when configured instead of being skipped when ambient AWS credentials resolve, fixing auth for cross-account access
 - [VSCode] Fixed in-chat mic showing no feedback when the microphone produced only silence — now shows "No audio detected"
 - [VSCode] Voice mode: the WSL error now suggests installing `sox libsox-fmt-pulse` for WSLg users
-- `claude agents`: launching a session no longer fails when the pre-warmed background worker is unhealthy — now falls back to a fresh launch
-- `claude agents` no longer shows empty placeholder sessions left over from backgrounding a fresh REPL, and shows onboarding text when entered via ← with no other agents
+- `viqo agents`: launching a session no longer fails when the pre-warmed background worker is unhealthy — now falls back to a fresh launch
+- `viqo agents` no longer shows empty placeholder sessions left over from backgrounding a fresh REPL, and shows onboarding text when entered via ← with no other agents
 - Empty idle background sessions left over from `←` are now automatically retired by the daemon after 5 minutes
 
 ## 2.1.140
@@ -1067,7 +1067,7 @@
 - Updated agent color palette
 - Fixed `/goal` silently hanging when `disableAllHooks` or `allowManagedHooksOnly` is set — now shows a clear message instead of an indicator that never resolves
 - Fixed a regression in settings hot-reload where symlinked settings files caused misattributed change events and spurious `ConfigChange` hooks
-- Fixed `claude --bg` failing with "connection dropped mid-request" when the background service was about to idle-exit
+- Fixed `viqo --bg` failing with "connection dropped mid-request" when the background service was about to idle-exit
 - Fixed background service startup failing on machines with enterprise endpoint security by allowing more time
 - Fixed remote managed settings not retrying on 401 — now retries once with a force-refreshed token
 - Fixed managed `extraKnownMarketplaces` auto-update policy not being persisted to `known_marketplaces.json`
@@ -1075,35 +1075,35 @@
 - Fixed a recurring event-loop stall on Windows when a missing executable (e.g. `gh`) triggered synchronous `where.exe` re-spawns on every check
 - Fixed `Read` tool calls failing validation when `offset` is passed as a whitespace-padded or `+`-prefixed string
 - Fixed native terminal cursor not staying at the input caret when the terminal loses focus
-- Plugins now warn when a default component folder (e.g. `commands/`) is silently ignored because `plugin.json` sets the matching key. Shown in `/doctor`, `claude plugin list`, and `/plugin`.
+- Plugins now warn when a default component folder (e.g. `commands/`) is silently ignored because `plugin.json` sets the matching key. Shown in `/doctor`, `viqo plugin list`, and `/plugin`.
 
 ## 2.1.139
 
-- Added agent view (Research Preview): a single list of every Claude Code session — running, blocked on you, or done. Run `claude agents` to get started. See https://code.claude.com/docs/en/agent-view
-- Added `/goal` command: set a completion condition and Claude keeps working across turns until it's met. Works in interactive, `-p`, and Remote Control. Shows live elapsed/turns/tokens as an overlay panel
+- Added agent view (Research Preview): a single list of every Viqo session — running, blocked on you, or done. Run `viqo agents` to get started. See https://github.com/inferviqo/viqo/docs/en/agent-view
+- Added `/goal` command: set a completion condition and Viqo keeps working across turns until it's met. Works in interactive, `-p`, and Remote Control. Shows live elapsed/turns/tokens as an overlay panel
 - Added `/scroll-speed` command to tune mouse wheel scroll speed with a live preview
-- Added `claude plugin details <name>` to show a plugin's component inventory and projected per-session token cost
+- Added `viqo plugin details <name>` to show a plugin's component inventory and projected per-session token cost
 - Added transcript view navigation: `?` for keyboard shortcuts, `{`/`}` to jump between user prompts, `v` to toggle shortcut panel
 - Added hook `args: string[]` field (exec form) that spawns the command directly without a shell, so path placeholders never need quoting
-- Added hook `continueOnBlock` config option for `PostToolUse` — set to `true` to feed the hook's rejection reason back to Claude and continue the turn
-- MCP stdio servers now receive `CLAUDE_PROJECT_DIR` in their environment, matching hooks. Plugin configs can reference `${CLAUDE_PROJECT_DIR}` in commands
+- Added hook `continueOnBlock` config option for `PostToolUse` — set to `true` to feed the hook's rejection reason back to Viqo and continue the turn
+- MCP stdio servers now receive `VIQO_PROJECT_DIR` in their environment, matching hooks. Plugin configs can reference `${VIQO_PROJECT_DIR}` in commands
 - Compaction prompt now asks the model to preserve sensitive user instructions
 - `/mcp` Reconnect now picks up `.mcp.json` edits without a restart, and shows the HTTP status and URL when reconnecting fails
 - `/context all` per-skill token estimates now account for the model's tokenizer and show rounded values
-- `claude plugin install <name>@<marketplace>` now auto-refreshes the marketplace and retries before reporting a plugin as not found
+- `viqo plugin install <name>@<marketplace>` now auto-refreshes the marketplace and retries before reporting a plugin as not found
 - `/plugin` installed-plugin details now show hook event names and MCP server names cleanly
 - `/context` now shows the providing plugin's name for plugin-sourced skills
 - Remote MCP server reconnect retry on transient failures is now enabled for all users
-- API requests from subagents now carry `x-claude-code-agent-id` / `x-claude-code-parent-agent-id` headers, and `claude_code.llm_request` OTEL spans include `agent_id` / `parent_agent_id` attributes
-- Remote Control, `/schedule`, claude.ai MCP connectors, and notification preferences are now disabled when `ANTHROPIC_API_KEY` / `apiKeyHelper` / `ANTHROPIC_AUTH_TOKEN` is set, even if a Claude.ai login also exists. Unset the API key to use these features
-- Fixed a deadlock where expired credentials and the `forceRemoteSettingsRefresh` policy setting blocked `claude auth login`/`logout`/`status` with no way to recover
+- API requests from subagents now carry `x-viqo-agent-id` / `x-viqo-parent-agent-id` headers, and `claude_code.llm_request` OTEL spans include `agent_id` / `parent_agent_id` attributes
+- Remote Control, `/schedule`, viqo.ai MCP connectors, and notification preferences are now disabled when `VIQO_API_KEY` / `apiKeyHelper` / `VIQO_AUTH_TOKEN` is set, even if a Viqo.ai login also exists. Unset the API key to use these features
+- Fixed a deadlock where expired credentials and the `forceRemoteSettingsRefresh` policy setting blocked `viqo auth login`/`logout`/`status` with no way to recover
 - Fixed `autoAllowBashIfSandboxed` not auto-approving commands with shell expansions like `$VAR` and `$(cmd)`
 - Fixed a bug where a hook writing to the terminal could corrupt an on-screen interactive prompt; hooks now run without terminal access
 - Fixed unbounded memory growth when an HTTP/SSE MCP server streams non-protocol data — response bodies now capped at 16 MB per SSE frame
 - Fixed `Skill(name *)` permission rules — the wildcard form now works as a prefix match, matching `Bash(ls *)` behavior
-- Fixed settings hot-reload not detecting edits to symlinked `~/.claude/settings.json`
+- Fixed settings hot-reload not detecting edits to symlinked `~/.viqo/settings.json`
 - Fixed plugin details failing to load when the marketplace key differs from the manifest name
-- Fixed `/model` picker "Default" row not reflecting `ANTHROPIC_DEFAULT_OPUS_MODEL`/`ANTHROPIC_DEFAULT_SONNET_MODEL` overrides
+- Fixed `/model` picker "Default" row not reflecting `VIQO_DEFAULT_OPUS_MODEL`/`VIQO_DEFAULT_SONNET_MODEL` overrides
 - Fixed spurious "stream idle timeout" 5 minutes after a response completed, caused by the watchdog timer not being cleared on stream cancellation
 - Fixed silent `exit 1` when 10+ MCP servers are configured and the cache directory is unwritable — the error message now includes the underlying cause
 - Fixed a typing cursor blinking on tab names, list pointers, and select rows in dialogs
@@ -1127,7 +1127,7 @@
 - Fixed Insights Time-of-Day chart skewing when a session has an unparseable timestamp
 - Fixed keybindings using only the cmd/super/win modifier being flagged as unparseable
 - Fixed `claude_code.active_time.total` OpenTelemetry metric not being emitted in `--print` mode
-- Fixed `claude plugin update` not preserving cross-plugin symlinks inside a marketplace
+- Fixed `viqo plugin update` not preserving cross-plugin symlinks inside a marketplace
 - [VSCode] Press Cmd/Ctrl+Shift+T to reopen the most recently closed session tab, configurable via `claudeCode.enableReopenClosedSessionShortcut`
 
 ## 2.1.138
@@ -1140,9 +1140,9 @@
 
 ## 2.1.136
 
-- Added `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` to re-enable the session quality survey for enterprises capturing responses through OpenTelemetry
+- Added `VIQO_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` to re-enable the session quality survey for enterprises capturing responses through OpenTelemetry
 - Added `settings.autoMode.hard_deny` for auto mode classifier rules that block unconditionally regardless of user intent or allow exceptions
-- Fixed MCP servers configured in `.mcp.json`, plugins, and claude.ai connectors silently disappearing after `/clear` in the VS Code extension, JetBrains plugin, and Agent SDK
+- Fixed MCP servers configured in `.mcp.json`, plugins, and viqo.ai connectors silently disappearing after `/clear` in the VS Code extension, JetBrains plugin, and Agent SDK
 - Fixed a rare login loop where a concurrent credential write could overwrite a freshly-rotated OAuth token and force re-login
 - Fixed MCP OAuth refresh tokens being lost when multiple servers refresh concurrently — users with several remote MCP servers should no longer need daily re-authentication
 - Fixed an API error (400) when extended thinking emitted a redacted thinking block after a tool call
@@ -1163,11 +1163,11 @@
 - Fixed `/insights` crash when session history contains tool calls with malformed input fields
 - Fixed a renderer crash when a tool's collapsibility classification changes mid-session
 - Fixed a `skills` entry in `plugin.json` hiding the plugin's default `skills/` directory, and listing a file path now shows an error instead of failing silently
-- Fixed IDE shell-integration lock files not respecting `CLAUDE_CONFIG_DIR`
+- Fixed IDE shell-integration lock files not respecting `VIQO_CONFIG_DIR`
 - Fixed trailing whitespace in copied terminal output during streaming
 - Fixed plugin uninstall and enable/disable not matching slugs case-insensitively
 - Fixed tool error truncation marker showing a negative count for surrogate-pair strings
-- Fixed env vars from `CLAUDE_ENV_FILE` SessionStart hooks going stale after `/resume` or `/clear`
+- Fixed env vars from `VIQO_ENV_FILE` SessionStart hooks going stale after `/resume` or `/clear`
 - Fixed `/branch` saving a multi-line session title when given a pasted multi-line name
 - Fixed a stray leading space on the second line of wrapped text at the column boundary
 - Fixed Esc not dismissing dialogs in `/install-github-app`, `/desktop`, `/resume`, and `/web-setup`
@@ -1207,16 +1207,16 @@
 - Fixed pressing Esc during conversation compaction showing a spurious "Error compacting conversation" notification
 - Fixed `HTTP(S)_PROXY` / `NO_PROXY` / mTLS not being respected for the full MCP OAuth flow including discovery, dynamic client registration, token exchange, and token refresh
 - Fixed Read/Write/Edit being denied on mapped network drives passed via `--add-dir` / SDK `additionalDirectories`
-- Fixed Remote Control stop/interrupt from claude.ai not fully canceling the CLI session the same way local Esc does, causing queued messages to never advance after interrupting a stuck tool or prompt
+- Fixed Remote Control stop/interrupt from viqo.ai not fully canceling the CLI session the same way local Esc does, causing queued messages to never advance after interrupting a stuck tool or prompt
 - Fixed `/effort` in one session unexpectedly changing the effort level of other concurrent sessions, and a related issue where an IDE effort change could be silently dropped
 - Fixed subagents not discovering project, user, or plugin skills via the Skill tool
-- `claude --help` now lists `--remote-control` alongside `--remote-control-session-name-prefix`
-- [VSCode] Fixed `claudeCode.claudeProcessWrapper` failing with "Unsupported platform" when the extension build doesn't bundle a Claude binary
+- `viqo --help` now lists `--remote-control` alongside `--remote-control-session-name-prefix`
+- [VSCode] Fixed `viqoCode.viqoProcessWrapper` failing with "Unsupported platform" when the extension build doesn't bundle a Viqo binary
 
 ## 2.1.132
 
-- Added `CLAUDE_CODE_SESSION_ID` environment variable to the Bash tool subprocess environment, matching the `session_id` passed to hooks
-- Added `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1` env var to opt out of the fullscreen alternate-screen renderer and keep the conversation in the terminal's native scrollback
+- Added `VIQO_CODE_SESSION_ID` environment variable to the Bash tool subprocess environment, matching the `session_id` passed to hooks
+- Added `VIQO_CODE_DISABLE_ALTERNATE_SCREEN=1` env var to opt out of the fullscreen alternate-screen renderer and keep the conversation in the terminal's native scrollback
 - Added a "Pasting…" footer hint while a Ctrl+V image paste is being read from the clipboard
 - Fixed external SIGINT (e.g. IDE stop button, `kill -INT`) not running graceful shutdown — terminal modes are now restored and the `--resume` hint is printed instead of an abrupt exit
 - Fixed an uncaught exception when the terminal is closed or SSH disconnects mid-session under the native build
@@ -1231,15 +1231,15 @@
 - Fixed scroll-wheel handling in JetBrains IDE 2025.2 terminals (spurious arrow keys, wrong-direction events, runaway acceleration)
 - Fixed `/usage` Ctrl+S hanging when copying the stats screenshot to the clipboard on Linux/X11
 - Fixed `/terminal-setup` showing a contradictory error in Windows Terminal — Shift+Enter is natively supported there
-- Fixed `/effort` picker not reflecting the `CLAUDE_CODE_EFFORT_LEVEL` env var override
+- Fixed `/effort` picker not reflecting the `VIQO_CODE_EFFORT_LEVEL` env var override
 - Fixed `/status` showing the wrong default model for some users
 - Fixed slash command autocomplete popup being capped at ~3–5 visible commands instead of scaling with terminal height
 - Fixed statusline `context_window` token counts reflecting cumulative session totals instead of current context usage
 - Fixed Alt+T (thinking toggle) not working on macOS terminals without "Option as Meta" enabled (iTerm2, Terminal.app defaults)
-- Fixed dead keyboard input on Windows after re-opening a background session from `claude agents`
+- Fixed dead keyboard input on Windows after re-opening a background session from `viqo agents`
 - Fixed unbounded memory growth (10GB+ RSS) when a stdio MCP server writes non-protocol data to stdout
 - Fixed MCP servers that connect but fail `tools/list` silently showing 0 tools — they now retry once and show "connected · tools fetch failed" in `/mcp`
-- Fixed unauthorized claude.ai MCP connectors showing as "failed" instead of "needs auth", and headless `-p` mode retrying non-transient 4xx connection failures
+- Fixed unauthorized viqo.ai MCP connectors showing as "failed" instead of "needs auth", and headless `-p` mode retrying non-transient 4xx connection failures
 - Improved visual consistency in slash command dialogs and `/login`, `/upgrade`, `/extra-usage` dialog spacing
 - Updated the `/tui fullscreen` startup banner to describe additional renderer benefits (lower memory usage, mouse support, auto-copy on select)
 - Fixed Bedrock and Vertex 400 errors when `ENABLE_PROMPT_CACHING_1H` is set
@@ -1252,12 +1252,12 @@
 ## 2.1.129
 
 - Added `--plugin-url <url>` flag to fetch a plugin `.zip` archive from a URL for the current session
-- Added `CLAUDE_CODE_FORCE_SYNC_OUTPUT=1` env var to force-enable synchronized output on terminals that auto-detection misses (e.g. Emacs `eat`)
-- Added `CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE`: when set on Homebrew or WinGet installations, Claude Code runs the upgrade command in the background and prompts to restart
-- Plugin manifests: `themes` and `monitors` should now be declared under `"experimental": { ... }`. Top-level declarations still work but `claude plugin validate` will warn
-- Gateway `/v1/models` discovery for the `/model` picker is now opt-in via `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` (was automatic in 2.1.126–2.1.128)
+- Added `VIQO_CODE_FORCE_SYNC_OUTPUT=1` env var to force-enable synchronized output on terminals that auto-detection misses (e.g. Emacs `eat`)
+- Added `VIQO_CODE_PACKAGE_MANAGER_AUTO_UPDATE`: when set on Homebrew or WinGet installations, Viqo runs the upgrade command in the background and prompts to restart
+- Plugin manifests: `themes` and `monitors` should now be declared under `"experimental": { ... }`. Top-level declarations still work but `viqo plugin validate` will warn
+- Gateway `/v1/models` discovery for the `/model` picker is now opt-in via `VIQO_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1` (was automatic in 2.1.126–2.1.128)
 - Ctrl+R history picker now defaults to searching all prompts across all projects, matching pre-2.1.124 behavior. Press Ctrl+S to narrow to the current project or session
-- Third-party deployments (Bedrock, Vertex, Foundry, or `ANTHROPIC_BASE_URL` gateway) no longer see spinner tips pointing at first-party Anthropic surfaces
+- Third-party deployments (Bedrock, Vertex, Foundry, or `VIQO_BASE_URL` gateway) no longer see spinner tips pointing at first-party Inferviqo surfaces
 - `skillOverrides` setting now works: `off` hides from model and `/`, `user-invocable-only` hides from model only, `name-only` collapses description
 - The `claude_code.pull_request.count` OTel metric now counts PRs/MRs created via MCP tools, not just shell commands
 - Policy refusal error messages now include the API Request ID for easier support debugging
@@ -1289,14 +1289,14 @@
 - Subprocesses (Bash, hooks, MCP, LSP) no longer inherit `OTEL_*` environment variables, so OTEL-instrumented apps run via the Bash tool no longer pick up the CLI's own OTLP endpoint
 - MCP: `workspace` is now a reserved server name — existing servers with that name will be skipped with a warning
 - Reconnecting MCP servers no longer flood the conversation with full tool-name lists on every reconnect — re-announced tools are summarized by server prefix
-- SDK hosts now receive a persistent `localSettings` suggestion for Bash permission prompts, so "Always allow" writes to `.claude/settings.local.json`
+- SDK hosts now receive a persistent `localSettings` suggestion for Bash permission prompts, so "Always allow" writes to `.viqo/settings.local.json`
 - `EnterWorktree` now creates the new branch from local HEAD as documented, instead of `origin/<default-branch>` — unpushed commits are no longer dropped
 - Auto mode: when the classifier can't evaluate an action, the error now includes a hint (retry, `/compact`, or run with `--debug`)
 - Fixed focus mode briefly dimming the previous response when submitting a new prompt
 - Fixed stray "4;0;" desktop notification on every `/exit` in Kitty and other terminals that interpret OSC 9 as a notification
 - Fixed Remote Control showing an empty "Opening your options…" message on rate limit instead of actionable upsell options
 - Fixed drag-and-drop image upload hanging on "Pasting text…" when the image read fails
-- Fixed crash loop when piping very large input (>10 MB) to `claude -p` via stdin
+- Fixed crash loop when piping very large input (>10 MB) to `viqo -p` via stdin
 - Fixed long URLs not being individually clickable on every wrapped row in fullscreen mode
 - Fixed `/plugin` Components panel showing "Marketplace 'inline' not found" for plugins loaded via `--plugin-dir`
 - Fixed MCP tool results dropping images when the server returns both structured content and content blocks
@@ -1313,7 +1313,7 @@
 - Fixed `/rename` without args failing on resumed sessions whose last entry is a compact boundary
 - Fixed stale "remote-control is active" status lines from prior sessions appearing after `--resume`/`--continue`
 - Fixed stale `installed_plugins.json` entries pointing at deleted cache directories polluting PATH
-- Fixed MCP stdio servers receiving corrupted arguments when `CLAUDE_CODE_SHELL_PREFIX` is set and an argument contains spaces or shell metacharacters
+- Fixed MCP stdio servers receiving corrupted arguments when `VIQO_CODE_SHELL_PREFIX` is set and an argument contains spaces or shell metacharacters
 - Fixed sub-agent progress summaries missing the prompt cache (~3× `cache_creation` reduction)
 - Fixed `/plugin update` never detecting new versions of npm-sourced plugins
 - Fixed sub-agent summaries firing repeatedly while a sub-agent's transcript is static, capping worst-case token cost on idle sub-agents
@@ -1321,15 +1321,15 @@
 
 ## 2.1.126
 
-- The `/model` picker now lists models from your gateway's `/v1/models` endpoint when `ANTHROPIC_BASE_URL` points at an Anthropic-compatible gateway
-- - Added `claude project purge [path]` to delete all Claude Code state for a project (transcripts, tasks, file history, config entry) — supports `--dry-run`, `-y/--yes`, `-i/--interactive`, and `--all`
-- `--dangerously-skip-permissions` now bypasses prompts for writes to `.claude/`, `.git/`, `.vscode/`, shell config files, and other previously-protected paths (catastrophic removal commands still prompt as a safety net)
-- `claude auth login` now accepts the OAuth code pasted into the terminal when the browser callback can't reach localhost (WSL2, SSH, containers)
-- `claude_code.skill_activated` OpenTelemetry event now fires for user-typed slash commands and carries a new `invocation_trigger` attribute (`"user-slash"`, `"claude-proactive"`, or `"nested-skill"`)
+- The `/model` picker now lists models from your gateway's `/v1/models` endpoint when `VIQO_BASE_URL` points at an Inferviqo-compatible gateway
+- - Added `viqo project purge [path]` to delete all Viqo state for a project (transcripts, tasks, file history, config entry) — supports `--dry-run`, `-y/--yes`, `-i/--interactive`, and `--all`
+- `--dangerously-skip-permissions` now bypasses prompts for writes to `.viqo/`, `.git/`, `.vscode/`, shell config files, and other previously-protected paths (catastrophic removal commands still prompt as a safety net)
+- `viqo auth login` now accepts the OAuth code pasted into the terminal when the browser callback can't reach localhost (WSL2, SSH, containers)
+- `claude_code.skill_activated` OpenTelemetry event now fires for user-typed slash commands and carries a new `invocation_trigger` attribute (`"user-slash"`, `"viqo-proactive"`, or `"nested-skill"`)
 - Auto mode: the spinner now turns red when a permission check stalls, instead of looking like the tool is running
-- Host-managed deployments (`CLAUDE_CODE_PROVIDER_MANAGED_BY_HOST`) no longer auto-disable analytics on Bedrock/Vertex/Foundry
+- Host-managed deployments (`VIQO_CODE_PROVIDER_MANAGED_BY_HOST`) no longer auto-disable analytics on Bedrock/Vertex/Foundry
 - Windows: PowerShell 7 installed via the Microsoft Store, MSI without PATH, or `.NET global tool` is now detected
-- Windows: when the PowerShell tool is enabled, Claude now treats PowerShell as the primary shell instead of defaulting to Bash
+- Windows: when the PowerShell tool is enabled, Viqo now treats PowerShell as the primary shell instead of defaulting to Bash
 - Read tool: removed the per-file malware-assessment reminder that could cause spurious refusals and "this is not malware" commentary on legacy models
 - **Security:** Fixed `allowManagedDomainsOnly` / `allowManagedReadPathsOnly` being ignored when a higher-priority managed-settings source lacked a `sandbox` block
 - Fixed pasting an image larger than 2000px breaking the session — images are now downscaled on paste, and oversized images in history are automatically removed and the request retried
@@ -1341,7 +1341,7 @@
 - Fixed background and remote sessions falsely aborting with "Stream idle timeout" during long model thinking pauses
 - Fixed a hang where the assistant could finish thinking but show no output after a run of empty turns
 - Fixed overly fast trackpad scrolling in Cursor and VS Code 1.92–1.104 integrated terminals
-- Fixed claude.ai MCP connectors being suppressed by manual servers stuck in needs-auth state
+- Fixed viqo.ai MCP connectors being suppressed by manual servers stuck in needs-auth state
 - Fixed Japanese/Korean/Chinese text rendering as garbled characters on Windows in no-flicker mode
 - Fixed `Ctrl+L` clearing the prompt input — it now only forces a screen redraw, matching readline behavior
 - Fixed deferred tools (WebSearch, WebFetch, etc.) not being available to skills with `context: fork` and other subagents on their first turn
@@ -1356,13 +1356,13 @@
 
 ## 2.1.123
 
-- Fixed OAuth authentication failing with a 401 retry loop when `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` is set
+- Fixed OAuth authentication failing with a 401 retry loop when `VIQO_CODE_DISABLE_EXPERIMENTAL_BETAS=1` is set
 
 ## 2.1.122
 
-- Added `ANTHROPIC_BEDROCK_SERVICE_TIER` environment variable to select a Bedrock service tier (`default`, `flex`, or `priority`), sent as the `X-Amzn-Bedrock-Service-Tier` header
+- Added `VIQO_BEDROCK_SERVICE_TIER` environment variable to select a Bedrock service tier (`default`, `flex`, or `priority`), sent as the `X-Amzn-Bedrock-Service-Tier` header
 - Pasting a PR URL into the `/resume` search box now finds the session that created that PR (GitHub, GitHub Enterprise, GitLab, and Bitbucket)
-- `/mcp` now shows claude.ai connectors hidden by a manually-added server with the same URL, with a hint to remove the duplicate
+- `/mcp` now shows viqo.ai connectors hidden by a manually-added server with the same URL, with a hint to remove the duplicate
 - Clarified the `/mcp` message shown when an MCP server is still unauthorized after the browser sign-in flow
 - OpenTelemetry: numeric attributes on `api_request`/`api_error` log events are now emitted as numbers, not strings
 - OpenTelemetry: added `claude_code.at_mention` log event for `@`-mention resolution
@@ -1382,35 +1382,35 @@
 ## 2.1.121
 
 - Added `alwaysLoad` option to MCP server config — when `true`, all tools from that server skip tool-search deferral and are always available
-- Added `claude plugin prune` to remove orphaned auto-installed plugin dependencies; `plugin uninstall --prune` cascades
+- Added `viqo plugin prune` to remove orphaned auto-installed plugin dependencies; `plugin uninstall --prune` cascades
 - Added a type-to-filter search box to `/skills` so you can find a skill in long lists without scrolling
 - PostToolUse hooks can now replace tool output for all tools via `hookSpecificOutput.updatedToolOutput` (previously MCP-only)
 - Fullscreen mode: typing into the prompt no longer jumps scroll back to the bottom after you've scrolled up to read earlier output
 - Dialogs that overflow the terminal are now scrollable with arrow keys, PgUp/PgDn, home/end, and mouse wheel in both fullscreen and non-fullscreen modes
 - Clicking any line of a long URL that wraps across rows in fullscreen mode now opens the full URL
-- SDK and `claude -p`: `CLAUDE_CODE_FORK_SUBAGENT=1` now works in non-interactive sessions
-- `--dangerously-skip-permissions` no longer prompts for writes to `.claude/skills/`, `.claude/agents/`, and `.claude/commands/`
+- SDK and `viqo -p`: `VIQO_CODE_FORK_SUBAGENT=1` now works in non-interactive sessions
+- `--dangerously-skip-permissions` no longer prompts for writes to `.viqo/skills/`, `.viqo/agents/`, and `.viqo/commands/`
 - `/terminal-setup` now enables iTerm2's "Applications in terminal may access clipboard" setting so `/copy` works, including from tmux
 - MCP servers that hit a transient error during startup now auto-retry up to 3 times instead of staying disconnected
 - The terminal tab session title is now generated in your configured `language` setting
-- Claude.ai connectors with the same upstream URL are now deduplicated instead of appearing as duplicates
+- Viqo.ai connectors with the same upstream URL are now deduplicated instead of appearing as duplicates
 - Vertex AI: support X.509 certificate-based Workload Identity Federation (mTLS ADC)
 - Faster startup after upgrading: removed the Recent Activity panel from the release-notes splash
 - LSP diagnostic summaries now expand on click/ctrl+o and show the expand hint
-- SDK: `mcp_authenticate` now supports `redirectUri` for custom scheme completion and claude.ai connectors
+- SDK: `mcp_authenticate` now supports `redirectUri` for custom scheme completion and viqo.ai connectors
 - OpenTelemetry: added `stop_reason`, `gen_ai.response.finish_reasons`, and `user_system_prompt` (gated behind `OTEL_LOG_USER_PROMPTS`) to LLM request spans
-- [VSCode] Voice dictation now respects the `accessibility.voice.speechLanguage` setting when no Claude Code language is configured
+- [VSCode] Voice dictation now respects the `accessibility.voice.speechLanguage` setting when no Viqo language is configured
 - [VSCode] `/context` now opens a native token usage dialog
 - Fixed unbounded memory growth (multi-GB RSS) when processing many images in a session
 - Fixed `/usage` leaking up to ~2GB of memory on machines with large transcript histories
 - Fixed memory leak when long-running tools fail to emit a clear progress event
-- Fixed Bash tool becoming permanently unusable when the directory Claude was started in is deleted or moved mid-session
+- Fixed Bash tool becoming permanently unusable when the directory Viqo was started in is deleted or moved mid-session
 - Fixed `--resume` crashing on startup in external builds
 - Fixed `--resume` failing on large sessions when a transcript line was corrupted by an unclean shutdown — the corrupt line is now skipped
 - Fixed `thinking.type.enabled is not supported` error when using Bedrock application inference profile ARNs
 - Fixed Microsoft 365 MCP OAuth failing with duplicate or unsupported `prompt` parameter
 - Fixed scrollback duplication when pressing Ctrl+L or triggering a redraw in non-fullscreen mode on tmux, GNOME Terminal, Windows Terminal, and Konsole
-- Fixed claude.ai MCP connectors silently disappearing when the connector-list fetch hits a transient auth error at startup
+- Fixed viqo.ai MCP connectors silently disappearing when the connector-list fetch hits a transient auth error at startup
 - Fixed "Always allow" rules for built-in tools in remote sessions not surviving worker restarts
 - Fixed `NO_PROXY` not being respected for all HTTP clients when set via `managed-settings.json` under the native build
 - Fixed managed settings approval prompt exiting the session even when accepted — now applies settings and continues
@@ -1423,34 +1423,34 @@
 
 ## 2.1.120
 
-- Windows: Git for Windows (Git Bash) is no longer required — when absent, Claude Code uses PowerShell as the shell tool
-- Added `claude ultrareview [target]` subcommand to run `/ultrareview` non-interactively from CI or scripts — prints findings to stdout (`--json` for raw output) and exits 0 on completion or 1 on failure
+- Windows: Git for Windows (Git Bash) is no longer required — when absent, Viqo uses PowerShell as the shell tool
+- Added `viqo ultrareview [target]` subcommand to run `/ultrareview` non-interactively from CI or scripts — prints findings to stdout (`--json` for raw output) and exits 0 on completion or 1 on failure
 - Skills can now reference the current effort level with `${CLAUDE_EFFORT}` in their content
-- Set `AI_AGENT` environment variable for subprocesses so `gh` can attribute traffic to Claude Code
+- Set `AI_AGENT` environment variable for subprocesses so `gh` can attribute traffic to Viqo
 - Spinner tips that recommend installing the desktop app or creating skills/agents are now hidden when you already have them
 - Show a "use PgUp/PgDn to scroll" hint when the terminal sends arrow keys instead of scroll events
-- Faster session start when you have many claude.ai connectors configured but not authorized
+- Faster session start when you have many viqo.ai connectors configured but not authorized
 - The auto mode denial message now links to the configuration docs
-- `claude plugin validate` now accepts `$schema`, `version`, and `description` at the top level of `marketplace.json` and `$schema` in `plugin.json`
+- `viqo plugin validate` now accepts `$schema`, `version`, and `description` at the top level of `marketplace.json` and `$schema` in `plugin.json`
 - Auto-compact in auto mode now displays `auto` (lowercase, no token count) instead of a misleading token value
 - Fixed pressing Esc during a stdio MCP tool call closing the entire server connection (regression in 2.1.105)
-- Fixed `/rewind` and other interactive overlays not responding to keyboard input after launching with `claude --resume`
+- Fixed `/rewind` and other interactive overlays not responding to keyboard input after launching with `viqo --resume`
 - Fixed terminal scrollback duplication in non-fullscreen mode (resize, dialog dismiss, long sessions)
-- Fixed `DISABLE_TELEMETRY` / `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` not suppressing usage metrics telemetry for API and enterprise users
+- Fixed `DISABLE_TELEMETRY` / `VIQO_CODE_DISABLE_NONESSENTIAL_TRAFFIC` not suppressing usage metrics telemetry for API and enterprise users
 - Fixed false-positive "Dangerous rm operation" permission prompts in auto mode for multi-line bash commands containing both a pipe and a redirect
 - Fixed long selection menus clipping below the terminal in fullscreen mode — the focused option now stays on screen as you scroll
 - Fixed Write tool output collapsing instead of expanding when clicking "+N lines" in fullscreen
 - Fixed slash command picker jumping while typing, and improved highlight to only match contiguous substrings in blue
 - Fixed `/plugin` marketplace failing to load when one entry uses an unrecognized source format — that entry is shown but installing it prompts you to update
 - [VSCode] `/usage` now opens the native Account & Usage dialog instead of returning plain-text session cost
-- [VSCode] Voice dictation now respects the `language` setting in `~/.claude/settings.json`
+- [VSCode] Voice dictation now respects the `language` setting in `~/.viqo/settings.json`
 - Fixed `find` in the Bash tool exhausting open file descriptors on large directory trees, causing host-wide crashes (macOS/Linux native builds)
 
 ## 2.1.119
 
-- `/config` settings (theme, editor mode, verbose, etc.) now persist to `~/.claude/settings.json` and participate in project/local/policy override precedence
+- `/config` settings (theme, editor mode, verbose, etc.) now persist to `~/.viqo/settings.json` and participate in project/local/policy override precedence
 - Added `prUrlTemplate` setting to point the footer PR badge at a custom code-review URL instead of github.com
-- Added `CLAUDE_CODE_HIDE_CWD` environment variable to hide the working directory in the startup logo
+- Added `VIQO_CODE_HIDE_CWD` environment variable to hide the working directory in the startup logo
 - `--from-pr` now accepts GitLab merge-request, Bitbucket pull-request, and GitHub Enterprise PR URLs
 - `--print` mode now honors the agent's `tools:` and `disallowedTools:` frontmatter, matching interactive-mode behavior
 - `--agent <name>` now honors the agent definition's `permissionMode` for built-in agents
@@ -1504,16 +1504,16 @@
 
 - Added vim visual mode (`v`) and visual-line mode (`V`) with selection, operators, and visual feedback
 - Merged `/cost` and `/stats` into `/usage` — both remain as typing shortcuts that open the relevant tab
-- Create and switch between named custom themes from `/theme`, or hand-edit JSON files in `~/.claude/themes/`; plugins can also ship themes via a `themes/` directory
+- Create and switch between named custom themes from `/theme`, or hand-edit JSON files in `~/.viqo/themes/`; plugins can also ship themes via a `themes/` directory
 - Hooks can now invoke MCP tools directly via `type: "mcp_tool"`
-- Added `DISABLE_UPDATES` env var to completely block all update paths including manual `claude update` — stricter than `DISABLE_AUTOUPDATER`
+- Added `DISABLE_UPDATES` env var to completely block all update paths including manual `viqo update` — stricter than `DISABLE_AUTOUPDATER`
 - WSL on Windows can now inherit Windows-side managed settings via the `wslInheritsWindowsSettings` policy key
 - Auto mode: include `"$defaults"` in `autoMode.allow`, `autoMode.soft_deny`, or `autoMode.environment` to add custom rules alongside the built-in list instead of replacing it
 - Added a "Don't ask again" option to the auto mode opt-in prompt
-- Added `claude plugin tag` to create release git tags for plugins with version validation
+- Added `viqo plugin tag` to create release git tags for plugins with version validation
 - `--continue`/`--resume` now find sessions that added the current directory via `/add-dir`
-- `/color` now syncs the session accent color to claude.ai/code when Remote Control is connected
-- The `/model` picker now honors `ANTHROPIC_DEFAULT_*_MODEL_NAME`/`_DESCRIPTION` overrides when using a custom `ANTHROPIC_BASE_URL` gateway
+- `/color` now syncs the session accent color to github.com/inferviqo/viqo when Remote Control is connected
+- The `/model` picker now honors `VIQO_DEFAULT_*_MODEL_NAME`/`_DESCRIPTION` overrides when using a custom `VIQO_BASE_URL` gateway
 - When auto-update skips a plugin due to another plugin's version constraint, the skip now appears in `/doctor` and the `/plugin` Errors tab
 - Fixed `/mcp` menu hiding OAuth Authenticate/Re-authenticate actions for servers configured with `headersHelper`, and HTTP/SSE MCP servers with custom headers being stuck in "needs authentication" after a transient 401
 - Fixed MCP servers whose OAuth token response omits `expires_in` requiring re-authentication every hour
@@ -1522,15 +1522,15 @@
 - Fixed MCP OAuth refresh proceeding without its cross-process lock under contention
 - Fixed macOS keychain race where a concurrent MCP token refresh could overwrite a freshly-refreshed OAuth token, causing unexpected "Please run /login" prompts
 - Fixed OAuth token refresh failing when the server revokes a token before its local expiry time
-- Fixed credential save crash on Linux/Windows corrupting `~/.claude/.credentials.json`
-- Fixed `/login` having no effect in a session launched with `CLAUDE_CODE_OAUTH_TOKEN` — the env token is now cleared so disk credentials take effect
+- Fixed credential save crash on Linux/Windows corrupting `~/.viqo/.credentials.json`
+- Fixed `/login` having no effect in a session launched with `VIQO_CODE_OAUTH_TOKEN` — the env token is now cleared so disk credentials take effect
 - Fixed unreadable text in the "new messages" scroll pill and `/plugin` badges
 - Fixed plan acceptance dialog offering "auto mode" instead of "bypass permissions" when running with `--dangerously-skip-permissions`
 - Fixed agent-type hooks failing with "Messages are required for agent hooks" when configured for events other than `Stop` or `SubagentStop`
 - Fixed `prompt` hooks re-firing on tool calls made by an agent-hook verifier subagent
 - Fixed `/fork` writing the full parent conversation to disk per fork — now writes a pointer and hydrates on read
 - Fixed Alt+K / Alt+X / Alt+^ / Alt+_ freezing keyboard input
-- Fixed connecting to a remote session overwriting your local `model` setting in `~/.claude/settings.json`
+- Fixed connecting to a remote session overwriting your local `model` setting in `~/.viqo/settings.json`
 - Fixed typeahead showing "No commands match" error when pasting file paths that start with `/`
 - Fixed `plugin install` on an already-installed plugin not re-resolving a dependency installed at the wrong version
 - Fixed unhandled errors from file watcher on invalid paths or fd exhaustion
@@ -1539,16 +1539,16 @@
 
 ## 2.1.117
 
-- Forked subagents can now be enabled on external builds by setting `CLAUDE_CODE_FORK_SUBAGENT=1`
+- Forked subagents can now be enabled on external builds by setting `VIQO_CODE_FORK_SUBAGENT=1`
 - Agent frontmatter `mcpServers` are now loaded for main-thread agent sessions via `--agent`
 - Improved `/model`: selections now persist across restarts even when the project pins a different model, and the startup header shows when the active model comes from a project or managed-settings pin
 - The `/resume` command now offers to summarize stale, large sessions before re-reading them, matching the existing `--resume` behavior
-- Faster startup when both local and claude.ai MCP servers are configured (concurrent connect now default)
+- Faster startup when both local and viqo.ai MCP servers are configured (concurrent connect now default)
 - `plugin install` on an already-installed plugin now installs any missing dependencies instead of stopping at "already installed"
-- Plugin dependency errors now say "not installed" with an install hint, and `claude plugin marketplace add` now auto-resolves missing dependencies from configured marketplaces
+- Plugin dependency errors now say "not installed" with an install hint, and `viqo plugin marketplace add` now auto-resolves missing dependencies from configured marketplaces
 - Managed-settings `blockedMarketplaces` and `strictKnownMarketplaces` are now enforced on plugin install, update, refresh, and autoupdate
 - Advisor Tool (experimental): dialog now carries an "experimental" label, learn-more link, and startup notification when enabled; sessions no longer get stuck with "Advisor tool result content could not be processed" errors on every prompt and `/compact`
-- The `cleanupPeriodDays` retention sweep now also covers `~/.claude/tasks/`, `~/.claude/shell-snapshots/`, and `~/.claude/backups/`
+- The `cleanupPeriodDays` retention sweep now also covers `~/.viqo/tasks/`, `~/.viqo/shell-snapshots/`, and `~/.viqo/backups/`
 - OpenTelemetry: `user_prompt` events now include `command_name` and `command_source` for slash commands; `cost.usage`, `token.usage`, `api_request`, and `api_error` now include an `effort` attribute when the model supports effort levels. Custom/MCP command names are redacted unless `OTEL_LOG_TOOL_DETAILS=1` is set
 - Native builds on macOS and Linux: the `Glob` and `Grep` tools are replaced by embedded `bfs` and `ugrep` available through the Bash tool — faster searches without a separate tool round-trip (Windows and npm-installed builds unchanged)
 - Windows: cached `where.exe` executable lookups per process for faster subprocess launches
@@ -1556,7 +1556,7 @@
 - Fixed Plain-CLI OAuth sessions dying with "Please run /login" when the access token expires mid-session — the token is now refreshed reactively on 401
 - Fixed `WebFetch` hanging on very large HTML pages by truncating input before HTML-to-markdown conversion
 - Fixed a crash when a proxy returns HTTP 204 No Content — now surfaces a clear error instead of a `TypeError`
-- Fixed `/login` having no effect when launched with `CLAUDE_CODE_OAUTH_TOKEN` env var and that token expires
+- Fixed `/login` having no effect when launched with `VIQO_CODE_OAUTH_TOKEN` env var and that token expires
 - Fixed prompt-input undo (`Ctrl+_`) doing nothing immediately after typing, and skipping a state on each undo step
 - Fixed `NO_PROXY` not being respected for remote API requests when running under Bun
 - Fixed rare spurious escape/return triggers when key names arrive as coalesced text over slow connections
@@ -1566,7 +1566,7 @@
 - Fixed subagents running a different model than the main agent incorrectly flagging file reads with a malware warning
 - Fixed idle re-render loop when background tasks are present, reducing memory growth on Linux
 - [VSCode] Fixed "Manage Plugins" panel breaking when multiple large marketplaces are configured
-- Fixed Opus 4.7 sessions showing inflated `/context` percentages and autocompacting too early — Claude Code was computing against a 200K context window instead of Opus 4.7's native 1M
+- Fixed Opus 4.7 sessions showing inflated `/context` percentages and autocompacting too early — Viqo was computing against a 200K context window instead of Opus 4.7's native 1M
 
 ## 2.1.116
 
@@ -1575,18 +1575,18 @@
 - Smoother fullscreen scrolling in VS Code, Cursor, and Windsurf terminals — `/terminal-setup` now configures the editor's scroll sensitivity
 - Thinking spinner now shows progress inline ("still thinking", "thinking more", "almost done thinking"), replacing the separate hint row
 - `/config` search now matches option values (e.g. searching "vim" finds the Editor mode setting)
-- `/doctor` can now be opened while Claude is responding, without waiting for the current turn to finish
+- `/doctor` can now be opened while Viqo is responding, without waiting for the current turn to finish
 - `/reload-plugins` and background plugin auto-update now auto-install missing plugin dependencies from marketplaces you've already added
 - Bash tool now surfaces a hint when `gh` commands hit GitHub's API rate limit, so agents can back off instead of retrying
 - The Usage tab in Settings now shows your 5-hour and weekly usage immediately and no longer fails when the usage endpoint is rate-limited
 - Agent frontmatter `hooks:` now fire when running as a main-thread agent via `--agent`
 - Slash command menu now shows "No commands match" when your filter has zero results, instead of disappearing
 - Security: sandbox auto-allow no longer bypasses the dangerous-path safety check for `rm`/`rmdir` targeting `/`, `$HOME`, or other critical system directories
-- Claude Code and installer now use `https://downloads.claude.ai/claude-code-releases` instead of `https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases`
+- Viqo and installer now use `https://downloads.inferviqo.com/viqo-releases` instead of `https://storage.googleapis.com/viqo-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/viqo-releases`
 - Fixed Devanagari and other Indic scripts rendering with broken column alignment in the terminal UI
 - Fixed Ctrl+- not triggering undo in terminals using the Kitty keyboard protocol (iTerm2, Ghostty, kitty, WezTerm, Windows Terminal)
 - Fixed Cmd+Left/Right not jumping to line start/end in terminals that use the Kitty keyboard protocol (Warp fullscreen, kitty, Ghostty, WezTerm)
-- Fixed Ctrl+Z hanging the terminal when Claude Code is launched via a wrapper process (e.g. `npx`, `bun run`)
+- Fixed Ctrl+Z hanging the terminal when Viqo is launched via a wrapper process (e.g. `npx`, `bun run`)
 - Fixed scrollback duplication in inline mode where resizing the terminal or large output bursts would repeat earlier conversation history
 - Fixed modal search dialogs overflowing the screen at short terminal heights, hiding the search box and keyboard hints
 - Fixed scattered blank cells and disappearing composer chrome in the VS Code integrated terminal during scrolling
@@ -1602,13 +1602,13 @@
 
 ## 2.1.113
 
-- Changed the CLI to spawn a native Claude Code binary (via a per-platform optional dependency) instead of bundled JavaScript
+- Changed the CLI to spawn a native Viqo binary (via a per-platform optional dependency) instead of bundled JavaScript
 - Added `sandbox.network.deniedDomains` setting to block specific domains even when a broader `allowedDomains` wildcard would otherwise permit them
 - Fullscreen mode: Shift+↑/↓ now scrolls the viewport when extending a selection past the visible edge
 - `Ctrl+A` and `Ctrl+E` now move to the start/end of the current logical line in multiline input, matching readline behavior
 - Windows: `Ctrl+Backspace` now deletes the previous word
 - Long URLs in responses and bash output stay clickable when they wrap across lines (in terminals with OSC 8 hyperlinks)
-- Improved `/loop`: pressing Esc now cancels pending wakeups, and wakeups display as "Claude resuming /loop wakeup" for clarity
+- Improved `/loop`: pressing Esc now cancels pending wakeups, and wakeups display as "Viqo resuming /loop wakeup" for clarity
 - `/extra-usage` now works from Remote Control (mobile/web) clients
 - Remote Control clients can now query `@`-file autocomplete suggestions
 - Improved `/ultrareview`: faster launch with parallelized checks, diffstat in the launch dialog, and animated launching state
@@ -1630,7 +1630,7 @@
 - Fixed `/insights` crashing with `EBUSY` on Windows
 - Fixed exit confirmation dialog mislabeling one-shot scheduled tasks as recurring — now shows a countdown
 - Fixed slash/@ completion menu not sitting flush against the prompt border in fullscreen mode
-- Fixed `CLAUDE_CODE_EXTRA_BODY` `output_config.effort` causing 400 errors on subagent calls to models that don't support effort and on Vertex AI
+- Fixed `VIQO_CODE_EXTRA_BODY` `output_config.effort` causing 400 errors on subagent calls to models that don't support effort and on Vertex AI
 - Fixed prompt cursor disappearing when `NO_COLOR` is set
 - Fixed `ToolSearch` ranking so pasted MCP tool names surface the actual tool instead of description-matching siblings
 - Fixed compacting a resumed long-context session failing with "Extra usage is required for long context requests"
@@ -1638,28 +1638,28 @@
 - Fixed "Refine with Ultraplan" not showing the remote session URL in the transcript
 - Fixed SDK image content blocks that fail to process crashing the session — now degrade to a text placeholder
 - Fixed Remote Control sessions not streaming subagent transcripts
-- Fixed Remote Control sessions not being archived when Claude Code exits
+- Fixed Remote Control sessions not being archived when Viqo exits
 - Fixed `thinking.type.enabled is not supported` 400 error when using Opus 4.7 via a Bedrock Application Inference Profile ARN
 
 ## 2.1.112
 
-- Fixed "claude-opus-4-7 is temporarily unavailable" for auto mode
+- Fixed "viqo-opus-4-7 is temporarily unavailable" for auto mode
 
 ## 2.1.111
 
-- Claude Opus 4.7 xhigh is now available! Use /effort to tune speed vs. intelligence
+- Viqo Opus 4.7 xhigh is now available! Use /effort to tune speed vs. intelligence
 - Auto mode is now available for Max subscribers when using Opus 4.7
 - Added `xhigh` effort level for Opus 4.7, sitting between `high` and `max`. Available via `/effort`, `--effort`, and the model picker; other models fall back to `high`
 - `/effort` now opens an interactive slider when called without arguments, with arrow-key navigation between levels and Enter to confirm
 - Added "Auto (match terminal)" theme option that matches your terminal's dark/light mode — select it from `/theme`
-- Added `/less-permission-prompts` skill — scans transcripts for common read-only Bash and MCP tool calls and proposes a prioritized allowlist for `.claude/settings.json`
+- Added `/less-permission-prompts` skill — scans transcripts for common read-only Bash and MCP tool calls and proposes a prioritized allowlist for `.viqo/settings.json`
 - Added `/ultrareview` for running comprehensive code review in the cloud using parallel multi-agent analysis and critique — invoke with no arguments to review your current branch, or `/ultrareview <PR#>` to fetch and review a specific GitHub PR
 - Auto mode no longer requires `--enable-auto-mode`
-- Windows: PowerShell tool is progressively rolling out. Opt in or out with `CLAUDE_CODE_USE_POWERSHELL_TOOL`. On Linux and macOS, enable with `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` (requires `pwsh` on PATH)
+- Windows: PowerShell tool is progressively rolling out. Opt in or out with `VIQO_CODE_USE_POWERSHELL_TOOL`. On Linux and macOS, enable with `VIQO_CODE_USE_POWERSHELL_TOOL=1` (requires `pwsh` on PATH)
 - Read-only bash commands with glob patterns (e.g. `ls *.ts`) and commands starting with `cd <project-dir> &&` no longer trigger a permission prompt
-- Suggest the closest matching subcommand when `claude <word>` is invoked with a near-miss typo (e.g. `claude udpate` → "Did you mean `claude update`?")
+- Suggest the closest matching subcommand when `viqo <word>` is invoked with a near-miss typo (e.g. `viqo udpate` → "Did you mean `viqo update`?")
 - Plan files are now named after your prompt (e.g. `fix-auth-race-snug-otter.md`) instead of purely random words
-- Improved `/setup-vertex` and `/setup-bedrock` to show the actual `settings.json` path when `CLAUDE_CONFIG_DIR` is set, seed model candidates from existing pins on re-run, and offer a "with 1M context" option for supported models
+- Improved `/setup-vertex` and `/setup-bedrock` to show the actual `settings.json` path when `VIQO_CONFIG_DIR` is set, seed model candidates from existing pins on re-run, and offer a "with 1M context" option for supported models
 - `/skills` menu now supports sorting by estimated token count — press `t` to toggle
 - `Ctrl+U` now clears the entire input buffer (previously: delete to start of line); press `Ctrl+Y` to restore
 - `Ctrl+L` now forces a full screen redraw in addition to clearing the prompt input
@@ -1676,20 +1676,20 @@
 - Fixed `/context` grid rendering with extra blank lines between rows
 - Fixed `/clear` dropping the session name set by `/rename`, causing statusline output to lose `session_name`
 - Improved plugin error handling: dependency errors now distinguish conflicting, invalid, and overly complex version requirements; fixed stale resolved versions after `plugin update`; `plugin install` now recovers from interrupted prior installs
-- Fixed Claude calling a non-existent `commit` skill and showing "Unknown skill: commit" for users without a custom `/commit` command
-- Fixed 429 rate-limit errors on Bedrock/Vertex/Foundry referencing status.claude.com (it only covers Anthropic-operated providers)
+- Fixed Viqo calling a non-existent `commit` skill and showing "Unknown skill: commit" for users without a custom `/commit` command
+- Fixed 429 rate-limit errors on Bedrock/Vertex/Foundry referencing status.inferviqo.com (it only covers Inferviqo-operated providers)
 - Fixed feedback surveys appearing back-to-back after dismissing one
 - Fixed bare URLs in bash/PowerShell/MCP tool output being unclickable when the terminal wraps them across lines
-- Windows: `CLAUDE_ENV_FILE` and SessionStart hook environment files now apply (previously a no-op)
+- Windows: `VIQO_ENV_FILE` and SessionStart hook environment files now apply (previously a no-op)
 - Windows: permission rules with drive-letter paths are now correctly root-anchored, and paths differing only by drive-letter case are recognized as the same path
 
 ## 2.1.110
 
 - Added `/tui` command and `tui` setting — run `/tui fullscreen` to switch to flicker-free rendering in the same conversation
-- Added push notification tool — Claude can send mobile push notifications when Remote Control and "Push when Claude decides" config are enabled
+- Added push notification tool — Viqo can send mobile push notifications when Remote Control and "Push when Viqo decides" config are enabled
 - Changed `Ctrl+O` to toggle between normal and verbose transcript only; focus view is now toggled separately with the new `/focus` command
 - Added `autoScrollEnabled` config to disable conversation auto-scroll in fullscreen mode
-- Added option to show Claude's last response as commented context in the `Ctrl+G` external editor (enable via `/config`)
+- Added option to show Viqo's last response as commented context in the `Ctrl+G` external editor (enable via `/config`)
 - Improved `/plugin` Installed tab — items needing attention and favorites appear at the top, disabled items are hidden behind a fold, and `f` favorites the selected item
 - Improved `/doctor` to warn when an MCP server is defined in multiple config scopes with different endpoints
 - `--resume`/`--continue` now resurrects unexpired scheduled tasks
@@ -1697,7 +1697,7 @@
 - Write tool now informs the model when you edit the proposed content in the IDE diff before accepting
 - Bash tool now enforces the documented maximum timeout instead of accepting arbitrarily large values
 - SDK/headless sessions now read `TRACEPARENT`/`TRACESTATE` from the environment for distributed trace linking
-- Session recap is now enabled for users with telemetry disabled (Bedrock, Vertex, Foundry, `DISABLE_TELEMETRY`). Opt out via `/config` or `CLAUDE_CODE_ENABLE_AWAY_SUMMARY=0`.
+- Session recap is now enabled for users with telemetry disabled (Bedrock, Vertex, Foundry, `DISABLE_TELEMETRY`). Opt out via `/config` or `VIQO_CODE_ENABLE_AWAY_SUMMARY=0`.
 - Fixed MCP tool calls hanging indefinitely when the server connection drops mid-response on SSE/HTTP transports
 - Fixed non-streaming fallback retries causing multi-minute hangs when the API is unreachable
 - Fixed session recap, local slash-command output, and other system status lines not appearing in focus mode
@@ -1713,11 +1713,11 @@
 - Fixed `PermissionRequest` hooks returning `updatedInput` not being re-checked against `permissions.deny` rules; `setMode:'bypassPermissions'` updates now respect `disableBypassPermissionsMode`
 - Fixed `PreToolUse` hook `additionalContext` being dropped when the tool call fails
 - Fixed stdio MCP servers that print stray non-JSON lines to stdout being disconnected on the first stray line (regression in 2.1.105)
-- Fixed headless/SDK session auto-title firing an extra Haiku request when `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` or `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` is set
+- Fixed headless/SDK session auto-title firing an extra Haiku request when `VIQO_CODE_DISABLE_NONESSENTIAL_TRAFFIC` or `VIQO_CODE_DISABLE_TERMINAL_TITLE` is set
 - Fixed potential excessive memory allocation when piped (non-TTY) Ink output contains a single very wide line
 - Fixed `/skills` menu not scrolling when the list overflows the modal in fullscreen mode
 - Fixed Remote Control sessions showing a generic error instead of prompting for re-login when the session is too old
-- Fixed Remote Control session renames from claude.ai not persisting the title to the local CLI session
+- Fixed Remote Control session renames from viqo.ai not persisting the title to the local CLI session
 
 ## 2.1.109
 
@@ -1726,20 +1726,20 @@
 ## 2.1.108
 
 - Added `ENABLE_PROMPT_CACHING_1H` env var to opt into 1-hour prompt cache TTL on API key, Bedrock, Vertex, and Foundry (`ENABLE_PROMPT_CACHING_1H_BEDROCK` is deprecated but still honored), and `FORCE_PROMPT_CACHING_5M` to force 5-minute TTL
-- Added recap feature to provide context when returning to a session, configurable in `/config` and manually invocable with `/recap`; force with `CLAUDE_CODE_ENABLE_AWAY_SUMMARY` if telemetry disabled.
+- Added recap feature to provide context when returning to a session, configurable in `/config` and manually invocable with `/recap`; force with `VIQO_CODE_ENABLE_AWAY_SUMMARY` if telemetry disabled.
 - The model can now discover and invoke built-in slash commands like `/init`, `/review`, and `/security-review` via the Skill tool
 - `/undo` is now an alias for `/rewind`
 - Improved `/model` to warn before switching models mid-conversation, since the next response re-reads the full history uncached
 - Improved `/resume` picker to default to sessions from the current directory; press `Ctrl+A` to show all projects
-- Improved error messages: server rate limits are now distinguished from plan usage limits; 5xx/529 errors show a link to status.claude.com; unknown slash commands suggest the closest match
+- Improved error messages: server rate limits are now distinguished from plan usage limits; 5xx/529 errors show a link to status.inferviqo.com; unknown slash commands suggest the closest match
 - Reduced memory footprint for file reads, edits, and syntax highlighting by loading language grammars on demand
 - Added "verbose" indicator when viewing the detailed transcript (`Ctrl+O`)
 - Added a warning at startup when prompt caching is disabled via `DISABLE_PROMPT_CACHING*` environment variables
 - Fixed paste not working in the `/login` code prompt (regression in 2.1.105)
 - Fixed subscribers who set `DISABLE_TELEMETRY` falling back to 5-minute prompt cache TTL instead of 1 hour
 - Fixed Agent tool prompting for permission in auto mode when the safety classifier's transcript exceeded its context window
-- Fixed Bash tool producing no output when `CLAUDE_ENV_FILE` (e.g. `~/.zprofile`) ends with a `#` comment line
-- Fixed `claude --resume <session-id>` losing the session's custom name and color set via `/rename`
+- Fixed Bash tool producing no output when `VIQO_ENV_FILE` (e.g. `~/.zprofile`) ends with a `#` comment line
+- Fixed `viqo --resume <session-id>` losing the session's custom name and color set via `/rename`
 - Fixed session titles showing placeholder example text when the first message is a short greeting
 - Fixed terminal escape codes appearing as garbage text in the prompt input after `--teleport`
 - Fixed `/feedback` retry: pressing Enter to resubmit after a failure now works without first editing the description
@@ -1763,13 +1763,13 @@
 - Improved stalled API stream handling: streams now abort after 5 minutes of no data and retry non-streaming instead of hanging indefinitely
 - Improved network error messages: connection errors now show a retry message immediately instead of a silent spinner
 - Improved file write display: long single-line writes (e.g. minified JSON) are now truncated in the UI instead of paginating across many screens
-- Improved `/doctor` layout with status icons; press `f` to have Claude fix reported issues
+- Improved `/doctor` layout with status icons; press `f` to have Viqo fix reported issues
 - Improved `/config` labels and descriptions for clarity
 - Improved skill description handling: raised the listing cap from 250 to 1,536 characters and added a startup warning when descriptions are truncated
 - Improved `WebFetch` to strip `<style>` and `<script>` contents from fetched pages so CSS-heavy pages no longer exhaust the content budget before reaching actual text
 - Improved stale agent worktree cleanup to remove worktrees whose PR was squash-merged instead of keeping them indefinitely
 - Improved MCP large-output truncation prompt to give format-specific recipes (e.g. `jq` for JSON, computed Read chunk sizes for text)
-- Fixed images attached to queued messages (sent while Claude is working) being dropped
+- Fixed images attached to queued messages (sent while Viqo is working) being dropped
 - Fixed screen going blank when the prompt input wraps to a second line in long conversations
 - Fixed leading whitespace getting copied when selecting multi-line assistant responses in fullscreen mode
 - Fixed leading whitespace being trimmed from assistant messages, breaking ASCII art and indented diagrams
@@ -1790,25 +1790,25 @@
 - Fixed crash on resume when session contains malformed text blocks
 - Fixed `/help` dropping the tab bar, Shortcuts heading, and footer at short terminal heights
 - Fixed malformed keybinding entry values in `keybindings.json` being silently loaded instead of rejected with a clear error
-- Fixed `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` in one project's settings permanently disabling usage metrics for all projects on the machine
+- Fixed `VIQO_CODE_DISABLE_NONESSENTIAL_TRAFFIC` in one project's settings permanently disabling usage metrics for all projects on the machine
 - Fixed washed-out 16-color palette when using Ghostty, Kitty, Alacritty, WezTerm, foot, rio, or Contour over SSH/mosh
 - Fixed Bash tool suggesting `acceptEdits` permission mode when exiting plan mode would downgrade from a higher permission level
 
 ## 2.1.101
 
-- Added `/team-onboarding` command to generate a teammate ramp-up guide from your local Claude Code usage
-- Added OS CA certificate store trust by default, so enterprise TLS proxies work without extra setup (set `CLAUDE_CODE_CERT_STORE=bundled` to use only bundled CAs)
+- Added `/team-onboarding` command to generate a teammate ramp-up guide from your local Viqo usage
+- Added OS CA certificate store trust by default, so enterprise TLS proxies work without extra setup (set `VIQO_CODE_CERT_STORE=bundled` to use only bundled CAs)
 - `/ultraplan` and other remote-session features now auto-create a default cloud environment instead of requiring web setup first
-- Improved brief mode to retry once when Claude responds with plain text instead of a structured message
-- Improved focus mode: Claude now writes more self-contained summaries since it knows you only see its final message
+- Improved brief mode to retry once when Viqo responds with plain text instead of a structured message
+- Improved focus mode: Viqo now writes more self-contained summaries since it knows you only see its final message
 - Improved tool-not-available errors to explain why and how to proceed when the model calls a tool that exists but isn't available in the current context
 - Improved rate-limit retry messages to show which limit was hit and when it resets instead of an opaque seconds countdown
 - Improved refusal error messages to include the API-provided explanation when available
-- Improved `claude -p --resume <name>` to accept session titles set via `/rename` or `--name`
+- Improved `viqo -p --resume <name>` to accept session titles set via `/rename` or `--name`
 - Improved settings resilience: an unrecognized hook event name in `settings.json` no longer causes the entire file to be ignored
 - Improved plugin hooks from plugins force-enabled by managed settings to run when `allowManagedHooksOnly` is set
-- Improved `/plugin` and `claude plugin update` to show a warning when the marketplace could not be refreshed, instead of silently reporting a stale version
-- Improved plan mode to hide the "Refine with Ultraplan" option when the user's org or auth setup can't reach Claude Code on the web
+- Improved `/plugin` and `viqo plugin update` to show a warning when the marketplace could not be refreshed, instead of silently reporting a stale version
+- Improved plan mode to hide the "Refine with Ultraplan" option when the user's org or auth setup can't reach Viqo on the web
 - Improved beta tracing to honor `OTEL_LOG_USER_PROMPTS`, `OTEL_LOG_TOOL_DETAILS`, and `OTEL_LOG_TOOL_CONTENT`; sensitive span attributes are no longer emitted unless opted in
 - Improved SDK `query()` to clean up subprocess and temp files when consumers `break` from `for await` or use `await using`
 - Fixed a command injection vulnerability in the POSIX `which` fallback used by LSP binary detection
@@ -1819,12 +1819,12 @@
 - Fixed a hardcoded 5-minute request timeout that aborted slow backends (local LLMs, extended thinking, slow gateways) regardless of `API_TIMEOUT_MS`
 - Fixed `permissions.deny` rules not overriding a PreToolUse hook's `permissionDecision: "ask"` — previously the hook could downgrade a deny into a prompt
 - Fixed `--setting-sources` without `user` causing background cleanup to ignore `cleanupPeriodDays` and delete conversation history older than 30 days
-- Fixed Bedrock SigV4 authentication failing with 403 when `ANTHROPIC_AUTH_TOKEN`, `apiKeyHelper`, or `ANTHROPIC_CUSTOM_HEADERS` set an Authorization header
-- Fixed `claude -w <name>` failing with "already exists" after a previous session's worktree cleanup left a stale directory
+- Fixed Bedrock SigV4 authentication failing with 403 when `VIQO_AUTH_TOKEN`, `apiKeyHelper`, or `VIQO_CUSTOM_HEADERS` set an Authorization header
+- Fixed `viqo -w <name>` failing with "already exists" after a previous session's worktree cleanup left a stale directory
 - Fixed subagents not inheriting MCP tools from dynamically-injected servers
 - Fixed sub-agents running in isolated worktrees being denied Read/Edit access to files inside their own worktree
 - Fixed sandboxed Bash commands failing with `mktemp: No such file or directory` after a fresh boot
-- Fixed `claude mcp serve` tool calls failing with "Tool execution failed" in MCP clients that validate `outputSchema`
+- Fixed `viqo mcp serve` tool calls failing with "Tool execution failed" in MCP clients that validate `outputSchema`
 - Fixed `RemoteTrigger` tool's `run` action sending an empty body and being rejected by the server
 - Fixed several `/resume` picker issues: narrow default view hiding sessions from other projects, unreachable preview on Windows Terminal, incorrect cwd in worktrees, session-not-found errors not surfacing in stderr, terminal title not being set, and resume hint overlapping the prompt input
 - Fixed Grep tool ENOENT when the embedded ripgrep binary path becomes stale (VS Code extension auto-update, macOS App Translocation); now falls back to system `rg` and self-heals mid-session
@@ -1837,22 +1837,22 @@
 - Fixed rendering issues: flicker in non-fullscreen mode when content above the visible area changed, terminal scrollback being wiped during long sessions in non-fullscreen mode, and mouse-scroll escape sequences occasionally leaking into the prompt as text
 - Fixed crash when `settings.json` env values are numbers instead of strings
 - Fixed in-app settings writes (e.g. `/add-dir --remember`, `/config`) not refreshing the in-memory snapshot, preventing removed directories from being revoked mid-session
-- Fixed custom keybindings (`~/.claude/keybindings.json`) not loading on Bedrock, Vertex, and other third-party providers
-- Fixed `claude --continue -p` not correctly continuing sessions created by `-p` or the SDK
-- Fixed several Remote Control issues: worktrees removed on session crash, connection failures not persisting in the transcript, spurious "Disconnected" indicator in brief mode for local sessions, and `/remote-control` failing over SSH when only `CLAUDE_CODE_ORGANIZATION_UUID` is set
+- Fixed custom keybindings (`~/.viqo/keybindings.json`) not loading on Bedrock, Vertex, and other third-party providers
+- Fixed `viqo --continue -p` not correctly continuing sessions created by `-p` or the SDK
+- Fixed several Remote Control issues: worktrees removed on session crash, connection failures not persisting in the transcript, spurious "Disconnected" indicator in brief mode for local sessions, and `/remote-control` failing over SSH when only `VIQO_CODE_ORGANIZATION_UUID` is set
 - Fixed `/insights` sometimes omitting the report file link from its response
 - [VSCode] Fixed the file attachment below the chat input not clearing when the last editor tab is closed
 
 ## 2.1.98
 
 - Added interactive Google Vertex AI setup wizard accessible from the login screen when selecting "3rd-party platform", guiding you through GCP authentication, project and region configuration, credential verification, and model pinning
-- Added `CLAUDE_CODE_PERFORCE_MODE` env var: when set, Edit/Write/NotebookEdit fail on read-only files with a `p4 edit` hint instead of silently overwriting them
+- Added `VIQO_CODE_PERFORCE_MODE` env var: when set, Edit/Write/NotebookEdit fail on read-only files with a `p4 edit` hint instead of silently overwriting them
 - Added Monitor tool for streaming events from background scripts
-- Added subprocess sandboxing with PID namespace isolation on Linux when `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` is set, and `CLAUDE_CODE_SCRIPT_CAPS` env var to limit per-session script invocations
+- Added subprocess sandboxing with PID namespace isolation on Linux when `VIQO_CODE_SUBPROCESS_ENV_SCRUB` is set, and `VIQO_CODE_SCRIPT_CAPS` env var to limit per-session script invocations
 - Added `--exclude-dynamic-system-prompt-sections` flag to print mode for improved cross-user prompt caching
 - Added `workspace.git_worktree` to the status line JSON input, set whenever the current directory is inside a linked git worktree
-- Added W3C `TRACEPARENT` env var to Bash tool subprocesses when OTEL tracing is enabled, so child-process spans correctly parent to Claude Code's trace tree
-- LSP: Claude Code now identifies itself to language servers via `clientInfo` in the initialize request
+- Added W3C `TRACEPARENT` env var to Bash tool subprocesses when OTEL tracing is enabled, so child-process spans correctly parent to Viqo's trace tree
+- LSP: Viqo now identifies itself to language servers via `clientInfo` in the initialize request
 - Fixed a Bash tool permission bypass where a backslash-escaped flag could be auto-allowed as read-only and lead to arbitrary code execution
 - Fixed compound Bash commands bypassing forced permission prompts for safety checks and explicit ask rules in auto and bypass-permissions modes
 - Fixed read-only commands with env-var prefixes not prompting unless the var is known-safe (`LANG`, `TZ`, `NO_COLOR`, etc.)
@@ -1879,7 +1879,7 @@
 - Fixed `/effort max` being denied for unknown or future model IDs
 - Fixed slash command picker breaking when a plugin's frontmatter `name` is a YAML boolean keyword
 - Fixed rate-limit upsell text being hidden after message remounts
-- Fixed MCP tools with `_meta["anthropic/maxResultSizeChars"]` not bypassing the token-based persist layer
+- Fixed MCP tools with `_meta["viqo/maxResultSizeChars"]` not bypassing the token-based persist layer
 - Fixed voice mode leaking dozens of space characters into the input when re-holding the push-to-talk key while the previous transcript is still processing
 - Fixed `DISABLE_AUTOUPDATER` not fully suppressing the npm registry version check and symlink modification on npm-based installs
 - Fixed a memory leak where Remote Control permission handler entries were retained for the lifetime of the session
@@ -1898,9 +1898,9 @@
 - Improved hook errors in the transcript to include the first line of stderr for self-diagnosis without `--debug`
 - Improved OTEL tracing: interaction spans now correctly wrap full turns under concurrent SDK calls, and headless turns end spans per-turn
 - Improved transcript entries to carry final token usage instead of streaming placeholders
-- Updated the `/claude-api` skill to cover Managed Agents alongside Claude API
-- [VSCode] Fixed false-positive "requires git-bash" error on Windows when `CLAUDE_CODE_GIT_BASH_PATH` is set or Git is installed at a default location
-- Fixed `CLAUDE_CODE_MAX_CONTEXT_TOKENS` to honor `DISABLE_COMPACT` when it is set.
+- Updated the `/viqo-api` skill to cover Managed Agents alongside Viqo API
+- [VSCode] Fixed false-positive "requires git-bash" error on Windows when `VIQO_CODE_GIT_BASH_PATH` is set or Git is installed at a default location
+- Fixed `VIQO_CODE_MAX_CONTEXT_TOKENS` to honor `DISABLE_COMPACT` when it is set.
 - Dropped `/compact` hints when `DISABLE_COMPACT` is set.
 
 ## 2.1.97
@@ -1923,11 +1923,11 @@
 - Fixed several `/resume` picker issues: `--resume <name>` opening uneditable, Ctrl+A reload wiping search, empty list swallowing navigation, task-status text replacing conversation summary, and cross-project staleness
 - Fixed file-edit diffs disappearing on `--resume` when the edited file was larger than 10KB
 - Fixed `--resume` cache misses and lost mid-turn input from attachment messages not being saved to the transcript
-- Fixed messages typed while Claude is working not being persisted to the transcript
+- Fixed messages typed while Viqo is working not being persisted to the transcript
 - Fixed prompt-type `Stop`/`SubagentStop` hooks failing on long sessions, and hook evaluator API errors displaying "JSON validation failed" instead of the actual message
 - Fixed subagents with worktree isolation or `cwd:` override leaking their working directory back to the parent session's Bash tool
 - Fixed compaction writing duplicate multi-MB subagent transcript files on prompt-too-long retries
-- Fixed `claude plugin update` reporting "already at the latest version" for git-based marketplace plugins when the remote had newer commits
+- Fixed `viqo plugin update` reporting "already at the latest version" for git-based marketplace plugins when the remote had newer commits
 - Fixed slash command picker breaking when a plugin's frontmatter `name` is a YAML boolean keyword
 - Fixed copying wrapped URLs in `NO_FLICKER` mode inserting spaces at line breaks
 - Fixed scroll rendering artifacts in `NO_FLICKER` mode when running inside zellij
@@ -1937,38 +1937,38 @@
 - Fixed custom status line not displaying in `NO_FLICKER` mode on terminals shorter than 24 rows
 - Fixed Shift+Enter and Alt/Cmd+arrow shortcuts not working in Warp with `NO_FLICKER` mode
 - Fixed Korean/Japanese/Unicode text becoming garbled when copied in no-flicker mode on Windows
-- Fixed Bedrock SigV4 authentication failing when `AWS_BEARER_TOKEN_BEDROCK` or `ANTHROPIC_BEDROCK_BASE_URL` are set to empty strings (as GitHub Actions does for unset inputs)
+- Fixed Bedrock SigV4 authentication failing when `AWS_BEARER_TOKEN_BEDROCK` or `VIQO_BEDROCK_BASE_URL` are set to empty strings (as GitHub Actions does for unset inputs)
 - Improved Accept Edits mode to auto-approve filesystem commands prefixed with safe env vars or process wrappers (e.g. `LANG=C rm foo`, `timeout 5 mkdir out`)
 - Improved auto mode and bypass-permissions mode to auto-approve sandbox network access prompts
 - Improved sandbox: `sandbox.network.allowMachLookup` now takes effect on macOS
 - Improved image handling: pasted and attached images are now compressed to the same token budget as images read via the Read tool
 - Improved slash command and `@`-mention completion to trigger after CJK sentence punctuation, so Japanese/Chinese input no longer requires a space before `/` or `@`
-- Improved Bridge sessions to show the local git repo, branch, and working directory on the claude.ai session card
+- Improved Bridge sessions to show the local git repo, branch, and working directory on the viqo.ai session card
 - Improved footer layout: indicators (Focus, notifications) now stay on the mode-indicator row instead of wrapping below
 - Improved context-low warning to show as a transient footer notification instead of a persistent row
 - Improved markdown blockquotes to show a continuous left bar across wrapped lines
 - Improved session transcript size by skipping empty hook entries and capping stored pre-edit file copies
 - Improved transcript accuracy: per-block entries now carry the final token usage instead of the streaming placeholder
 - Improved Bash tool OTEL tracing: subprocesses now inherit a W3C `TRACEPARENT` env var when tracing is enabled
-- Updated `/claude-api` skill to cover Managed Agents alongside the Claude API
+- Updated `/viqo-api` skill to cover Managed Agents alongside the Viqo API
 
 ## 2.1.96
 
-- Fixed Bedrock requests failing with `403 "Authorization header is missing"` when using `AWS_BEARER_TOKEN_BEDROCK` or `CLAUDE_CODE_SKIP_BEDROCK_AUTH` (regression in 2.1.94)
+- Fixed Bedrock requests failing with `403 "Authorization header is missing"` when using `AWS_BEARER_TOKEN_BEDROCK` or `VIQO_CODE_SKIP_BEDROCK_AUTH` (regression in 2.1.94)
 
 ## 2.1.94
 
-- Added support for Amazon Bedrock powered by Mantle, set `CLAUDE_CODE_USE_MANTLE=1`
+- Added support for Amazon Bedrock powered by Mantle, set `VIQO_CODE_USE_MANTLE=1`
 - Changed default effort level from medium to high for API-key, Bedrock/Vertex/Foundry, Team, and Enterprise users (control this with `/effort`)
 - Added compact `Slacked #channel` header with a clickable channel link for Slack MCP send-message tool calls
 - Added `keep-coding-instructions` frontmatter field support for plugin output styles
 - Added `hookSpecificOutput.sessionTitle` to `UserPromptSubmit` hooks for setting the session title
 - Plugin skills declared via `"skills": ["./"]` now use the skill's frontmatter `name` for the invocation name instead of the directory basename, giving a stable name across install methods
 - Fixed agents appearing stuck after a 429 rate-limit response with a long Retry-After header — the error now surfaces immediately instead of silently waiting
-- Fixed Console login on macOS silently failing with "Not logged in" when the login keychain is locked or its password is out of sync — the error is now surfaced and `claude doctor` diagnoses the fix
+- Fixed Console login on macOS silently failing with "Not logged in" when the login keychain is locked or its password is out of sync — the error is now surfaced and `viqo doctor` diagnoses the fix
 - Fixed plugin skill hooks defined in YAML frontmatter being silently ignored
-- Fixed plugin hooks failing with "No such file or directory" when `CLAUDE_PLUGIN_ROOT` was not set
-- Fixed `${CLAUDE_PLUGIN_ROOT}` resolving to the marketplace source directory instead of the installed cache for local-marketplace plugins on startup
+- Fixed plugin hooks failing with "No such file or directory" when `VIQO_PLUGIN_ROOT` was not set
+- Fixed `${VIQO_PLUGIN_ROOT}` resolving to the marketplace source directory instead of the installed cache for local-marketplace plugins on startup
 - Fixed scrollback showing the same diff repeated and blank pages in long-running sessions
 - Fixed multiline user prompts in the transcript indenting wrapped lines under the `❯` caret instead of under the text
 - Fixed Shift+Space inserting the literal word "space" instead of a space character in search inputs
@@ -1998,11 +1998,11 @@
 - Fixed an API 400 error that could occur when extended thinking produced a whitespace-only text block alongside real content
 - Fixed accidental feedback survey submissions from auto-pilot keypresses and consecutive-prompt digit collisions
 - Fixed misleading "esc to interrupt" hint appearing alongside "esc to clear" when a text selection exists in fullscreen mode during processing
-- Fixed Homebrew install update prompts to use the cask's release channel (`claude-code` → stable, `claude-code@latest` → latest)
+- Fixed Homebrew install update prompts to use the cask's release channel (`viqo` → stable, `viqo@latest` → latest)
 - Fixed `ctrl+e` jumping to the end of the next line when already at end of line in multiline prompts
 - Fixed an issue where the same message could appear at two positions when scrolling up in fullscreen mode (iTerm2, Ghostty, and other terminals with DEC 2026 support)
 - Fixed idle-return "/clear to save X tokens" hint showing cumulative session tokens instead of current context size
-- Fixed plugin MCP servers stuck "connecting" on session start when they duplicate a claude.ai connector that is unauthenticated
+- Fixed plugin MCP servers stuck "connecting" on session start when they duplicate a viqo.ai connector that is unauthenticated
 - Improved Write tool diff computation speed for large files (60% faster on files with tabs/`&`/`$`)
 - Removed `/tag` command
 - Removed `/vim` command (toggle vim mode via `/config` → Editor mode)
@@ -2010,9 +2010,9 @@
 
 ## 2.1.91
 
-- Added MCP tool result persistence override via `_meta["anthropic/maxResultSizeChars"]` annotation (up to 500K), allowing larger results like DB schemas to pass through without truncation
+- Added MCP tool result persistence override via `_meta["viqo/maxResultSizeChars"]` annotation (up to 500K), allowing larger results like DB schemas to pass through without truncation
 - Added `disableSkillShellExecution` setting to disable inline shell execution in skills, custom slash commands, and plugin commands
-- Added support for multi-line prompts in `claude-cli://open?q=` deep links (encoded newlines `%0A` no longer rejected)
+- Added support for multi-line prompts in `viqo-cli://open?q=` deep links (encoded newlines `%0A` no longer rejected)
 - Plugins can now ship executables under `bin/` and invoke them as bare commands from the Bash tool
 - Fixed transcript chain breaks on `--resume` that could lose conversation history when async transcript writes fail silently
 - Fixed `cmd+delete` not deleting to start of line on iTerm2, kitty, WezTerm, Ghostty, and Windows Terminal
@@ -2020,20 +2020,20 @@
 - Fixed JSON schema validation for `permissions.defaultMode: "auto"` in settings.json
 - Fixed Windows version cleanup not protecting the active version's rollback copy
 - `/feedback` now explains why it's unavailable instead of disappearing from the slash menu
-- Improved `/claude-api` skill guidance for agent design patterns including tool surface decisions, context management, and caching strategy
+- Improved `/viqo-api` skill guidance for agent design patterns including tool surface decisions, context management, and caching strategy
 - Improved performance: faster `stripAnsi` on Bun by routing through `Bun.stripANSI`
 - Edit tool now uses shorter `old_string` anchors, reducing output tokens
 
 ## 2.1.90
 
-- Added `/powerup` — interactive lessons teaching Claude Code features with animated demos
-- Added `CLAUDE_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE` env var to keep the existing marketplace cache when `git pull` fails, useful in offline environments
+- Added `/powerup` — interactive lessons teaching Viqo features with animated demos
+- Added `VIQO_CODE_PLUGIN_KEEP_MARKETPLACE_ON_FAILURE` env var to keep the existing marketplace cache when `git pull` fails, useful in offline environments
 - Added `.husky` to protected directories (acceptEdits mode)
 - Fixed an infinite loop where the rate-limit options dialog would repeatedly auto-open after hitting your usage limit, eventually crashing the session
 - Fixed `--resume` causing a full prompt-cache miss on the first request for users with deferred tools, MCP servers, or custom agents (regression since v2.1.69)
 - Fixed `Edit`/`Write` failing with "File content has changed" when a PostToolUse format-on-save hook rewrites the file between consecutive edits
 - Fixed `PreToolUse` hooks that emit JSON to stdout and exit with code 2 not correctly blocking the tool call
-- Fixed collapsed search/read summary badge appearing multiple times in fullscreen scrollback when a CLAUDE.md file auto-loads during a tool call
+- Fixed collapsed search/read summary badge appearing multiple times in fullscreen scrollback when a VIQO.md file auto-loads during a tool call
 - Fixed auto mode not respecting explicit user boundaries ("don't push", "wait for X before Y") even when the action would otherwise be allowed
 - Fixed click-to-expand hover text being nearly invisible on light terminal themes
 - Fixed UI crash when malformed tool input reached the permission dialog
@@ -2043,13 +2043,13 @@
 - Improved performance: SSE transport now handles large streamed frames in linear time (was quadratic)
 - Improved performance: SDK sessions with long conversations no longer slow down quadratically on transcript writes
 - Improved `/resume` all-projects view to load project sessions in parallel, improving load times for users with many projects
-- Changed `--resume` picker to no longer show sessions created by `claude -p` or SDK invocations
+- Changed `--resume` picker to no longer show sessions created by `viqo -p` or SDK invocations
 - Removed `Get-DnsClientCache` and `ipconfig /displaydns` from auto-allow (DNS cache privacy)
 
 ## 2.1.89
 
 - Added `"defer"` permission decision to `PreToolUse` hooks — headless sessions can pause at a tool call and resume with `-p --resume` to have the hook re-evaluate
-- Added `CLAUDE_CODE_NO_FLICKER=1` environment variable to opt into flicker-free alt-screen rendering with virtualized scrollback
+- Added `VIQO_CODE_NO_FLICKER=1` environment variable to opt into flicker-free alt-screen rendering with virtualized scrollback
 - Added `PermissionDenied` hook that fires after auto mode classifier denials — return `{retry: true}` to tell the model it can retry
 - Added named subagents to `@` mention typeahead suggestions
 - Added `MCP_CONNECTION_NONBLOCKING=true` for `-p` mode to skip the MCP connection wait entirely, and bounded `--mcp-config` server connections at 5s instead of blocking on the slowest server
@@ -2061,16 +2061,16 @@
 - Fixed memory leak where large JSON inputs were retained as LRU cache keys in long-running sessions
 - Fixed a crash when removing a message from very large session files (over 50MB)
 - Fixed LSP server zombie state after crash — server now restarts on next request instead of failing until session restart
-- Fixed prompt history entries containing CJK or emoji being silently dropped when they fall on a 4KB boundary in `~/.claude/history.jsonl`
+- Fixed prompt history entries containing CJK or emoji being silently dropped when they fall on a 4KB boundary in `~/.viqo/history.jsonl`
 - Fixed `/stats` undercounting tokens by excluding subagent usage, and losing historical data beyond 30 days when the stats cache format changes
 - Fixed `-p --resume` hangs when the deferred tool input exceeds 64KB or no deferred marker exists, and `-p --continue` not resuming deferred tools
-- Fixed `claude-cli://` deep links not opening on macOS
+- Fixed `viqo-cli://` deep links not opening on macOS
 - Fixed MCP tool errors truncating to only the first content block when the server returns multi-element error content
 - Fixed skill reminders and other system context being dropped when sending messages with images via the SDK
 - Fixed PreToolUse/PostToolUse hooks to receive `file_path` as an absolute path for Write/Edit/Read tools, matching the documented behavior
 - Fixed autocompact thrash loop — now detects when context refills to the limit immediately after compacting three times in a row and stops with an actionable error instead of burning API calls
 - Fixed prompt cache misses in long sessions caused by tool schema bytes changing mid-session
-- Fixed nested CLAUDE.md files being re-injected dozens of times in long sessions that read many files
+- Fixed nested VIQO.md files being re-injected dozens of times in long sessions that read many files
 - Fixed `--resume` crash when transcript contains a tool result from an older CLI version or interrupted write
 - Fixed misleading "Rate limit reached" message when the API returned an entitlement error — now shows the actual error with actionable hints
 - Fixed hooks `if` condition filtering not matching compound commands (`ls && git push`) or commands with env-var prefixes (`FOO=bar git push`)
@@ -2107,23 +2107,23 @@
 
 ## 2.1.86
 
-- Added `X-Claude-Code-Session-Id` header to API requests so proxies can aggregate requests by session without parsing the body
+- Added `X-Viqo-Code-Session-Id` header to API requests so proxies can aggregate requests by session without parsing the body
 - Added `.jj` and `.sl` to VCS directory exclusion lists so Grep and file autocomplete don't descend into Jujutsu or Sapling metadata
 - Fixed `--resume` failing with "tool_use ids were found without tool_result blocks" on sessions created before v2.1.85
-- Fixed Write/Edit/Read failing on files outside the project root (e.g., `~/.claude/CLAUDE.md`) when conditional skills or rules are configured
+- Fixed Write/Edit/Read failing on files outside the project root (e.g., `~/.viqo/VIQO.md`) when conditional skills or rules are configured
 - Fixed unnecessary config disk writes on every skill invocation that could cause performance issues and config corruption on Windows
 - Fixed potential out-of-memory crash when using `/feedback` on very long sessions with large transcript files
 - Fixed `--bare` mode dropping MCP tools in interactive sessions and silently discarding messages enqueued mid-turn
 - Fixed the `c` shortcut copying only ~20 characters of the OAuth login URL instead of the full URL
 - Fixed masked input (e.g., OAuth code paste) leaking the start of the token when wrapping across multiple lines on narrow terminals
 - Fixed official marketplace plugin scripts failing with "Permission denied" on macOS/Linux since v2.1.83
-- Fixed statusline showing another session's model when running multiple Claude Code instances and using `/model` in one of them
+- Fixed statusline showing another session's model when running multiple Viqo instances and using `/model` in one of them
 - Fixed scroll not following new messages after wheel scroll or click-to-select at the bottom of a long conversation
 - Fixed `/plugin` uninstall dialog: pressing `n` now correctly uninstalls the plugin while preserving its data directory
 - Fixed a regression where pressing Enter after clicking could leave the transcript blank until the response arrived
 - Fixed `ultrathink` hint lingering after deleting the keyword
 - Fixed memory growth in long sessions from markdown/highlight render caches retaining full content strings
-- Reduced startup event-loop stalls when many claude.ai MCP connectors are configured (macOS keychain cache extended from 5s to 30s)
+- Reduced startup event-loop stalls when many viqo.ai MCP connectors are configured (macOS keychain cache extended from 5s to 30s)
 - Reduced token overhead when mentioning files with `@` — raw string content no longer JSON-escaped
 - Improved prompt cache hit rate for Bedrock, Vertex, and Foundry users by removing dynamic content from tool descriptions
 - Memory filenames in the "Saved N memories" notice now highlight on hover and open on click
@@ -2136,11 +2136,11 @@
 
 ## 2.1.85
 
-- Added `CLAUDE_CODE_MCP_SERVER_NAME` and `CLAUDE_CODE_MCP_SERVER_URL` environment variables to MCP `headersHelper` scripts, allowing one helper to serve multiple servers
+- Added `VIQO_CODE_MCP_SERVER_NAME` and `VIQO_CODE_MCP_SERVER_URL` environment variables to MCP `headersHelper` scripts, allowing one helper to serve multiple servers
 - Added conditional `if` field for hooks using permission rule syntax (e.g., `Bash(git *)`) to filter when they run, reducing process spawning overhead
 - Added timestamp markers in transcripts when scheduled tasks (`/loop`, `CronCreate`) fire
 - Added trailing space after `[Image #N]` placeholder when pasting images
-- Deep link queries (`claude-cli://open?q=…`) now support up to 5,000 characters, with a "scroll to review" warning for long pre-filled prompts
+- Deep link queries (`viqo-cli://open?q=…`) now support up to 5,000 characters, with a "scroll to review" warning for long pre-filled prompts
 - MCP OAuth now follows RFC 9728 Protected Resource Metadata discovery to find the authorization server
 - Plugins blocked by organization policy (`managed-settings.json`) can no longer be installed or enabled, and are hidden from marketplace views
 - PreToolUse hooks can now satisfy `AskUserQuestion` by returning `updatedInput` alongside `permissionDecision: "allow"`, enabling headless integrations that collect answers via their own UI
@@ -2148,7 +2148,7 @@
 - Fixed `/compact` failing with "context exceeded" when the conversation has grown too large for the compact request itself to fit
 - Fixed `/plugin enable` and `/plugin disable` failing when a plugin's install location differs from where it's declared in settings
 - Fixed `--worktree` exiting with an error in non-git repositories before the `WorktreeCreate` hook could run
-- Fixed `deniedMcpServers` setting not blocking claude.ai MCP servers
+- Fixed `deniedMcpServers` setting not blocking viqo.ai MCP servers
 - Fixed `switch_display` in the computer-use tool returning "not available in this session" on multi-monitor setups
 - Fixed crash when `OTEL_LOGS_EXPORTER`, `OTEL_METRICS_EXPORTER`, or `OTEL_TRACES_EXPORTER` is set to `none`
 - Fixed diff syntax highlighting not working in non-native builds
@@ -2169,18 +2169,18 @@
 
 ## 2.1.84
 
-- Added PowerShell tool for Windows as an opt-in preview. Learn more at https://code.claude.com/docs/en/tools-reference#powershell-tool
-- Added `ANTHROPIC_DEFAULT_{OPUS,SONNET,HAIKU}_MODEL_SUPPORTS` env vars to override effort/thinking capability detection for pinned default models for 3p (Bedrock, Vertex, Foundry), and `_MODEL_NAME`/`_DESCRIPTION` to customize the `/model` picker label
+- Added PowerShell tool for Windows as an opt-in preview. Learn more at https://github.com/inferviqo/viqo/docs/en/tools-reference#powershell-tool
+- Added `VIQO_DEFAULT_{OPUS,SONNET,HAIKU}_MODEL_SUPPORTS` env vars to override effort/thinking capability detection for pinned default models for 3p (Bedrock, Vertex, Foundry), and `_MODEL_NAME`/`_DESCRIPTION` to customize the `/model` picker label
 - Added `CLAUDE_STREAM_IDLE_TIMEOUT_MS` env var to configure the streaming idle watchdog threshold (default 90s)
 - Added `TaskCreated` hook that fires when a task is created via `TaskCreate`
 - Added `WorktreeCreate` hook support for `type: "http"` — return the created worktree path via `hookSpecificOutput.worktreePath` in the response JSON
 - Added `allowedChannelPlugins` managed setting for team/enterprise admins to define a channel plugin allowlist
 - Added `x-client-request-id` header to API requests for debugging timeouts
 - Added idle-return prompt that nudges users returning after 75+ minutes to `/clear`, reducing unnecessary token re-caching on stale sessions
-- Deep links (`claude-cli://`) now open in your preferred terminal instead of whichever terminal happens to be first in the detection list
+- Deep links (`viqo-cli://`) now open in your preferred terminal instead of whichever terminal happens to be first in the detection list
 - Rules and skills `paths:` frontmatter now accepts a YAML list of globs
 - MCP tool descriptions and server instructions are now capped at 2KB to prevent OpenAPI-generated servers from bloating context
-- MCP servers configured both locally and via claude.ai connectors are now deduplicated — the local config wins
+- MCP servers configured both locally and via viqo.ai connectors are now deduplicated — the local config wins
 - Background bash tasks that appear stuck on an interactive prompt now surface a notification after ~45 seconds
 - Token counts ≥1M now display as "1.5m" instead of "1512.6k"
 - Global system-prompt caching now works when `ToolSearch` is enabled, including for users with MCP tools configured
@@ -2191,7 +2191,7 @@
 - Fixed mouse events inserting literal "mouse" text into transcript search input
 - Fixed workflow subagents failing with API 400 when the outer session uses `--json-schema` and the subagent also specifies a schema
 - Fixed missing background color behind certain emoji in user message bubbles on some terminals
-- Fixed the "allow Claude to edit its own settings for this session" permission option not sticking for users with `Edit(.claude)` allow rules
+- Fixed the "allow Viqo to edit its own settings for this session" permission option not sticking for users with `Edit(.viqo)` allow rules
 - Fixed a hang when generating attachment snippets for large edited files
 - Fixed MCP tool/resource cache leak on server reconnect
 - Fixed a startup performance issue where partial clone repositories (Scalar/GVFS) triggered mass blob downloads
@@ -2200,7 +2200,7 @@
 - Fixed cold-start race where core tools could be deferred without their bypass active, causing Edit/Write to fail with InputValidationError on typed parameters
 - Improved detection for dangerous removals of Windows drive roots (`C:\`, `C:\Windows`, etc.)
 - Improved interactive startup by ~30ms by running `setup()` in parallel with slash command and agent loading
-- Improved startup for `claude "prompt"` with MCP servers — the REPL now renders immediately instead of blocking until all servers connect
+- Improved startup for `viqo "prompt"` with MCP servers — the REPL now renders immediately instead of blocking until all servers connect
 - Improved Remote Control to show a specific reason when blocked instead of a generic "not yet enabled" message
 - Improved p90 prompt cache rate
 - Reduced scroll-to-top resets in long sessions by making the message window immune to compaction and grouping changes
@@ -2215,22 +2215,22 @@
 - Added `managed-settings.d/` drop-in directory alongside `managed-settings.json`, letting separate teams deploy independent policy fragments that merge alphabetically
 - Added `CwdChanged` and `FileChanged` hook events for reactive environment management (e.g., direnv)
 - Added `sandbox.failIfUnavailable` setting to exit with an error when sandbox is enabled but cannot start, instead of running unsandboxed
-- Added `disableDeepLinkRegistration` setting to prevent `claude-cli://` protocol handler registration
-- Added `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB=1` to strip Anthropic and cloud provider credentials from subprocess environments (Bash tool, hooks, MCP stdio servers)
+- Added `disableDeepLinkRegistration` setting to prevent `viqo-cli://` protocol handler registration
+- Added `VIQO_CODE_SUBPROCESS_ENV_SCRUB=1` to strip Inferviqo and cloud provider credentials from subprocess environments (Bash tool, hooks, MCP stdio servers)
 - Added transcript search — press `/` in transcript mode (`Ctrl+O`) to search, `n`/`N` to step through matches
 - Added `Ctrl+X Ctrl+E` as an alias for opening the external editor (readline-native binding; `Ctrl+G` still works)
 - Pasted images now insert an `[Image #N]` chip at the cursor so you can reference them positionally in your prompt
 - Agents can now declare `initialPrompt` in frontmatter to auto-submit a first turn
-- `chat:killAgents` and `chat:fastMode` are now rebindable via `~/.claude/keybindings.json`
+- `chat:killAgents` and `chat:fastMode` are now rebindable via `~/.viqo/keybindings.json`
 - Fixed mouse tracking escape sequences leaking to shell prompt after exit
-- Fixed Claude Code hanging on exit on macOS
+- Fixed Viqo hanging on exit on macOS
 - Fixed screen flashing blank after being idle for a few seconds
 - Fixed a hang when diffing very large files with few common lines — diffs now time out after 5 seconds and fall back gracefully
 - Fixed a 1–8 second UI freeze on startup when voice input was enabled, caused by eagerly loading the native audio module
-- Fixed a startup regression where Claude Code would wait ~3s for claude.ai MCP config fetch before proceeding
+- Fixed a startup regression where Viqo would wait ~3s for viqo.ai MCP config fetch before proceeding
 - Fixed `--mcp-config` CLI flag bypassing `allowedMcpServers`/`deniedMcpServers` managed policy enforcement
-- Fixed claude.ai MCP connectors (Slack, Gmail, etc.) not being available in single-turn `--print` mode
-- Fixed `caffeinate` process not properly terminating when Claude Code exits, preventing Mac from sleeping
+- Fixed viqo.ai MCP connectors (Slack, Gmail, etc.) not being available in single-turn `--print` mode
+- Fixed `caffeinate` process not properly terminating when Viqo exits, preventing Mac from sleeping
 - Fixed bash mode not activating when tab-accepting `!`-prefixed command suggestions
 - Fixed stale slash command selection showing wrong highlighted command after navigating suggestions
 - Fixed `/config` menu showing both the search cursor and list selection at the same time
@@ -2257,21 +2257,21 @@
 - Improved `--resume` memory usage and startup latency on large sessions
 - Improved plugin startup — commands, skills, and agents now load from disk cache without re-fetching
 - Improved Remote Control session titles: AI-generated titles now appear within seconds of the first message
-- Improved `WebFetch` to identify as `Claude-User` so site operators can recognize and allowlist Claude Code traffic via `robots.txt`
+- Improved `WebFetch` to identify as `Viqo-User` so site operators can recognize and allowlist Viqo traffic via `robots.txt`
 - Reduced `WebFetch` peak memory usage for large pages
 - Reduced scrollback resets in long sessions from once per turn to once per ~50 messages
-- Faster `claude -p` startup with unauthenticated HTTP/SSE MCP servers (~600ms saved)
+- Faster `viqo -p` startup with unauthenticated HTTP/SSE MCP servers (~600ms saved)
 - Bash ghost-text suggestions now include just-submitted commands immediately
 - Increased non-streaming fallback token cap (21k → 64k) and timeout (120s → 300s local) so fallback requests are less likely to be truncated
 - Interrupting a prompt before any response now automatically restores your input so you can edit and resubmit
-- `/status` now works while Claude is responding, instead of being queued until the turn finishes
+- `/status` now works while Viqo is responding, instead of being queued until the turn finishes
 - Plugin MCP servers that duplicate an org-managed connector are now suppressed instead of running a second connection
-- Linux: respect `XDG_DATA_HOME` when registering the `claude-cli://` protocol handler
+- Linux: respect `XDG_DATA_HOME` when registering the `viqo-cli://` protocol handler
 - Changed "stop all background agents" keybinding from `Ctrl+F` to `Ctrl+X Ctrl+K` to stop shadowing readline forward-char
 - Deprecated `TaskOutput` tool in favor of using `Read` on the background task's output file path
-- Added `CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK` env var to disable the non-streaming fallback when streaming fails
+- Added `VIQO_CODE_DISABLE_NONSTREAMING_FALLBACK` env var to disable the non-streaming fallback when streaming fails
 - Plugin options (`manifest.userConfig`) now available externally — plugins can prompt for configuration at enable time, with `sensitive: true` values stored in keychain (macOS) or protected credentials file (other platforms)
-- Claude can now reference the on-disk path of clipboard-pasted images for file operations
+- Viqo can now reference the on-disk path of clipboard-pasted images for file operations
 - `Ctrl+L` now clears the screen and forces a full redraw — use this to recover when Cmd+K leaves the UI partially blank. Use `Ctrl+U` or double-Esc to clear prompt input.
 - `--bare -p` (SDK pattern) is ~14% faster to the API request
 - Memory: `MEMORY.md` index now truncates at 25KB as well as 200 lines
@@ -2291,12 +2291,12 @@
 
 ## 2.1.81
 
-- Added `--bare` flag for scripted `-p` calls — skips hooks, LSP, plugin sync, and skill directory walks; requires `ANTHROPIC_API_KEY` or an `apiKeyHelper` via `--settings` (OAuth and keychain auth disabled); auto-memory fully disabled
+- Added `--bare` flag for scripted `-p` calls — skips hooks, LSP, plugin sync, and skill directory walks; requires `VIQO_API_KEY` or an `apiKeyHelper` via `--settings` (OAuth and keychain auth disabled); auto-memory fully disabled
 - Added `--channels` permission relay — channel servers that declare the permission capability can forward tool approval prompts to your phone
-- Fixed multiple concurrent Claude Code sessions requiring repeated re-authentication when one session refreshes its OAuth token
+- Fixed multiple concurrent Viqo sessions requiring repeated re-authentication when one session refreshes its OAuth token
 - Fixed voice mode silently swallowing retry failures and showing a misleading "check your network" message instead of the actual error
 - Fixed voice mode audio not recovering when the server silently drops the WebSocket connection
-- Fixed `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` not suppressing the structured-outputs beta header, causing 400 errors on proxy gateways forwarding to Vertex/Bedrock
+- Fixed `VIQO_CODE_DISABLE_EXPERIMENTAL_BETAS` not suppressing the structured-outputs beta header, causing 400 errors on proxy gateways forwarding to Vertex/Bedrock
 - Fixed `--channels` bypass for Team/Enterprise orgs with no other managed settings configured
 - Fixed a crash on Node.js 18
 - Fixed unnecessary permission prompts for Bash commands containing dashes in strings
@@ -2311,7 +2311,7 @@
 - Fixed `/rename` not syncing the title for Remote Control sessions
 - Fixed Remote Control `/exit` not reliably archiving the session
 - Improved MCP read/search tool calls to collapse into a single "Queried {server}" line (expand with Ctrl+O)
-- Improved `!` bash mode discoverability — Claude now suggests it when you need to run an interactive command
+- Improved `!` bash mode discoverability — Viqo now suggests it when you need to run an interactive command
 - Improved plugin freshness — ref-tracked plugins now re-clone on every load to pick up upstream changes
 - Improved Remote Control session titles to refresh after your third message
 - Updated MCP OAuth to support Client ID Metadata Document (CIMD / SEP-991) for servers without Dynamic Client Registration
@@ -2321,7 +2321,7 @@
 
 ## 2.1.80
 
-- Added `rate_limits` field to statusline scripts for displaying Claude.ai rate limit usage (5-hour and 7-day windows with `used_percentage` and `resets_at`)
+- Added `rate_limits` field to statusline scripts for displaying Viqo.ai rate limit usage (5-hour and 7-day windows with `used_percentage` and `resets_at`)
 - Added `source: 'settings'` plugin marketplace source — declare plugin entries inline in settings.json
 - Added CLI tool usage detection to plugin tips, in addition to file pattern matching
 - Added `effort` frontmatter support for skills and slash commands to override the model effort level when invoked
@@ -2341,21 +2341,21 @@
 
 ## 2.1.79
 
-- Added `--console` flag to `claude auth login` for Anthropic Console (API billing) authentication
+- Added `--console` flag to `viqo auth login` for Inferviqo Console (API billing) authentication
 - Added "Show turn duration" toggle to the `/config` menu
-- Fixed `claude -p` hanging when spawned as a subprocess without explicit stdin (e.g. Python `subprocess.run`)
+- Fixed `viqo -p` hanging when spawned as a subprocess without explicit stdin (e.g. Python `subprocess.run`)
 - Fixed Ctrl+C not working in `-p` (print) mode
 - Fixed `/btw` returning the main agent's output instead of answering the side question when triggered during streaming
 - Fixed voice mode not activating correctly on startup when `voiceEnabled: true` is set
 - Fixed left/right arrow tab navigation in `/permissions`
-- Fixed `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` not preventing terminal title from being set on startup
+- Fixed `VIQO_CODE_DISABLE_TERMINAL_TITLE` not preventing terminal title from being set on startup
 - Fixed custom status line showing nothing when workspace trust is blocking it
 - Fixed enterprise users being unable to retry on rate limit (429) errors
 - Fixed `SessionEnd` hooks not firing when using interactive `/resume` to switch sessions
 - Improved startup memory usage by ~18MB across all scenarios
 - Improved non-streaming API fallback with a 2-minute per-attempt timeout, preventing sessions from hanging indefinitely
-- `CLAUDE_CODE_PLUGIN_SEED_DIR` now supports multiple seed directories separated by the platform path delimiter (`:` on Unix, `;` on Windows)
-- [VSCode] Added `/remote-control` — bridge your session to claude.ai/code to continue from a browser or phone
+- `VIQO_CODE_PLUGIN_SEED_DIR` now supports multiple seed directories separated by the platform path delimiter (`:` on Unix, `;` on Windows)
+- [VSCode] Added `/remote-control` — bridge your session to github.com/inferviqo/viqo to continue from a browser or phone
 - [VSCode] Session tabs now get AI-generated titles based on your first message
 - [VSCode] Fixed the thinking pill showing "Thinking" instead of "Thought for Ns" after a response completes
 - [VSCode] Fixed missing session diff button when opening sessions from the left sidebar
@@ -2374,16 +2374,16 @@
 - Fixed `sandbox.filesystem.allowWrite` not working with absolute paths (previously required `//` prefix)
 - Fixed `/sandbox` Dependencies tab showing Linux prerequisites on macOS instead of macOS-specific info
 - **Security:** Fixed silent sandbox disable when `sandbox.enabled: true` is set but dependencies are missing — now shows a visible startup warning
-- Fixed `.git`, `.claude`, and other protected directories being writable without a prompt in `bypassPermissions` mode
+- Fixed `.git`, `.viqo`, and other protected directories being writable without a prompt in `bypassPermissions` mode
 - Fixed ctrl+u in normal mode scrolling instead of readline kill-line (ctrl+u/ctrl+d half-page scroll moved to transcript mode only)
 - Fixed voice mode modifier-combo push-to-talk keybindings (e.g. ctrl+k) requiring a hold instead of activating immediately
 - Fixed voice mode not working on WSL2 with WSLg (Windows 11); WSL1/Win10 users now get a clear error
 - Fixed `--worktree` flag not loading skills and hooks from the worktree directory
-- Fixed `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` and `includeGitInstructions` setting not suppressing the git status section in the system prompt
+- Fixed `VIQO_CODE_DISABLE_GIT_INSTRUCTIONS` and `includeGitInstructions` setting not suppressing the git status section in the system prompt
 - Fixed Bash tool not finding Homebrew and other PATH-dependent binaries when VS Code is launched from Dock/Spotlight
-- Fixed washed-out Claude orange color in VS Code/Cursor/code-server terminals that don't advertise truecolor support
-- Added `ANTHROPIC_CUSTOM_MODEL_OPTION` env var to add a custom entry to the `/model` picker, with optional `_NAME` and `_DESCRIPTION` suffixed vars for display
-- Fixed `ANTHROPIC_BETAS` environment variable being silently ignored when using Haiku models
+- Fixed washed-out Viqo orange color in VS Code/Cursor/code-server terminals that don't advertise truecolor support
+- Added `VIQO_CUSTOM_MODEL_OPTION` env var to add a custom entry to the `/model` picker, with optional `_NAME` and `_DESCRIPTION` suffixed vars for display
+- Fixed `VIQO_BETAS` environment variable being silently ignored when using Haiku models
 - Fixed queued prompts being concatenated without a newline separator
 - Improved memory usage and startup time when resuming large sessions
 - [VSCode] Fixed a brief flash of the login screen when opening the sidebar while already authenticated
@@ -2391,7 +2391,7 @@
 
 ## 2.1.77
 
-- Increased default maximum output token limits for Claude Opus 4.6 to 64k tokens, and the upper bound for Opus 4.6 and Sonnet 4.6 models to 128k tokens
+- Increased default maximum output token limits for Viqo Opus 4.6 to 64k tokens, and the upper bound for Opus 4.6 and Sonnet 4.6 models to 128k tokens
 - Added `allowRead` sandbox filesystem setting to re-allow read access within `denyRead` regions
 - `/copy` now accepts an optional index: `/copy N` copies the Nth-latest assistant response
 - Fixed "Always Allow" on compound bash commands (e.g. `cd src && npm test`) saving a single rule for the full string instead of per-subcommand, leading to dead rules and repeated permission prompts
@@ -2401,12 +2401,12 @@
 - Fixed Write tool silently converting line endings when overwriting CRLF files or creating files in CRLF directories
 - Fixed memory growth in long-running sessions from progress messages surviving compaction
 - Fixed cost and token usage not being tracked when the API falls back to non-streaming mode
-- Fixed `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` not stripping beta tool-schema fields, causing proxy gateways to reject requests
+- Fixed `VIQO_CODE_DISABLE_EXPERIMENTAL_BETAS` not stripping beta tool-schema fields, causing proxy gateways to reject requests
 - Fixed Bash tool reporting errors for successful commands when the system temp directory path contains spaces
 - Fixed paste being lost when typing immediately after pasting
 - Fixed Ctrl+D in `/feedback` text input deleting forward instead of the second press exiting the session
 - Fixed API error when dragging a 0-byte image file into the prompt
-- Fixed Claude Desktop sessions incorrectly using the terminal CLI's configured API key instead of OAuth
+- Fixed Viqo Desktop sessions incorrectly using the terminal CLI's configured API key instead of OAuth
 - Fixed `git-subdir` plugins at different subdirectories of the same monorepo commit colliding in the plugin cache
 - Fixed ordered list numbers not rendering in terminal UI
 - Fixed a race condition where stale-worktree cleanup could delete an agent worktree just resumed from a previous crash
@@ -2418,22 +2418,22 @@
 - Fixed iTerm2 session crash when selecting text inside tmux over SSH
 - Fixed clipboard copy silently failing in tmux sessions; copy toast now indicates whether to paste with `⌘V` or tmux `prefix+]`
 - Fixed `←`/`→` accidentally switching tabs in settings, permissions, and sandbox dialogs while navigating lists
-- Fixed IDE integration not auto-connecting when Claude Code is launched inside tmux or screen
+- Fixed IDE integration not auto-connecting when Viqo is launched inside tmux or screen
 - Fixed CJK characters visually bleeding into adjacent UI elements when clipped at the right edge
 - Fixed teammate panes not closing when the leader exits
 - Fixed iTerm2 auto mode not detecting iTerm2 for native split-pane teammates
 - Faster startup on macOS (~60ms) by reading keychain credentials in parallel with module loading
 - Faster `--resume` on fork-heavy and very large sessions — up to 45% faster loading and ~100-150MB less peak memory
 - Improved Esc to abort in-flight non-streaming API requests
-- Improved `claude plugin validate` to check skill, agent, and command frontmatter plus `hooks/hooks.json`, catching YAML parse errors and schema violations
+- Improved `viqo plugin validate` to check skill, agent, and command frontmatter plus `hooks/hooks.json`, catching YAML parse errors and schema violations
 - Background bash tasks are now killed if output exceeds 5GB, preventing runaway processes from filling disk
 - Sessions are now auto-named from plan content when you accept a plan
-- Improved headless mode plugin installation to compose correctly with `CLAUDE_CODE_PLUGIN_SEED_DIR`
+- Improved headless mode plugin installation to compose correctly with `VIQO_CODE_PLUGIN_SEED_DIR`
 - Show a notice when `apiKeyHelper` takes longer than 10s, preventing it from blocking the main loop
 - The Agent tool no longer accepts a `resume` parameter — use `SendMessage({to: agentId})` to continue a previously spawned agent
 - `SendMessage` now auto-resumes stopped agents in the background instead of returning an error
 - Renamed `/fork` to `/branch` (`/fork` still works as an alias)
-- [VSCode] Improved plan preview tab titles to use the plan's heading instead of "Claude's Plan"
+- [VSCode] Improved plan preview tab titles to use the plan's heading instead of "Viqo's Plan"
 - [VSCode] When option+click doesn't trigger native selection on macOS, the footer now points to the `macOptionClickForcesSelection` setting
 
 ## 2.1.76
@@ -2441,7 +2441,7 @@
 - Added MCP elicitation support — MCP servers can now request structured input mid-task via an interactive dialog (form fields or browser URL)
 - Added new `Elicitation` and `ElicitationResult` hooks to intercept and override responses before they're sent back
 - Added `-n` / `--name <name>` CLI flag to set a display name for the session at startup
-- Added `worktree.sparsePaths` setting for `claude --worktree` in large monorepos to check out only the directories you need via git sparse-checkout
+- Added `worktree.sparsePaths` setting for `viqo --worktree` in large monorepos to check out only the directories you need via git sparse-checkout
 - Added `PostCompact` hook that fires after compaction completes
 - Added `/effort` slash command to set model effort level
 - Added session quality survey — enterprise admins can configure the sample rate via the `feedbackSurveyRate` setting
@@ -2479,10 +2479,10 @@
 - Added 1M context window for Opus 4.6 by default for Max, Team, and Enterprise plans (previously required extra usage)
 - Added `/color` command for all users to set a prompt-bar color for your session
 - Added session name display on the prompt bar when using `/rename`
-- Added last-modified timestamps to memory files, helping Claude reason about which memories are fresh vs. stale
+- Added last-modified timestamps to memory files, helping Viqo reason about which memories are fresh vs. stale
 - Added hook source display (settings/plugin/skill) in permission prompts when a hook requires confirmation
 - Fixed voice mode not activating correctly on fresh installs without toggling `/voice` twice
-- Fixed the Claude Code header not updating the displayed model name after switching models with `/model` or Option+P
+- Fixed the Viqo header not updating the displayed model name after switching models with `/model` or Option+P
 - Fixed session crash when an attachment message computation returns undefined values
 - Fixed Bash tool mangling `!` in piped commands (e.g., `jq 'select(.x != .y)'` now works correctly)
 - Fixed managed-disabled plugins showing up in the `/plugin` Installed tab — plugins force-disabled by your organization are now hidden
@@ -2494,7 +2494,7 @@
 - Fixed footer hint in agent teams showing "↓ to expand" instead of the correct "shift + ↓ to expand"
 - Improved startup performance on macOS non-MDM machines by skipping unnecessary subprocess spawns
 - Suppressed async hook completion messages by default (visible with `--verbose` or transcript mode)
-- Breaking change: Removed deprecated Windows managed settings fallback at `C:\ProgramData\ClaudeCode\managed-settings.json` — use `C:\Program Files\ClaudeCode\managed-settings.json`
+- Breaking change: Removed deprecated Windows managed settings fallback at `C:\ProgramData\Viqo\managed-settings.json` — use `C:\Program Files\Viqo\managed-settings.json`
 
 ## 2.1.74
 
@@ -2502,11 +2502,11 @@
 - Added `autoMemoryDirectory` setting to configure a custom directory for auto-memory storage
 - Fixed memory leak where streaming API response buffers were not released when the generator was terminated early, causing unbounded RSS growth on the Node.js/npm code path
 - Fixed managed policy `ask` rules being bypassed by user `allow` rules or skill `allowed-tools`
-- Fixed full model IDs (e.g., `claude-opus-4-5`) being silently ignored in agent frontmatter `model:` field and `--agents` JSON config — agents now accept the same model values as `--model`
+- Fixed full model IDs (e.g., `viqo-opus-4-5`) being silently ignored in agent frontmatter `model:` field and `--agents` JSON config — agents now accept the same model values as `--model`
 - Fixed MCP OAuth authentication hanging when the callback port is already in use
 - Fixed MCP OAuth refresh never prompting for re-auth after the refresh token expires, for OAuth servers that return errors with HTTP 200 (e.g. Slack)
 - Fixed voice mode silently failing on the macOS native binary for users whose terminal had never been granted microphone permission — the binary now includes the `audio-input` entitlement so macOS prompts correctly
-- Fixed `SessionEnd` hooks being killed after 1.5 s on exit regardless of `hook.timeout` — now configurable via `CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS`
+- Fixed `SessionEnd` hooks being killed after 1.5 s on exit regardless of `hook.timeout` — now configurable via `VIQO_CODE_SESSIONEND_HOOKS_TIMEOUT_MS`
 - Fixed `/plugin install` failing inside the REPL for marketplace plugins with local sources
 - Fixed marketplace update not syncing git submodules — plugin sources in submodules no longer break after update
 - Fixed unknown slash commands with arguments silently dropping input — now shows your input as a warning
@@ -2521,8 +2521,8 @@
 - Added `modelOverrides` setting to map model picker entries to custom provider model IDs (e.g. Bedrock inference profile ARNs)
 - Added actionable guidance when OAuth login or connectivity checks fail due to SSL certificate errors (corporate proxies, `NODE_EXTRA_CA_CERTS`)
 - Fixed freezes and 100% CPU loops triggered by permission prompts for complex bash commands
-- Fixed a deadlock that could freeze Claude Code when many skill files changed at once (e.g. during `git pull` in a repo with a large `.claude/skills/` directory)
-- Fixed Bash tool output being lost when running multiple Claude Code sessions in the same project directory
+- Fixed a deadlock that could freeze Viqo when many skill files changed at once (e.g. during `git pull` in a repo with a large `.viqo/skills/` directory)
+- Fixed Bash tool output being lost when running multiple Viqo sessions in the same project directory
 - Fixed subagents with `model: opus`/`sonnet`/`haiku` being silently downgraded to older model versions on Bedrock, Vertex, and Microsoft Foundry
 - Fixed background bash processes spawned by subagents not being cleaned up when the agent exits
 - Fixed `/resume` showing the current session in the picker
@@ -2535,23 +2535,23 @@
 - Fixed Linux native modules not loading on Amazon Linux 2 and other glibc 2.26 systems
 - Fixed "media_type: Field required" API error when receiving images via Remote Control
 - Fixed `/heapdump` failing on Windows with `EEXIST` error when the Desktop folder already exists
-- Improved Up arrow after interrupting Claude — now restores the interrupted prompt and rewinds the conversation in one step
+- Improved Up arrow after interrupting Viqo — now restores the interrupted prompt and rewinds the conversation in one step
 - Improved IDE detection speed at startup
 - Improved clipboard image pasting performance on macOS
-- Improved `/effort` to work while Claude is responding, matching `/model` behavior
+- Improved `/effort` to work while Viqo is responding, matching `/model` behavior
 - Improved voice mode to automatically retry transient connection failures during rapid push-to-talk re-press
 - Improved the Remote Control spawn mode selection prompt with better context
 - Changed default Opus model on Bedrock, Vertex, and Microsoft Foundry to Opus 4.6 (was Opus 4.1)
 - Deprecated `/output-style` command — use `/config` instead. Output style is now fixed at session start for better prompt caching
-- VSCode: Fixed HTTP 400 errors for users behind proxies or on Bedrock/Vertex with Claude 4.5 models
+- VSCode: Fixed HTTP 400 errors for users behind proxies or on Bedrock/Vertex with Viqo 4.5 models
 
 ## 2.1.72
 
-- Fixed tool search to activate even with `ANTHROPIC_BASE_URL` as long as `ENABLE_TOOL_SEARCH` is set.
+- Fixed tool search to activate even with `VIQO_BASE_URL` as long as `ENABLE_TOOL_SEARCH` is set.
 - Added `w` key in `/copy` to write the focused selection directly to a file, bypassing the clipboard (useful over SSH)
 - Added optional description argument to `/plan` (e.g., `/plan fix the auth bug`) that enters plan mode and immediately starts
 - Added `ExitWorktree` tool to leave an `EnterWorktree` session
-- Added `CLAUDE_CODE_DISABLE_CRON` environment variable to immediately stop scheduled cron jobs mid-session
+- Added `VIQO_CODE_DISABLE_CRON` environment variable to immediately stop scheduled cron jobs mid-session
 - Added `lsof`, `pgrep`, `tput`, `ss`, `fd`, and `fdfind` to the bash auto-approval allowlist, reducing permission prompts for common read-only operations
 - Restored the `model` parameter on the Agent tool for per-invocation model overrides
 - Simplified effort levels to low/medium/high (removed max) with new symbols (○ ◐ ●) and a brief notification instead of a persistent icon. Use `/effort auto` to reset to default
@@ -2560,7 +2560,7 @@
 - Improved voice input transcription accuracy for repo names and common dev terms (regex, OAuth, JSON)
 - Improved bash command parsing by switching to a native module — faster initialization and no memory leak
 - Reduced bundle size by ~510 KB
-- Changed CLAUDE.md HTML comments (`<!-- ... -->`) to be hidden from Claude when auto-injected. Comments remain visible when read with the Read tool
+- Changed VIQO.md HTML comments (`<!-- ... -->`) to be hidden from Viqo when auto-injected. Comments remain visible when read with the Read tool
 - Fixed slow exits when background tasks or hooks were slow to respond
 - Fixed agent task progress stuck on "Initializing…"
 - Fixed skill hooks firing twice per event when a hooks-enabled skill is invoked by the model
@@ -2569,15 +2569,15 @@
 - Fixed bash security parsing edge cases
 - Added support for marketplace git URLs without `.git` suffix (Azure DevOps, AWS CodeCommit)
 - Improved marketplace clone failure messages to show diagnostic info even when git produces no stderr
-- Fixed several plugin issues: installation failing on Windows with `EEXIST` error in OneDrive folders, marketplace blocking user-scope installs when a project-scope install exists, `CLAUDE_CODE_PLUGIN_CACHE_DIR` creating literal `~` directories, and `plugin.json` with marketplace-only fields failing to load
+- Fixed several plugin issues: installation failing on Windows with `EEXIST` error in OneDrive folders, marketplace blocking user-scope installs when a project-scope install exists, `VIQO_CODE_PLUGIN_CACHE_DIR` creating literal `~` directories, and `plugin.json` with marketplace-only fields failing to load
 - Fixed feedback survey appearing too frequently in long sessions
 - Fixed `--effort` CLI flag being reset by unrelated settings writes on startup
 - Fixed backgrounded Ctrl+B queries losing their transcript or corrupting the new conversation after `/clear`
 - Fixed `/clear` killing background agent/bash tasks — only foreground tasks are now cleared
 - Fixed worktree isolation issues: Task tool resume not restoring cwd, and background task notifications missing `worktreePath` and `worktreeBranch`
-- Fixed `/model` not displaying results when run while Claude is working
+- Fixed `/model` not displaying results when run while Viqo is working
 - Fixed digit keys selecting menu options instead of typing in plan mode permission prompt's text input
-- Fixed sandbox permission issues: certain file write operations incorrectly allowed without prompting, and output redirections to allowlisted directories (like `/tmp/claude/`) prompting unnecessarily
+- Fixed sandbox permission issues: certain file write operations incorrectly allowed without prompting, and output redirections to allowlisted directories (like `/tmp/viqo/`) prompting unnecessarily
 - Improved CPU utilization in long sessions
 - Fixed prompt cache invalidation in SDK `query()` calls, reducing input token costs up to 12x
 - Fixed Escape key becoming unresponsive after cancelling a query
@@ -2586,7 +2586,7 @@
 - Fixed "Always Allow" saving permission rules that never match again
 - Fixed several hooks issues: `transcript_path` pointing to the wrong directory for resumed/forked sessions, agent `prompt` being silently deleted from settings.json on every settings write, PostToolUse block reason displaying twice, async hooks not receiving stdin with bash `read -r`, and validation error message showing an example that fails validation
 - Fixed session crashes in Desktop/SDK when Read returned files containing U+2028/U+2029 characters
-- Fixed terminal title being cleared on exit even when `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` was set
+- Fixed terminal title being cleared on exit even when `VIQO_CODE_DISABLE_TERMINAL_TITLE` was set
 - Fixed several permission rule matching issues: wildcard rules not matching commands with heredocs, embedded newlines, or no arguments; `sandbox.excludedCommands` failing with env var prefixes; "always allow" suggesting overly broad prefixes for nested CLI tools; and deny rules not applying to all command forms
 - Fixed oversized and truncated images from Bash data-URL output
 - Fixed a crash when resuming sessions that contained Bedrock API errors
@@ -2597,7 +2597,7 @@
 - VSCode: Fixed scroll speed in integrated terminals not matching native terminals
 - VSCode: Fixed Shift+Enter submitting input instead of inserting a newline for users with older keybindings
 - VSCode: Added effort level indicator on the input border
-- VSCode: Added `vscode://anthropic.claude-code/open` URI handler to open a new Claude Code tab programmatically, with optional `prompt` and `session` query parameters
+- VSCode: Added `vscode://inferviqo.viqo/open` URI handler to open a new Viqo tab programmatically, with optional `prompt` and `session` query parameters
 
 ## 2.1.71
 
@@ -2607,13 +2607,13 @@
 - Added `fmt`, `comm`, `cmp`, `numfmt`, `expr`, `test`, `printf`, `getconf`, `seq`, `tsort`, and `pr` to the bash auto-approval allowlist
 - Fixed stdin freeze in long-running sessions where keystrokes stop being processed but the process stays alive
 - Fixed a 5–8 second startup freeze for users with voice mode enabled, caused by CoreAudio initialization blocking the main thread after system wake
-- Fixed startup UI freeze when many claude.ai proxy connectors refresh an expired OAuth token simultaneously
+- Fixed startup UI freeze when many viqo.ai proxy connectors refresh an expired OAuth token simultaneously
 - Fixed forked conversations (`/fork`) sharing the same plan file, which caused plan edits in one fork to overwrite the other
 - Fixed the Read tool putting oversized images into context when image processing failed, breaking subsequent turns in long image-heavy sessions
 - Fixed false-positive permission prompts for compound bash commands containing heredoc commit messages
-- Fixed plugin installations being lost when running multiple Claude Code instances
-- Fixed claude.ai connectors failing to reconnect after OAuth token refresh
-- Fixed claude.ai MCP connector startup notifications appearing for every org-configured connector instead of only previously connected ones
+- Fixed plugin installations being lost when running multiple Viqo instances
+- Fixed viqo.ai connectors failing to reconnect after OAuth token refresh
+- Fixed viqo.ai MCP connector startup notifications appearing for every org-configured connector instead of only previously connected ones
 - Fixed background agent completion notifications missing the output file path, which made it difficult for parent agents to recover agent results after context compaction
 - Fixed duplicate output in Bash tool error messages when commands exit with non-zero status
 - Fixed Chrome extension auto-detection getting permanently stuck on "not installed" after running on a machine without local Chrome
@@ -2625,15 +2625,15 @@
 - Fixed prompting for `cd <cwd> && git ...` on Windows when the model uses a mingw-style path
 - Improved startup time by deferring native image processor loading to first use
 - Improved bridge session reconnection to complete within seconds after laptop wake from sleep, instead of waiting up to 10 minutes
-- Improved `/plugin uninstall` to disable project-scoped plugins in `.claude/settings.local.json` instead of modifying `.claude/settings.json`, so changes don't affect teammates
+- Improved `/plugin uninstall` to disable project-scoped plugins in `.viqo/settings.local.json` instead of modifying `.viqo/settings.json`, so changes don't affect teammates
 - Improved plugin-provided MCP server deduplication — servers that duplicate a manually-configured server (same command/URL) are now skipped, preventing duplicate connections and tool sets. Suppressions are shown in the `/plugin` menu.
 - Updated `/debug` to toggle debug logging on mid-session, since debug logs are no longer written by default
-- Removed startup notification noise for unauthenticated org-registered claude.ai connectors
+- Removed startup notification noise for unauthenticated org-registered viqo.ai connectors
 
 ## 2.1.70
 
-- Fixed API 400 errors when using `ANTHROPIC_BASE_URL` with a third-party gateway — tool search now correctly detects proxy endpoints and disables `tool_reference` blocks
-- Fixed `API Error: 400 This model does not support the effort parameter` when using custom Bedrock inference profiles or other model identifiers not matching standard Claude naming patterns
+- Fixed API 400 errors when using `VIQO_BASE_URL` with a third-party gateway — tool search now correctly detects proxy endpoints and disables `tool_reference` blocks
+- Fixed `API Error: 400 This model does not support the effort parameter` when using custom Bedrock inference profiles or other model identifiers not matching standard Viqo naming patterns
 - Fixed empty model responses immediately after `ToolSearch` — the server renders tool schemas with system-prompt-style tags at the prompt tail, which could confuse models into stopping early
 - Fixed prompt-cache bust when an MCP server with `instructions` connects after the first turn
 - Fixed Enter inserting a newline instead of submitting when typing over a slow SSH connection
@@ -2642,41 +2642,41 @@
 - Fixed voice mode failing on Windows native binary with "native audio module could not be loaded"
 - Fixed push-to-talk not activating on session start when `voiceEnabled: true` was set in settings
 - Fixed markdown links containing `#NNN` references incorrectly pointing to the current repository instead of the linked URL
-- Fixed repeated "Model updated to Opus 4.6" notification when a project's `.claude/settings.json` has a legacy Opus model string pinned
+- Fixed repeated "Model updated to Opus 4.6" notification when a project's `.viqo/settings.json` has a legacy Opus model string pinned
 - Fixed plugins showing as inaccurately installed in `/plugin`
 - Fixed plugins showing "not found in marketplace" errors on fresh startup by auto-refreshing after marketplace installation
 - Fixed `/security-review` command failing with `unknown option merge-base` on older git versions
 - Fixed `/color` command having no way to reset back to the default color — `/color default`, `/color gray`, `/color reset`, and `/color none` now restore the default
 - Fixed a performance regression in the `AskUserQuestion` preview dialog that re-ran markdown rendering on every keystroke in the notes input
 - Fixed feature flags read during early startup never refreshing their disk cache, causing stale values to persist across sessions
-- Fixed `permissions.defaultMode` settings values other than `acceptEdits` or `plan` being applied in Claude Code Remote environments — they are now ignored
+- Fixed `permissions.defaultMode` settings values other than `acceptEdits` or `plan` being applied in Viqo Remote environments — they are now ignored
 - Fixed skill listing being re-injected on every `--resume` (~600 tokens saved per resume)
 - Fixed teleport marker not rendering in VS Code teleported sessions
 - Improved error message when microphone captures silence to distinguish from "no speech detected"
 - Improved compaction to preserve images in the summarizer request, allowing prompt cache reuse for faster and cheaper compaction
-- Improved `/rename` to work while Claude is processing, instead of being silently queued
+- Improved `/rename` to work while Viqo is processing, instead of being silently queued
 - Reduced prompt input re-renders during turns by ~74%
 - Reduced startup memory by ~426KB for users without custom CA certificates
 - Reduced Remote Control `/poll` rate to once per 10 minutes while connected (was 1–2s), cutting server load ~300×. Reconnection is unaffected — transport loss immediately wakes fast polling.
-- [VSCode] Added spark icon in VS Code activity bar that lists all Claude Code sessions, with sessions opening as full editors
+- [VSCode] Added spark icon in VS Code activity bar that lists all Viqo sessions, with sessions opening as full editors
 - [VSCode] Added full markdown document view for plans in VS Code, with support for adding comments to provide feedback
 - [VSCode] Added native MCP server management dialog — use `/mcp` in the chat panel to enable/disable servers, reconnect, and manage OAuth authentication without switching to the terminal
 
 ## 2.1.69
 
-- Added the `/claude-api` skill for building applications with the Claude API and Anthropic SDK
+- Added the `/viqo-api` skill for building applications with the Viqo API and Inferviqo SDK
 - Added Ctrl+U on an empty bash prompt (`!`) to exit bash mode, matching `escape` and `backspace`
-- Added numeric keypad support for selecting options in Claude's interview questions (previously only the number row above QWERTY worked)
-- Added optional name argument to `/remote-control` and `claude remote-control` (`/remote-control My Project` or `--name "My Project"`) to set a custom session title visible in claude.ai/code
+- Added numeric keypad support for selecting options in Viqo's interview questions (previously only the number row above QWERTY worked)
+- Added optional name argument to `/remote-control` and `viqo remote-control` (`/remote-control My Project` or `--name "My Project"`) to set a custom session title visible in github.com/inferviqo/viqo
 - Added Voice STT support for 10 new languages (20 total) — Russian, Polish, Turkish, Dutch, Ukrainian, Greek, Czech, Danish, Swedish, Norwegian
 - Added effort level display (e.g., "with low effort") to the logo and spinner, making it easier to see which effort setting is active
-- Added agent name display in terminal title when using `claude --agent`
+- Added agent name display in terminal title when using `viqo --agent`
 - Added `sandbox.enableWeakerNetworkIsolation` setting (macOS only) to allow Go programs like `gh`, `gcloud`, and `terraform` to verify TLS certificates when using a custom MITM proxy with `httpProxyPort`
-- Added `includeGitInstructions` setting (and `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS` env var) to remove built-in commit and PR workflow instructions from Claude's system prompt
+- Added `includeGitInstructions` setting (and `VIQO_CODE_DISABLE_GIT_INSTRUCTIONS` env var) to remove built-in commit and PR workflow instructions from Viqo's system prompt
 - Added `/reload-plugins` command to activate pending plugin changes without restarting
-- Added a one-time startup prompt suggesting Claude Code Desktop on macOS and Windows (max 3 showings, dismissible)
+- Added a one-time startup prompt suggesting Viqo Desktop on macOS and Windows (max 3 showings, dismissible)
 - Added `${CLAUDE_SKILL_DIR}` variable for skills to reference their own directory in SKILL.md content
-- Added `InstructionsLoaded` hook event that fires when CLAUDE.md or `.claude/rules/*.md` files are loaded into context
+- Added `InstructionsLoaded` hook event that fires when VIQO.md or `.viqo/rules/*.md` files are loaded into context
 - Added `agent_id` (for subagents) and `agent_type` (for subagents and `--agent`) to hook events
 - Added `worktree` field to status line hook commands with name, path, branch, and original repo directory when running in a `--worktree` session
 - Added `pluginTrustMessage` in managed settings to append organization-specific context to the plugin trust warning shown before installation
@@ -2686,31 +2686,31 @@
 - Added `oauth.authServerMetadataUrl` config option for MCP servers to specify a custom OAuth metadata discovery URL when standard discovery fails
 - Fixed a security issue where nested skill discovery could load skills from gitignored directories like `node_modules`
 - Fixed trust dialog silently enabling all `.mcp.json` servers on first run. You'll now see the per-server approval dialog as expected
-- Fixed `claude remote-control` crashing immediately on npm installs with "bad option: --sdk-url" (anthropics/claude-code#28334)
-- Fixed `--model claude-opus-4-0` and `--model claude-opus-4-1` resolving to deprecated Opus versions instead of current
+- Fixed `viqo remote-control` crashing immediately on npm installs with "bad option: --sdk-url" (inferviqo/viqo#28334)
+- Fixed `--model viqo-opus-4-0` and `--model viqo-opus-4-1` resolving to deprecated Opus versions instead of current
 - Fixed macOS keychain corruption when using multiple OAuth MCP servers. Large OAuth metadata blobs could overflow the `security -i` stdin buffer, silently leaving stale credentials behind and causing repeated `/login` prompts.
-- Fixed `.credentials.json` losing `subscriptionType` (showing "Claude API" instead of "Claude Pro"/"Claude Max") when the profile endpoint transiently fails during token refresh (anthropics/claude-code#30185)
+- Fixed `.credentials.json` losing `subscriptionType` (showing "Viqo API" instead of "Viqo Pro"/"Viqo Max") when the profile endpoint transiently fails during token refresh (inferviqo/viqo#30185)
 - Fixed ghost dotfiles (`.bashrc`, `HEAD`, etc.) appearing as untracked files in the working directory after sandboxed Bash commands on Linux
 - Fixed Shift+Enter printing `[27;2;13~` instead of inserting a newline in Ghostty over SSH
-- Fixed stash (Ctrl+S) being cleared when submitting a message while Claude is working
+- Fixed stash (Ctrl+S) being cleared when submitting a message while Viqo is working
 - Fixed ctrl+o (transcript toggle) freezing for many seconds in long sessions with lots of file edits
 - Fixed plan mode feedback input not supporting multi-line text entry (backslash+Enter and Shift+Enter now insert newlines)
 - Fixed cursor not moving down into blank lines at the top of the input box
 - Fixed `/stats` crash when transcript files contain entries with missing or malformed timestamps
 - Fixed a brief hang after a streaming error on long sessions (the transcript was being fully rewritten to drop one line; it is now truncated in place)
 - Fixed `--setting-sources user` not blocking dynamically discovered project skills
-- Fixed duplicate CLAUDE.md, slash commands, agents, and rules when running from a worktree nested inside its main repo (e.g. `claude -w`)
+- Fixed duplicate VIQO.md, slash commands, agents, and rules when running from a worktree nested inside its main repo (e.g. `viqo -w`)
 - Fixed plugin Stop/SessionEnd/etc hooks not firing after any `/plugin` operation
-- Fixed plugin hooks being silently dropped when two plugins use the same `${CLAUDE_PLUGIN_ROOT}/...` command template
+- Fixed plugin hooks being silently dropped when two plugins use the same `${VIQO_PLUGIN_ROOT}/...` command template
 - Fixed memory leak in long-running SDK/CCR sessions where conversation messages were retained unnecessarily
 - Fixed API 400 errors in forked agents (autocompact, summarization) when resuming sessions that were interrupted mid-tool-batch
 - Fixed "unexpected tool_use_id found in tool_result blocks" error when resuming conversations that start with an orphaned tool result
 - Fixed teammates accidentally spawning nested teammates via the Agent tool's `name` parameter
-- Fixed `CLAUDE_CODE_MAX_OUTPUT_TOKENS` being ignored during conversation compaction
-- Fixed `/compact` summary rendering as a user bubble in SDK consumers (Claude Code Remote web UI, VSCode extension)
+- Fixed `VIQO_CODE_MAX_OUTPUT_TOKENS` being ignored during conversation compaction
+- Fixed `/compact` summary rendering as a user bubble in SDK consumers (Viqo Remote web UI, VSCode extension)
 - Fixed voice space bar getting stuck after a failed voice activation (module loading race, cold GrowthBook)
 - Fixed worktree file copy on Windows
-- Fixed global `.claude` folder detection on Windows
+- Fixed global `.viqo` folder detection on Windows
 - Fixed symlink bypass where writing new files through a symlinked parent directory could escape the working directory in `acceptEdits` mode
 - Fixed sandbox prompting users to approve non-allowed domains when `allowManagedDomainsOnly` is enabled in managed settings — non-allowed domains are now blocked automatically with no bypass
 - Fixed interactive tools (e.g., `AskUserQuestion`) being silently auto-allowed when listed in a skill's allowed-tools, bypassing the permission prompt and running with empty answers
@@ -2724,7 +2724,7 @@
 - Fixed hang when `--mcp-config` points to a corrupted file
 - Fixed slow startup when many skills/plugins are installed
 - Fixed `cd <outside-dir> && <cmd>` permission prompt to surface the chained command instead of only showing "Yes, allow reading from <dir>/"
-- Fixed conditional `.claude/rules/*.md` files (with `paths:` frontmatter) and nested CLAUDE.md files not loading in print mode (`claude -p`)
+- Fixed conditional `.viqo/rules/*.md` files (with `paths:` frontmatter) and nested VIQO.md files not loading in print mode (`viqo -p`)
 - Fixed `/clear` not fully clearing all session caches, reducing memory retention in long sessions
 - Fixed terminal flicker caused by animated elements at the scrollback boundary
 - Fixed UI frame drops on macOS when using MCP servers with OAuth (regression from 2.1.x)
@@ -2732,7 +2732,7 @@
 - Fixed `TeammateIdle` and `TaskCompleted` hooks to support `{"continue": false, "stopReason": "..."}` to stop the teammate, matching `Stop` hook behavior
 - Fixed `WorktreeCreate` and `WorktreeRemove` plugin hooks being silently ignored
 - Fixed skill descriptions with colons (e.g., "Triggers include: X, Y, Z") failing to load from SKILL.md frontmatter
-- Fixed project skills without a `description:` frontmatter field not appearing in Claude's available skills list
+- Fixed project skills without a `description:` frontmatter field not appearing in Viqo's available skills list
 - Fixed `/context` showing identical token counts for all MCP tools from a server
 - Fixed literal `nul` file creation on Windows when the model uses CMD-style `2>nul` redirection in Git Bash
 - Fixed extra blank lines appearing below each tool call in the expanded subagent transcript view (Ctrl+O)
@@ -2745,8 +2745,8 @@
 - Improved UI rendering performance in native binaries with React Compiler
 - Improved `--worktree` startup by eliminating a git subprocess on the startup path
 - Improved macOS startup by eliminating redundant settings-file reloads when managed settings resolve
-- Improved macOS startup for Claude.ai enterprise/team users by skipping an unnecessary keychain lookup
-- Improved MCP `-p` startup by pipelining claude.ai config fetch with local connections and using a concurrency pool instead of sequential batching
+- Improved macOS startup for Viqo.ai enterprise/team users by skipping an unnecessary keychain lookup
+- Improved MCP `-p` startup by pipelining viqo.ai config fetch with local connections and using a concurrency pool instead of sequential batching
 - Improved voice startup by removing imperceptible warmup pulse animations that were causing re-render stutter
 - Improved MCP binary content handling: tools returning PDFs, Office documents, or audio now save decoded bytes to disk with the correct file extension instead of dumping raw base64 into the conversation context. WebFetch also saves binary responses alongside its summary.
 - Improved memory usage in long sessions by stabilizing `onSubmit` across message updates
@@ -2760,19 +2760,19 @@
 - Reduced token usage on multi-agent tasks with more concise subagent final reports
 - Changed Sonnet 4.5 users on Pro/Max/Team Premium to be automatically migrated to Sonnet 4.6
 - Changed the `/resume` picker to show your most recent prompt instead of the first one. This also resolves some titles appearing as `(session)`.
-- Changed claude.ai MCP connector failures to show a notification instead of silently disappearing from the tool list
+- Changed viqo.ai MCP connector failures to show a notification instead of silently disappearing from the tool list
 - Changed example command suggestions to be generated deterministically instead of calling Haiku
 - Changed resuming after compaction to no longer produce a preamble recap before continuing
 - [SDK] Changed task creation to no longer require the `activeForm` field — the spinner falls back to the task subject
 - [VSCode] Added compaction display as a collapsible "Compacted chat" card with the summary inside
-- [VSCode] The permission mode picker now respects `permissions.disableBypassPermissionsMode` from your effective Claude Code settings (including managed/policy settings) — when set to `disable`, bypass permissions mode is hidden from the picker
+- [VSCode] The permission mode picker now respects `permissions.disableBypassPermissionsMode` from your effective Viqo settings (including managed/policy settings) — when set to `disable`, bypass permissions mode is hidden from the picker
 - [VSCode] Fixed RTL text (Arabic, Hebrew, Persian) rendering reversed in the chat panel (regression in v2.1.63)
 
 ## 2.1.68
 
 - Opus 4.6 now defaults to medium effort for Max and Team subscribers. Medium effort works well for most tasks — it's the sweet spot between speed and thoroughness. You can change this anytime with `/model`
 - Re-introduced the "ultrathink" keyword to enable high effort for the next turn
-- Removed Opus 4 and 4.1 from Claude Code on the first-party API — users with these models pinned are automatically moved to Opus 4.6
+- Removed Opus 4 and 4.1 from Viqo on the first-party API — users with these models pinned are automatically moved to Opus 4.6
 
 ## 2.1.66
 
@@ -2783,7 +2783,7 @@
 - Added `/simplify` and `/batch` bundled slash commands
 - Fixed local slash command output like /cost appearing as user-sent messages instead of system messages in the UI
 - Project configs & auto memory now shared across git worktrees of the same repository
-- Added `ENABLE_CLAUDEAI_MCP_SERVERS=false` env var to opt out from making claude.ai MCP servers available
+- Added `ENABLE_CLAUDEAI_MCP_SERVERS=false` env var to opt out from making viqo.ai MCP servers available
 - Improved `/model` command to show the currently active model in the slash command menu
 - Added HTTP hooks, which can POST JSON to a URL and receive JSON instead of running a shell command
 - Fixed listener leak in bridge polling loop
@@ -2817,14 +2817,14 @@
 
 ## 2.1.59
 
-- Claude automatically saves useful context to auto-memory. Manage with /memory
+- Viqo automatically saves useful context to auto-memory. Manage with /memory
 - Added `/copy` command to show an interactive picker when code blocks are present, allowing selection of individual code blocks or the full response.
 - Improved "always allow" prefix suggestions for compound bash commands (e.g. `cd /tmp && git fetch && git push`) to compute smarter per-subcommand prefixes instead of treating the whole command as one
 - Improved ordering of short task lists
 - Improved memory usage in multi-agent sessions by releasing completed subagent task state
-- Fixed MCP OAuth token refresh race condition when running multiple Claude Code instances simultaneously
+- Fixed MCP OAuth token refresh race condition when running multiple Viqo instances simultaneously
 - Fixed shell commands not showing a clear error message when the working directory has been deleted
-- Fixed config file corruption that could wipe authentication when multiple Claude Code instances ran simultaneously
+- Fixed config file corruption that could wipe authentication when multiple Viqo instances ran simultaneously
 
 ## 2.1.58
 
@@ -2832,7 +2832,7 @@
 
 ## 2.1.56
 
-- VS Code: Fixed another cause of "command 'claude-vscode.editor.openLast' not found" crashes
+- VS Code: Fixed another cause of "command 'viqo-vscode.editor.openLast' not found" crashes
 
 ## 2.1.55
 
@@ -2851,21 +2851,21 @@
 
 ## 2.1.52
 
-- VS Code: Fixed extension crash on Windows ("command 'claude-vscode.editor.openLast' not found")
+- VS Code: Fixed extension crash on Windows ("command 'viqo-vscode.editor.openLast' not found")
 
 ## 2.1.51
 
-- Added `claude remote-control` subcommand for external builds, enabling local environment serving for all users.
-- Updated plugin marketplace default git timeout from 30s to 120s and added `CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS` to configure.
+- Added `viqo remote-control` subcommand for external builds, enabling local environment serving for all users.
+- Updated plugin marketplace default git timeout from 30s to 120s and added `VIQO_CODE_PLUGIN_GIT_TIMEOUT_MS` to configure.
 - Added support for custom npm registries and specific version pinning when installing plugins from npm sources
 - BashTool now skips login shell (`-l` flag) by default when a shell snapshot is available, improving command execution performance. Previously this required setting `CLAUDE_BASH_NO_LOGIN=true`.
 - Fixed a security issue where `statusLine` and `fileSuggestion` hook commands could execute without workspace trust acceptance in interactive mode.
 - Tool results larger than 50K characters are now persisted to disk (previously 100K). This reduces context window usage and improves conversation longevity.
 - Fixed a bug where duplicate `control_response` messages (e.g. from WebSocket reconnects) could cause API 400 errors by pushing duplicate assistant messages into the conversation.
-- Added `CLAUDE_CODE_ACCOUNT_UUID`, `CLAUDE_CODE_USER_EMAIL`, and `CLAUDE_CODE_ORGANIZATION_UUID` environment variables for SDK callers to provide account info synchronously, eliminating a race condition where early telemetry events lacked account metadata.
+- Added `VIQO_CODE_ACCOUNT_UUID`, `VIQO_CODE_USER_EMAIL`, and `VIQO_CODE_ORGANIZATION_UUID` environment variables for SDK callers to provide account info synchronously, eliminating a race condition where early telemetry events lacked account metadata.
 - Fixed slash command autocomplete crashing when a plugin's SKILL.md description is a YAML array or other non-string type
 - The `/model` picker now shows human-readable labels (e.g., "Sonnet 4.5") instead of raw model IDs for pinned model versions, with an upgrade hint when a newer version is available.
-- Managed settings can now be set via macOS plist or Windows Registry. Learn more at https://code.claude.com/docs/en/settings#settings-files
+- Managed settings can now be set via macOS plist or Windows Registry. Learn more at https://github.com/inferviqo/viqo/docs/en/settings#settings-files
 
 ## 2.1.50
 
@@ -2874,21 +2874,21 @@
 - Fixed a bug where resumed sessions could be invisible when the working directory involved symlinks, because the session storage path was resolved at different times during startup. Also fixed session data loss on SSH disconnect by flushing session data before hooks and analytics in the graceful shutdown sequence.
 - Linux: Fixed native modules not loading on systems with glibc older than 2.30 (e.g., RHEL 8)
 - Fixed memory leak in agent teams where completed teammate tasks were never garbage collected from session state
-- Fixed `CLAUDE_CODE_SIMPLE` to fully strip down skills, session memory, custom agents, and CLAUDE.md token counting
+- Fixed `VIQO_CODE_SIMPLE` to fully strip down skills, session memory, custom agents, and VIQO.md token counting
 - Fixed `/mcp reconnect` freezing the CLI when given a server name that doesn't exist
 - Fixed memory leak where completed task state objects were never removed from AppState
 - Added support for `isolation: worktree` in agent definitions, allowing agents to declaratively run in isolated git worktrees.
-- `CLAUDE_CODE_SIMPLE` mode now also disables MCP tools, attachments, hooks, and CLAUDE.md file loading for a fully minimal experience.
+- `VIQO_CODE_SIMPLE` mode now also disables MCP tools, attachments, hooks, and VIQO.md file loading for a fully minimal experience.
 - Fixed bug where MCP tools were not discovered when tool search is enabled and a prompt is passed in as a launch argument
 - Improved memory usage during long sessions by clearing internal caches after compaction
-- Added `claude agents` CLI command to list all configured agents
+- Added `viqo agents` CLI command to list all configured agents
 - Improved memory usage during long sessions by clearing large tool results after they have been processed
 - Fixed a memory leak where LSP diagnostic data was never cleaned up after delivery, causing unbounded memory growth in long sessions
 - Fixed a memory leak where completed task output was not freed from memory, reducing memory usage in long sessions with many tasks
 - Improved startup performance for headless mode (`-p` flag) by deferring Yoga WASM and UI component imports
 - Fixed prompt suggestion cache regression that reduced cache hit rates
 - Fixed unbounded memory growth in long sessions by capping file history snapshots
-- Added `CLAUDE_CODE_DISABLE_1M_CONTEXT` environment variable to disable 1M context window support
+- Added `VIQO_CODE_DISABLE_1M_CONTEXT` environment variable to disable 1M context window support
 - Opus 4.6 (fast mode) now includes the full 1M context window
 - VSCode: Added `/extra-usage` command support in VS Code sessions
 - Fixed memory leak where TaskOutput retained recent lines after cleanup
@@ -2898,7 +2898,7 @@
 ## 2.1.49
 
 - Improved MCP OAuth authentication with step-up auth support and discovery caching, reducing redundant network requests during server connections
-- Added `--worktree` (`-w`) flag to start Claude in an isolated git worktree
+- Added `--worktree` (`-w`) flag to start Viqo in an isolated git worktree
 - Subagents support `isolation: "worktree"` for working in a temporary git worktree
 - Added Ctrl+F keybinding to kill background agents (two-press confirmation)
 - Agent definitions support `background: true` to always run as a background task
@@ -2907,7 +2907,7 @@
 - Fixed Ctrl+C and ESC being silently ignored when background agents are running and the main thread is idle. Pressing twice within 3 seconds now kills all background agents.
 - Fixed prompt suggestion cache regression that reduced cache hit rates.
 - Fixed `plugin enable` and `plugin disable` to auto-detect the correct scope when `--scope` is not specified, instead of always defaulting to user scope
-- Simple mode (`CLAUDE_CODE_SIMPLE`) now includes the file edit tool in addition to the Bash tool, allowing direct file editing in simple mode.
+- Simple mode (`VIQO_CODE_SIMPLE`) now includes the file edit tool in addition to the Bash tool, allowing direct file editing in simple mode.
 - Permission suggestions are now populated when safety checks trigger an ask response, enabling SDK consumers to display permission options
 - Sonnet 4.5 with 1M context is being removed from the Max plan in favor of our frontier Sonnet 4.6 model, which now has 1M context. Please switch in /model.
 - Fixed verbose mode not updating thinking block display when toggled via `/config` — memo comparators now correctly detect verbose changes
@@ -2929,9 +2929,9 @@
 
 - Fixed FileWriteTool line counting to preserve intentional trailing blank lines instead of stripping them with `trimEnd()`.
 - Fixed Windows terminal rendering bugs caused by `os.EOL` (`\r\n`) in display code — line counts now show correct values instead of always showing 1 on Windows.
-- Improved VS Code plan preview: auto-updates as Claude iterates, enables commenting only when the plan is ready for review, and keeps the preview open when rejecting so Claude can revise.
+- Improved VS Code plan preview: auto-updates as Viqo iterates, enables commenting only when the plan is ready for review, and keeps the preview open when rejecting so Viqo can revise.
 - Fixed a bug where bold and colored text in markdown output could shift to the wrong characters on Windows due to `\r\n` line endings.
-- Fixed compaction failing when conversation contains many PDF documents by stripping document blocks alongside images before sending to the compaction API (anthropics/claude-code#26188)
+- Fixed compaction failing when conversation contains many PDF documents by stripping document blocks alongside images before sending to the compaction API (inferviqo/viqo#26188)
 - Improved memory usage in long-running sessions by releasing API stream buffers, agent context, and skill state after use
 - Improved startup performance by deferring SessionStart hook execution, reducing time-to-interactive by ~500ms.
 - Fixed an issue where bash tool output was silently discarded on Windows when using MSYS2 or Cygwin shells.
@@ -2939,80 +2939,80 @@
 - Improved memory usage by trimming agent task message history after tasks complete
 - Improved memory usage during long agent sessions by eliminating O(n²) message accumulation in progress updates
 - Fixed the bash permission classifier to validate that returned match descriptions correspond to actual input rules, preventing hallucinated descriptions from incorrectly granting permissions
-- Fixed user-defined agents only loading one file on NFS/FUSE filesystems that report zero inodes (anthropics/claude-code#26044)
-- Fixed plugin agent skills silently failing to load when referenced by bare name instead of fully-qualified plugin name (anthropics/claude-code#25834)
+- Fixed user-defined agents only loading one file on NFS/FUSE filesystems that report zero inodes (inferviqo/viqo#26044)
+- Fixed plugin agent skills silently failing to load when referenced by bare name instead of fully-qualified plugin name (inferviqo/viqo#25834)
 - Search patterns in collapsed tool results are now displayed in quotes for clarity
-- Windows: Fixed CWD tracking temp files never being cleaned up, causing them to accumulate indefinitely (anthropics/claude-code#17600)
+- Windows: Fixed CWD tracking temp files never being cleaned up, causing them to accumulate indefinitely (inferviqo/viqo#17600)
 - Use `ctrl+f` to kill all background agents instead of double-pressing ESC. Background agents now continue running when you press ESC to cancel the main thread, giving you more control over agent lifecycle.
 - Fixed API 400 errors ("thinking blocks cannot be modified") that occurred in sessions with concurrent agents, caused by interleaved streaming content blocks preventing proper message merging.
 - Simplified teammate navigation to use only Shift+Down (with wrapping) instead of both Shift+Up and Shift+Down.
 - Fixed an issue where a single file write/edit error would abort all other parallel file write/edit operations. Independent file mutations now complete even when a sibling fails.
 - Added `last_assistant_message` field to Stop and SubagentStop hook inputs, providing the final assistant response text so hooks can access it without parsing transcript files.
-- Fixed custom session titles set via `/rename` being lost after resuming a conversation (anthropics/claude-code#23610)
+- Fixed custom session titles set via `/rename` being lost after resuming a conversation (inferviqo/viqo#23610)
 - Fixed collapsed read/search hint text overflowing on narrow terminals by truncating from the start.
 - Fixed an issue where bash commands with backslash-newline continuation lines (e.g., long commands split across multiple lines with `\`) would produce spurious empty arguments, potentially breaking command execution.
-- Fixed built-in slash commands (`/help`, `/model`, `/compact`, etc.) being hidden from the autocomplete dropdown when many user skills are installed (anthropics/claude-code#22020)
+- Fixed built-in slash commands (`/help`, `/model`, `/compact`, etc.) being hidden from the autocomplete dropdown when many user skills are installed (inferviqo/viqo#22020)
 - Fixed MCP servers not appearing in the MCP Management Dialog after deferred loading
-- Fixed session name persisting in status bar after `/clear` command (anthropics/claude-code#26082)
-- Fixed crash when a skill's `name` or `description` in SKILL.md frontmatter is a bare number (e.g., `name: 3000`) — the value is now properly coerced to a string (anthropics/claude-code#25837)
-- Fixed /resume silently dropping sessions when the first message exceeds 16KB or uses array-format content (anthropics/claude-code#25721)
-- Added `chat:newline` keybinding action for configurable multi-line input (anthropics/claude-code#26075)
-- Added `added_dirs` to the statusline JSON `workspace` section, exposing directories added via `/add-dir` to external scripts (anthropics/claude-code#26096)
-- Fixed `claude doctor` misclassifying mise and asdf-managed installations as native installs (anthropics/claude-code#26033)
-- Fixed zsh heredoc failing with "read-only file system" error in sandboxed commands (anthropics/claude-code#25990)
-- Fixed agent progress indicator showing inflated tool use count (anthropics/claude-code#26023)
-- Fixed image pasting not working on WSL2 systems where Windows copies images as BMP format (anthropics/claude-code#25935)
-- Fixed background agent results returning raw transcript data instead of the agent's final answer (anthropics/claude-code#26012)
-- Fixed Warp terminal incorrectly prompting for Shift+Enter setup when it supports it natively (anthropics/claude-code#25957)
-- Fixed CJK wide characters causing misaligned timestamps and layout elements in the TUI (anthropics/claude-code#26084)
-- Fixed custom agent `model` field in `.claude/agents/*.md` being ignored when spawning team teammates (anthropics/claude-code#26064)
-- Fixed plan mode being lost after context compaction, causing the model to switch from planning to implementation mode (anthropics/claude-code#26061)
-- Fixed `alwaysThinkingEnabled: true` in settings.json not enabling thinking mode on Bedrock and Vertex providers (anthropics/claude-code#26074)
-- Fixed `tool_decision` OTel telemetry event not being emitted in headless/SDK mode (anthropics/claude-code#26059)
-- Fixed session name being lost after context compaction — renamed sessions now preserve their custom title through compaction (anthropics/claude-code#26121)
-- Increased initial session count in resume picker from 10 to 50 for faster session discovery (anthropics/claude-code#26123)
-- Windows: fixed worktree session matching when drive letter casing differs (anthropics/claude-code#26123)
-- Fixed `/resume <session-id>` failing to find sessions whose first message exceeds 16KB (anthropics/claude-code#25920)
-- Fixed "Always allow" on multiline bash commands creating invalid permission patterns that corrupt settings (anthropics/claude-code#25909)
-- Fixed React crash (error #31) when a skill's `argument-hint` in SKILL.md frontmatter uses YAML sequence syntax (e.g., `[topic: foo | bar]`) — the value is now properly coerced to a string (anthropics/claude-code#25826)
-- Fixed crash when using `/fork` on sessions that used web search — null entries in search results from transcript deserialization are now handled gracefully (anthropics/claude-code#25811)
-- Fixed read-only git commands triggering FSEvents file watcher loops on macOS by adding --no-optional-locks flag (anthropics/claude-code#25750)
-- Fixed custom agents and skills not being discovered when running from a git worktree — project-level `.claude/agents/` and `.claude/skills/` from the main repository are now included (anthropics/claude-code#25816)
-- Fixed non-interactive subcommands like `claude doctor` and `claude plugin validate` being blocked inside nested Claude sessions (anthropics/claude-code#25803)
-- Windows: Fixed the same CLAUDE.md file being loaded twice when drive letter casing differs between paths (anthropics/claude-code#25756)
-- Fixed inline code spans in markdown being incorrectly parsed as bash commands (anthropics/claude-code#25792)
-- Fixed teammate spinners not respecting custom spinnerVerbs from settings (anthropics/claude-code#25748)
-- Fixed shell commands permanently failing after a command deletes its own working directory (anthropics/claude-code#26136)
-- Fixed hooks (PreToolUse, PostToolUse) silently failing to execute on Windows by using Git Bash instead of cmd.exe (anthropics/claude-code#25981)
-- Fixed LSP `findReferences` and other location-based operations returning results from gitignored files (e.g., `node_modules/`, `venv/`) (anthropics/claude-code#26051)
-- Moved config backup files from home directory root to `~/.claude/backups/` to reduce home directory clutter (anthropics/claude-code#26130)
-- Fixed sessions with large first prompts (>16KB) disappearing from the /resume list (anthropics/claude-code#26140)
-- Fixed shell functions with double-underscore prefixes (e.g., `__git_ps1`) not being preserved across shell sessions (anthropics/claude-code#25824)
-- Fixed spinner showing "0 tokens" counter before any tokens have been received (anthropics/claude-code#26105)
-- VSCode: Fixed conversation messages appearing dimmed while the AskUserQuestion dialog is open (anthropics/claude-code#26078)
-- Fixed background tasks failing in git worktrees due to remote URL resolution reading from worktree-specific gitdir instead of the main repository config (anthropics/claude-code#26065)
-- Fixed Right Alt key leaving visible `[25~` escape sequence residue in the input field on Windows/Git Bash terminals (anthropics/claude-code#25943)
-- The `/rename` command now updates the terminal tab title by default (anthropics/claude-code#25789)
-- Fixed Edit tool silently corrupting Unicode curly quotes (\u201c\u201d \u2018\u2019) by replacing them with straight quotes when making edits (anthropics/claude-code#26141)
+- Fixed session name persisting in status bar after `/clear` command (inferviqo/viqo#26082)
+- Fixed crash when a skill's `name` or `description` in SKILL.md frontmatter is a bare number (e.g., `name: 3000`) — the value is now properly coerced to a string (inferviqo/viqo#25837)
+- Fixed /resume silently dropping sessions when the first message exceeds 16KB or uses array-format content (inferviqo/viqo#25721)
+- Added `chat:newline` keybinding action for configurable multi-line input (inferviqo/viqo#26075)
+- Added `added_dirs` to the statusline JSON `workspace` section, exposing directories added via `/add-dir` to external scripts (inferviqo/viqo#26096)
+- Fixed `viqo doctor` misclassifying mise and asdf-managed installations as native installs (inferviqo/viqo#26033)
+- Fixed zsh heredoc failing with "read-only file system" error in sandboxed commands (inferviqo/viqo#25990)
+- Fixed agent progress indicator showing inflated tool use count (inferviqo/viqo#26023)
+- Fixed image pasting not working on WSL2 systems where Windows copies images as BMP format (inferviqo/viqo#25935)
+- Fixed background agent results returning raw transcript data instead of the agent's final answer (inferviqo/viqo#26012)
+- Fixed Warp terminal incorrectly prompting for Shift+Enter setup when it supports it natively (inferviqo/viqo#25957)
+- Fixed CJK wide characters causing misaligned timestamps and layout elements in the TUI (inferviqo/viqo#26084)
+- Fixed custom agent `model` field in `.viqo/agents/*.md` being ignored when spawning team teammates (inferviqo/viqo#26064)
+- Fixed plan mode being lost after context compaction, causing the model to switch from planning to implementation mode (inferviqo/viqo#26061)
+- Fixed `alwaysThinkingEnabled: true` in settings.json not enabling thinking mode on Bedrock and Vertex providers (inferviqo/viqo#26074)
+- Fixed `tool_decision` OTel telemetry event not being emitted in headless/SDK mode (inferviqo/viqo#26059)
+- Fixed session name being lost after context compaction — renamed sessions now preserve their custom title through compaction (inferviqo/viqo#26121)
+- Increased initial session count in resume picker from 10 to 50 for faster session discovery (inferviqo/viqo#26123)
+- Windows: fixed worktree session matching when drive letter casing differs (inferviqo/viqo#26123)
+- Fixed `/resume <session-id>` failing to find sessions whose first message exceeds 16KB (inferviqo/viqo#25920)
+- Fixed "Always allow" on multiline bash commands creating invalid permission patterns that corrupt settings (inferviqo/viqo#25909)
+- Fixed React crash (error #31) when a skill's `argument-hint` in SKILL.md frontmatter uses YAML sequence syntax (e.g., `[topic: foo | bar]`) — the value is now properly coerced to a string (inferviqo/viqo#25826)
+- Fixed crash when using `/fork` on sessions that used web search — null entries in search results from transcript deserialization are now handled gracefully (inferviqo/viqo#25811)
+- Fixed read-only git commands triggering FSEvents file watcher loops on macOS by adding --no-optional-locks flag (inferviqo/viqo#25750)
+- Fixed custom agents and skills not being discovered when running from a git worktree — project-level `.viqo/agents/` and `.viqo/skills/` from the main repository are now included (inferviqo/viqo#25816)
+- Fixed non-interactive subcommands like `viqo doctor` and `viqo plugin validate` being blocked inside nested Viqo sessions (inferviqo/viqo#25803)
+- Windows: Fixed the same VIQO.md file being loaded twice when drive letter casing differs between paths (inferviqo/viqo#25756)
+- Fixed inline code spans in markdown being incorrectly parsed as bash commands (inferviqo/viqo#25792)
+- Fixed teammate spinners not respecting custom spinnerVerbs from settings (inferviqo/viqo#25748)
+- Fixed shell commands permanently failing after a command deletes its own working directory (inferviqo/viqo#26136)
+- Fixed hooks (PreToolUse, PostToolUse) silently failing to execute on Windows by using Git Bash instead of cmd.exe (inferviqo/viqo#25981)
+- Fixed LSP `findReferences` and other location-based operations returning results from gitignored files (e.g., `node_modules/`, `venv/`) (inferviqo/viqo#26051)
+- Moved config backup files from home directory root to `~/.viqo/backups/` to reduce home directory clutter (inferviqo/viqo#26130)
+- Fixed sessions with large first prompts (>16KB) disappearing from the /resume list (inferviqo/viqo#26140)
+- Fixed shell functions with double-underscore prefixes (e.g., `__git_ps1`) not being preserved across shell sessions (inferviqo/viqo#25824)
+- Fixed spinner showing "0 tokens" counter before any tokens have been received (inferviqo/viqo#26105)
+- VSCode: Fixed conversation messages appearing dimmed while the AskUserQuestion dialog is open (inferviqo/viqo#26078)
+- Fixed background tasks failing in git worktrees due to remote URL resolution reading from worktree-specific gitdir instead of the main repository config (inferviqo/viqo#26065)
+- Fixed Right Alt key leaving visible `[25~` escape sequence residue in the input field on Windows/Git Bash terminals (inferviqo/viqo#25943)
+- The `/rename` command now updates the terminal tab title by default (inferviqo/viqo#25789)
+- Fixed Edit tool silently corrupting Unicode curly quotes (\u201c\u201d \u2018\u2019) by replacing them with straight quotes when making edits (inferviqo/viqo#26141)
 - Fixed OSC 8 hyperlinks only being clickable on the first line when link text wraps across multiple terminal lines.
 
 ## 2.1.46
 
 - Fixed orphaned CC processes after terminal disconnect on macOS
-- Added support for using claude.ai MCP connectors in Claude Code
+- Added support for using viqo.ai MCP connectors in Viqo
 
 ## 2.1.45
 
-- Added support for Claude Sonnet 4.6
+- Added support for Viqo Sonnet 4.6
 - Added support for reading `enabledPlugins` and `extraKnownMarketplaces` from `--add-dir` directories
 - Added `spinnerTipsOverride` setting to customize spinner tips — configure `tips` with an array of custom tip strings, and optionally set `excludeDefault: true` to show only your custom tips instead of the built-in ones
 - Added `SDKRateLimitInfo` and `SDKRateLimitEvent` types to the SDK, enabling consumers to receive rate limit status updates including utilization, reset times, and overage information
-- Fixed Agent Teams teammates failing on Bedrock, Vertex, and Foundry by propagating API provider environment variables to tmux-spawned processes (anthropics/claude-code#23561)
-- Fixed sandbox "operation not permitted" errors when writing temporary files on macOS by using the correct per-user temp directory (anthropics/claude-code#21654)
-- Fixed Task tool (backgrounded agents) crashing with a `ReferenceError` on completion (anthropics/claude-code#22087)
+- Fixed Agent Teams teammates failing on Bedrock, Vertex, and Foundry by propagating API provider environment variables to tmux-spawned processes (inferviqo/viqo#23561)
+- Fixed sandbox "operation not permitted" errors when writing temporary files on macOS by using the correct per-user temp directory (inferviqo/viqo#21654)
+- Fixed Task tool (backgrounded agents) crashing with a `ReferenceError` on completion (inferviqo/viqo#22087)
 - Fixed autocomplete suggestions not being accepted on Enter when images are pasted in the input
 - Fixed skills invoked by subagents incorrectly appearing in main session context after compaction
-- Fixed excessive `.claude.json.backup` files accumulating on every startup
+- Fixed excessive `.viqo.json.backup` files accumulating on every startup
 - Fixed plugin-provided commands, agents, and hooks not being available immediately after installation without requiring a restart
 - Improved startup performance by removing eager loading of session history for stats caching
 - Improved memory usage for shell commands that produce large output — RSS no longer grows unboundedly with command output size
@@ -3027,7 +3027,7 @@
 ## 2.1.43
 
 - Fixed AWS auth refresh hanging indefinitely by adding a 3-minute timeout
-- Fixed spurious warnings for non-agent markdown files in `.claude/agents/` directory
+- Fixed spurious warnings for non-agent markdown files in `.viqo/agents/` directory
 - Fixed structured-outputs beta header being sent unconditionally on Vertex/Bedrock
 
 ## 2.1.42
@@ -3040,7 +3040,7 @@
 
 ## 2.1.41
 
-- Added guard against launching Claude Code inside another Claude Code session
+- Added guard against launching Viqo inside another Viqo session
 - Fixed Agent Teams using wrong model identifier for Bedrock, Vertex, and Foundry customers
 - Fixed a crash when MCP tools return image content during streaming
 - Fixed /resume session previews showing raw XML tags instead of readable command names
@@ -3048,7 +3048,7 @@
 - Fixed plugin browse showing misleading "Space to Toggle" hint for already-installed plugins
 - Fixed hook blocking errors (exit code 2) not showing stderr to the user
 - Added `speed` attribute to OTel events and trace spans for fast mode visibility
-- Added `claude auth login`, `claude auth status`, and `claude auth logout` CLI subcommands
+- Added `viqo auth login`, `viqo auth status`, and `viqo auth logout` CLI subcommands
 - Added Windows ARM64 (win32-arm64) native binary support
 - Improved `/rename` to auto-generate session name from conversation context when called without arguments
 - Improved narrow terminal layout for prompt footer
@@ -3079,7 +3079,7 @@
 - Fixed text between tool uses disappearing when not using streaming
 - Fixed duplicate sessions when resuming in VS Code extension
 - Improved heredoc delimiter parsing to prevent command smuggling
-- Blocked writes to `.claude/skills` directory in sandbox mode
+- Blocked writes to `.viqo/skills` directory in sandbox mode
 
 ## 2.1.37
 
@@ -3087,7 +3087,7 @@
 
 ## 2.1.36
 
-- Fast mode is now available for Opus 4.6. Learn more at https://code.claude.com/docs/en/fast-mode
+- Fast mode is now available for Opus 4.6. Learn more at https://github.com/inferviqo/viqo/docs/en/fast-mode
 
 ## 2.1.34
 
@@ -3109,17 +3109,17 @@
 - Fixed `/resume` session picker showing raw XML markup instead of clean titles for sessions started with slash commands
 - Improved error messages for API connection failures — now shows specific cause (e.g., ECONNREFUSED, SSL errors) instead of generic "Connection error"
 - Errors from invalid managed settings are now surfaced
-- VSCode: Added support for remote sessions, allowing OAuth users to browse and resume sessions from claude.ai
+- VSCode: Added support for remote sessions, allowing OAuth users to browse and resume sessions from viqo.ai
 - VSCode: Added git branch and message count to the session picker, with support for searching by branch name
 - VSCode: Fixed scroll-to-bottom under-scrolling on initial session load and session switch
 
 ## 2.1.32
 
-- Claude Opus 4.6 is now available!
-- Added research preview agent teams feature for multi-agent collaboration (token-intensive feature, requires setting CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1)
-- Claude now automatically records and recalls memories as it works
+- Viqo Opus 4.6 is now available!
+- Added research preview agent teams feature for multi-agent collaboration (token-intensive feature, requires setting VIQO_CODE_EXPERIMENTAL_AGENT_TEAMS=1)
+- Viqo now automatically records and recalls memories as it works
 - Added "Summarize from here" to the message selector, allowing partial conversation summarization.
-- Skills defined in `.claude/skills/` within additional directories (`--add-dir`) are now loaded automatically.
+- Skills defined in `.viqo/skills/` within additional directories (`--add-dir`) are now loaded automatically.
 - Fixed `@` file completion showing incorrect relative paths when running from a subdirectory
 - Updated --resume to re-use --agent value specified in previous conversation by default.
 - Fixed: Bash tool no longer throws "Bad substitution" errors when heredocs contain JavaScript template literals like `${index + 1}`, which previously interrupted tool execution
@@ -3134,19 +3134,19 @@
 - Added support for full-width (zenkaku) space input from Japanese IME in checkbox selection
 - Fixed PDF too large errors permanently locking up sessions, requiring users to start a new conversation
 - Fixed bash commands incorrectly reporting failure with "Read-only file system" errors when sandbox mode was enabled
-- Fixed a crash that made sessions unusable after entering plan mode when project config in `~/.claude.json` was missing default fields
+- Fixed a crash that made sessions unusable after entering plan mode when project config in `~/.viqo.json` was missing default fields
 - Fixed `temperatureOverride` being silently ignored in the streaming API path, causing all streaming requests to use the default temperature (1) regardless of the configured override
 - Fixed LSP shutdown/exit compatibility with strict language servers that reject null params
 - Improved system prompts to more clearly guide the model toward using dedicated tools (Read, Edit, Glob, Grep) instead of bash equivalents (`cat`, `sed`, `grep`, `find`), reducing unnecessary bash command usage
 - Improved PDF and request size error messages to show actual limits (100 pages, 20MB)
 - Reduced layout jitter in the terminal when the spinner appears and disappears during streaming
-- Removed misleading Anthropic API pricing from model selector for third-party provider (Bedrock, Vertex, Foundry) users
+- Removed misleading Inferviqo API pricing from model selector for third-party provider (Bedrock, Vertex, Foundry) users
 
 ## 2.1.30
 
 - Added `pages` parameter to the Read tool for PDFs, allowing specific page ranges to be read (e.g., `pages: "1-5"`). Large PDFs (>10 pages) now return a lightweight reference when `@` mentioned instead of being inlined into context.
-- Added pre-configured OAuth client credentials for MCP servers that don't support Dynamic Client Registration (e.g., Slack). Use `--client-id` and `--client-secret` with `claude mcp add`.
-- Added `/debug` for Claude to help troubleshoot the current session
+- Added pre-configured OAuth client credentials for MCP servers that don't support Dynamic Client Registration (e.g., Slack). Use `--client-id` and `--client-secret` with `viqo mcp add`.
+- Added `/debug` for Viqo to help troubleshoot the current session
 - Added support for additional `git log` and `git show` flags in read-only mode (e.g., `--topo-order`, `--cherry-pick`, `--format`, `--raw`)
 - Added token count, tool uses, and duration metrics to Task tool results
 - Added reduced motion mode to the config
@@ -3171,7 +3171,7 @@
 ## 2.1.27
 
 - Added tool call failures and denials to debug logs
-- Fixed context management validation error for gateway users, ensuring `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` avoids the error
+- Fixed context management validation error for gateway users, ensuring `VIQO_CODE_DISABLE_EXPERIMENTAL_BETAS=1` avoids the error
 - Added `--from-pr` flag to resume sessions linked to a specific GitHub PR number or URL
 - Sessions are now automatically linked to PRs when created via `gh pr create`
 - Fixed /context command not displaying colored output
@@ -3182,7 +3182,7 @@
 
 ## 2.1.25
 
-- Fixed beta header validation error for gateway users on Bedrock and Vertex, ensuring `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` avoids the error
+- Fixed beta header validation error for gateway users on Bedrock and Vertex, ensuring `VIQO_CODE_DISABLE_EXPERIMENTAL_BETAS=1` avoids the error
 
 ## 2.1.23
 
@@ -3211,7 +3211,7 @@
 - Fixed task IDs potentially being reused after deletion
 - Fixed file search not working in VS Code extension on Windows
 - Improved read/search progress indicators to show "Reading…" while in progress and "Read" when complete
-- Improved Claude to prefer file operation tools (Read, Edit, Write) over bash equivalents (cat, sed, awk)
+- Improved Viqo to prefer file operation tools (Read, Edit, Write) over bash equivalents (cat, sed, awk)
 - [VSCode] Added automatic Python virtual environment activation, ensuring `python` and `pip` commands use the correct interpreter (configurable via `claudeCode.usePythonEnvironment` setting)
 - [VSCode] Fixed message action buttons having incorrect background colors
 
@@ -3220,7 +3220,7 @@
 - Added arrow key history navigation in vim normal mode when cursor cannot move further
 - Added external editor shortcut (Ctrl+G) to the help menu for better discoverability
 - Added PR review status indicator to the prompt footer, showing the current branch's PR state (approved, changes requested, pending, or draft) as a colored dot with a clickable link
-- Added support for loading `CLAUDE.md` files from additional directories specified via `--add-dir` flag (requires setting `CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`)
+- Added support for loading `VIQO.md` files from additional directories specified via `--add-dir` flag (requires setting `VIQO_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD=1`)
 - Added ability to delete tasks via the `TaskUpdate` tool
 - Fixed session compaction issues that could cause resume to load full history instead of the compact summary
 - Fixed agents sometimes ignoring user messages sent while actively working on a task
@@ -3248,10 +3248,10 @@
 
 ## 2.1.19
 
-- Added env var `CLAUDE_CODE_ENABLE_TASKS`, set to `false` to keep the old system temporarily
+- Added env var `VIQO_CODE_ENABLE_TASKS`, set to `false` to keep the old system temporarily
 - Added shorthand `$0`, `$1`, etc. for accessing individual arguments in custom commands
 - Fixed crashes on processors without AVX instruction support
-- Fixed dangling Claude Code processes when terminal is closed by catching EIO errors from `process.exit()` and using SIGKILL as fallback
+- Fixed dangling Viqo processes when terminal is closed by catching EIO errors from `process.exit()` and using SIGKILL as fallback
 - Fixed `/rename` and `/tag` not updating the correct session when resuming from a different directory (e.g., git worktrees)
 - Fixed resuming sessions by custom title not working when run from a different directory
 - Fixed pasted text content being lost when using prompt stash (Ctrl+S) and restore
@@ -3265,7 +3265,7 @@
 
 ## 2.1.18
 
-- Added customizable keyboard shortcuts. Configure keybindings per context, create chord sequences, and personalize your workflow. Run `/keybindings` to get started. Learn more at https://code.claude.com/docs/en/keybindings
+- Added customizable keyboard shortcuts. Configure keybindings per context, create chord sequences, and personalize your workflow. Run `/keybindings` to get started. Learn more at https://github.com/inferviqo/viqo/docs/en/keybindings
 
 ## 2.1.17
 
@@ -3275,15 +3275,15 @@
 
 - Added new task management system, including new capabilities like dependency tracking
 - [VSCode] Added native plugin management support
-- [VSCode] Added ability for OAuth users to browse and resume remote Claude sessions from the Sessions dialog
+- [VSCode] Added ability for OAuth users to browse and resume remote Viqo sessions from the Sessions dialog
 - Fixed out-of-memory crashes when resuming sessions with heavy subagent usage
 - Fixed an issue where the "context remaining" warning was not hidden after running `/compact`
 - Fixed session titles on the resume screen not respecting the user's language setting
-- [IDE] Fixed a race condition on Windows where the Claude Code sidebar view container would not appear on start
+- [IDE] Fixed a race condition on Windows where the Viqo sidebar view container would not appear on start
 
 ## 2.1.15
 
-- Added deprecation notification for npm installations - run `claude install` or see https://docs.anthropic.com/en/docs/claude-code/getting-started for more options
+- Added deprecation notification for npm installations - run `viqo install` or see https://github.com/inferviqo/viqo/en/docs/viqo/getting-started for more options
 - Improved UI rendering performance with React Compiler
 - Fixed the "Context left until auto-compact" warning not disappearing after running `/compact`
 - Fixed MCP stdio server timeout not killing child process, which could cause UI freezes
@@ -3352,15 +3352,15 @@
 - Fixed bash commands failing on Windows when temp directory paths contained characters like `t` or `n` that were misinterpreted as escape sequences
 - Improved typing responsiveness by reducing memory allocation overhead in terminal rendering
 - Enabled MCP tool search auto mode by default for all users. When MCP tool descriptions exceed 10% of the context window, they are automatically deferred and discovered via the MCPSearch tool instead of being loaded upfront. This reduces context usage for users with many MCP tools configured. Users can disable this by adding `MCPSearch` to `disallowedTools` in their settings.
-- Changed OAuth and API Console URLs from console.anthropic.com to platform.claude.com
-- [VSCode] Fixed `claudeProcessWrapper` setting passing the wrapper path instead of the Claude binary path
+- Changed OAuth and API Console URLs from console.inferviqo.com to github.com/inferviqo/viqo
+- [VSCode] Fixed `claudeProcessWrapper` setting passing the wrapper path instead of the Viqo binary path
 
 ## 2.1.6
 
 - Added search functionality to `/config` command for quickly filtering settings
 - Added Updates section to `/doctor` showing auto-update channel and available npm versions (stable/latest)
 - Added date range filtering to `/stats` command - press `r` to cycle between Last 7 days, Last 30 days, and All time
-- Added automatic discovery of skills from nested `.claude/skills` directories when working with files in subdirectories
+- Added automatic discovery of skills from nested `.viqo/skills` directories when working with files in subdirectories
 - Added `context_window.used_percentage` and `context_window.remaining_percentage` fields to status line input for easier context window display
 - Added an error display when the editor fails during Ctrl+G
 - Fixed permission bypass via shell line continuation that could allow blocked commands to execute
@@ -3374,23 +3374,23 @@
 - Fixed corrupted config backup files accumulating in the home directory (now only one backup is created per config file)
 - Fixed `mcp list` and `mcp get` commands leaving orphaned MCP server processes
 - Fixed visual artifacts in ink2 mode when nodes become hidden via `display:none`
-- Improved the external CLAUDE.md imports approval dialog to show which files are being imported and from where
+- Improved the external VIQO.md imports approval dialog to show which files are being imported and from where
 - Improved the `/tasks` dialog to go directly to task details when there's only one background task running
 - Improved @ autocomplete with icons for different suggestion types and single-line formatting
-- Updated "Help improve Claude" setting fetch to refresh OAuth and retry when it fails due to a stale OAuth token
+- Updated "Help improve Viqo" setting fetch to refresh OAuth and retry when it fails due to a stale OAuth token
 - Changed task notification display to cap at 3 lines with overflow summary when multiple background tasks complete simultaneously
-- Changed terminal title to "Claude Code" on startup for better window identification
+- Changed terminal title to "Viqo" on startup for better window identification
 - Removed ability to @-mention MCP servers to enable/disable - use `/mcp enable <name>` instead
 - [VSCode] Fixed usage indicator not updating after manual compact
 
 ## 2.1.5
 
-- Added `CLAUDE_CODE_TMPDIR` environment variable to override the temp directory used for internal temp files, useful for environments with custom temp directory requirements
+- Added `VIQO_CODE_TMPDIR` environment variable to override the temp directory used for internal temp files, useful for environments with custom temp directory requirements
 
 ## 2.1.4
 
-- Added `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS` environment variable to disable all background task functionality including auto-backgrounding and the Ctrl+B shortcut
-- Fixed "Help improve Claude" setting fetch to refresh OAuth and retry when it fails due to a stale OAuth token
+- Added `VIQO_CODE_DISABLE_BACKGROUND_TASKS` environment variable to disable all background task functionality including auto-backgrounding and the Ctrl+B shortcut
+- Fixed "Help improve Viqo" setting fetch to refresh OAuth and retry when it fails due to a stale OAuth token
 
 ## 2.1.3
 
@@ -3410,7 +3410,7 @@
 
 ## 2.1.2
 
-- Added source path metadata to images dragged onto the terminal, helping Claude understand where images originated
+- Added source path metadata to images dragged onto the terminal, helping Viqo understand where images originated
 - Added clickable hyperlinks for file paths in tool output in terminals that support OSC 8 (like iTerm)
 - Added support for Windows Package Manager (winget) installations with automatic detection and update instructions
 - Added Shift+Tab keyboard shortcut in plan mode to quickly select "auto-accept edits" option
@@ -3418,7 +3418,7 @@
 - Added `agent_type` to SessionStart hook input, populated if `--agent` is specified
 - Fixed a command injection vulnerability in bash command processing where malformed input could execute arbitrary commands
 - Fixed a memory leak where tree-sitter parse trees were not being freed, causing WASM memory to grow unbounded over long sessions
-- Fixed binary files (images, PDFs, etc.) being accidentally included in memory when using `@include` directives in CLAUDE.md files
+- Fixed binary files (images, PDFs, etc.) being accidentally included in memory when using `@include` directives in VIQO.md files
 - Fixed updates incorrectly claiming another installation is in progress
 - Fixed crash when socket files exist in watched directories (defense-in-depth for EOPNOTSUPP errors)
 - Fixed remote session URL and teleport being broken when using `/tasks` command
@@ -3426,19 +3426,19 @@
 - Improved Option-as-Meta hint on macOS to show terminal-specific instructions for native CSIu terminals like iTerm2, Kitty, and WezTerm
 - Improved error message when pasting images over SSH to suggest using `scp` instead of the unhelpful clipboard shortcut hint
 - Improved permission explainer to not flag routine dev workflows (git fetch/rebase, npm install, tests, PRs) as medium risk
-- Changed large bash command outputs to be saved to disk instead of truncated, allowing Claude to read the full content
+- Changed large bash command outputs to be saved to disk instead of truncated, allowing Viqo to read the full content
 - Changed large tool outputs to be persisted to disk instead of truncated, providing full output access via file references
 - Changed `/plugins` installed tab to unify plugins and MCPs with scope-based grouping
-- Deprecated Windows managed settings path `C:\ProgramData\ClaudeCode\managed-settings.json` - administrators should migrate to `C:\Program Files\ClaudeCode\managed-settings.json`
+- Deprecated Windows managed settings path `C:\ProgramData\Viqo\managed-settings.json` - administrators should migrate to `C:\Program Files\Viqo\managed-settings.json`
 - [SDK] Changed minimum zod peer dependency to ^4.0.0
 - [VSCode] Fixed usage display not updating after manual compact
 
 ## 2.1.0
 
-- Added automatic skill hot-reload - skills created or modified in `~/.claude/skills` or `.claude/skills` are now immediately available without restarting the session
+- Added automatic skill hot-reload - skills created or modified in `~/.viqo/skills` or `.viqo/skills` are now immediately available without restarting the session
 - Added support for running skills and slash commands in a forked sub-agent context using `context: fork` in skill frontmatter
 - Added support for `agent` field in skills to specify agent type for execution
-- Added `language` setting to configure Claude's response language (e.g., language: "japanese")
+- Added `language` setting to configure Viqo's response language (e.g., language: "japanese")
 - Changed Shift+Enter to work out of the box in iTerm2, WezTerm, Ghostty, and Kitty without modifying terminal configs
 - Added `respectGitignore` support in `settings.json` for per-project control over @-mention file picker behavior
 - Added `IS_DEMO` environment variable to hide email and organization from the UI, useful for streaming or recording sessions
@@ -3452,21 +3452,21 @@
 - Fixed plugin path resolution for file-based marketplace sources
 - Fixed LSP tool being incorrectly enabled when no LSP servers were configured
 - Fixed background tasks failing with "git repository not found" error for repositories with dots in their names
-- Fixed Claude in Chrome support for WSL environments
+- Fixed Viqo in Chrome support for WSL environments
 - Fixed Windows native installer silently failing when executable creation fails
 - Improved CLI help output to display options and subcommands in alphabetical order for easier navigation
 - Added wildcard pattern matching for Bash tool permissions using `*` at any position in rules (e.g., `Bash(npm *)`, `Bash(* install)`, `Bash(git * main)`)
 - Added unified Ctrl+B backgrounding for both bash commands and agents - pressing Ctrl+B now backgrounds all running foreground tasks simultaneously
 - Added support for MCP `list_changed` notifications, allowing MCP servers to dynamically update their available tools, prompts, and resources without requiring reconnection
-- Added `/teleport` and `/remote-env` slash commands for claude.ai subscribers, allowing them to resume and configure remote sessions
+- Added `/teleport` and `/remote-env` slash commands for viqo.ai subscribers, allowing them to resume and configure remote sessions
 - Added support for disabling specific agents using `Task(AgentName)` syntax in settings.json permissions or the `--disallowedTools` CLI flag
 - Added hooks support to agent frontmatter, allowing agents to define PreToolUse, PostToolUse, and Stop hooks scoped to the agent's lifecycle
 - Added hooks support for skill and slash command frontmatter
 - Added new Vim motions: `;` and `,` to repeat f/F/t/T motions, `y` operator for yank with `yy`/`Y`, `p`/`P` for paste, text objects (`iw`, `aw`, `iW`, `aW`, `i"`, `a"`, `i'`, `a'`, `i(`, `a(`, `i[`, `a[`, `i{`, `a{`), `>>` and `<<` for indent/dedent, and `J` to join lines
 - Added `/plan` command shortcut to enable plan mode directly from the prompt
 - Added slash command autocomplete support when `/` appears anywhere in input, not just at the beginning
-- Added `--tools` flag support in interactive mode to restrict which built-in tools Claude can use during interactive sessions
-- Added `CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS` environment variable to override the default file read token limit
+- Added `--tools` flag support in interactive mode to restrict which built-in tools Viqo can use during interactive sessions
+- Added `VIQO_CODE_FILE_READ_MAX_OUTPUT_TOKENS` environment variable to override the default file read token limit
 - Added support for `once: true` config for hooks
 - Added support for YAML-style lists in frontmatter `allowed-tools` field for cleaner skill declarations
 - Added support for prompt and agent hook types from plugins (previously only command hooks were supported)
@@ -3484,15 +3484,15 @@
 - Fixed a hang when reading FIFO files by skipping symlink resolution for special file types
 - Fixed terminal keyboard mode not being reset on exit in Ghostty, iTerm2, Kitty, and WezTerm
 - Fixed Alt+B and Alt+F (word navigation) not working in iTerm2, Ghostty, Kitty, and WezTerm
-- Fixed `${CLAUDE_PLUGIN_ROOT}` not being substituted in plugin `allowed-tools` frontmatter, which caused tools to incorrectly require approval
+- Fixed `${VIQO_PLUGIN_ROOT}` not being substituted in plugin `allowed-tools` frontmatter, which caused tools to incorrectly require approval
 - Fixed files created by the Write tool using hardcoded 0o600 permissions instead of respecting the system umask
 - Fixed commands with `$()` command substitution failing with parse errors
 - Fixed multi-line bash commands with backslash continuations being incorrectly split and flagged for permissions
 - Fixed bash command prefix extraction to correctly identify subcommands after global options (e.g., `git -C /path log` now correctly matches `Bash(git log:*)` rules)
-- Fixed slash commands passed as CLI arguments (e.g., `claude /context`) not being executed properly
+- Fixed slash commands passed as CLI arguments (e.g., `viqo /context`) not being executed properly
 - Fixed pressing Enter after Tab-completing a slash command selecting a different command instead of submitting the completed one
 - Fixed slash command argument hint flickering and inconsistent display when typing commands with arguments
-- Fixed Claude sometimes redundantly invoking the Skill tool when running slash commands directly
+- Fixed Viqo sometimes redundantly invoking the Skill tool when running slash commands directly
 - Fixed skill token estimates in `/context` to accurately reflect frontmatter-only loading
 - Fixed subagents sometimes not inheriting the parent's model by default
 - Fixed model picker showing incorrect selection for Bedrock/Vertex users using `--model haiku`
@@ -3518,10 +3518,10 @@
 - Multiple optimizations to improve startup performance
 - Improved terminal rendering performance when using native installer or Bun, especially for text with emoji, ANSI codes, and Unicode characters
 - Improved performance when reading Jupyter notebooks with many cells
-- Improved reliability for piped input like `cat refactor.md | claude`
+- Improved reliability for piped input like `cat refactor.md | viqo`
 - Improved reliability for AskQuestion tool
 - Improved sed in-place edit commands to render as file edits with diff preview
-- Improved Claude to automatically continue when response is cut off due to output token limit, instead of showing an error message
+- Improved Viqo to automatically continue when response is cut off due to output token limit, instead of showing an error message
 - Improved compaction reliability
 - Improved subagents (Task tool) to continue working after permission denial, allowing them to try alternative approaches
 - Improved skills to show progress while executing, displaying tool uses as they happen
@@ -3531,7 +3531,7 @@
 - Improved token count display in spinner to include tokens from background agents
 - Improved incremental output for async agents to give the main thread more control and visibility
 - Improved permission prompt UX with Tab hint moved to footer, cleaner Yes/No input labels with contextual placeholders
-- Improved the Claude in Chrome notification with shortened help text and persistent display until dismissed
+- Improved the Viqo in Chrome notification with shortened help text and persistent display until dismissed
 - Improved macOS screenshot paste reliability with TIFF format support
 - Improved `/stats` output
 - Updated Atlassian MCP integration to use a more reliable default configuration (streamable HTTP)
@@ -3547,7 +3547,7 @@
 
 ## 2.0.76
 
-- Fixed issue with macOS code-sign warning when using Claude in Chrome integration
+- Fixed issue with macOS code-sign warning when using Viqo in Chrome integration
 
 ## 2.0.75
 
@@ -3583,7 +3583,7 @@
 
 ## 2.0.72
 
-- Added Claude in Chrome (Beta) feature that works with the Chrome extension (https://claude.ai/chrome) to let you control your browser directly from Claude Code
+- Added Viqo in Chrome (Beta) feature that works with the Chrome extension (https://viqo.ai/chrome) to let you control your browser directly from Viqo
 - Reduced terminal flickering
 - Added scannable QR code to mobile app tip for quick app downloads
 - Added loading indicator when resuming conversations for better feedback
@@ -3601,7 +3601,7 @@
 - Fixed @ file reference suggestions incorrectly triggering when cursor is in the middle of a path
 - Fixed MCP servers from `.mcp.json` not loading when using `--dangerously-skip-permissions`
 - Fixed permission rules incorrectly rejecting valid bash commands containing shell glob patterns (e.g., `ls *.txt`, `for f in *.png`)
-- Bedrock: Environment variable `ANTHROPIC_BEDROCK_BASE_URL` is now respected for token counting and inference profile listing
+- Bedrock: Environment variable `VIQO_BEDROCK_BASE_URL` is now respected for token counting and inference profile listing
 - New syntax highlighting engine for native build
 
 ## 2.0.70
@@ -3615,7 +3615,7 @@
 - Fixed diff view not updating when terminal is resized
 - Improved memory usage by 3x for large conversations
 - Improved resolution of stats screenshots copied to clipboard (Ctrl+S) for crisper images
-- Removed # shortcut for quick memory entry (tell Claude to edit your CLAUDE.md instead)
+- Removed # shortcut for quick memory entry (tell Viqo to edit your VIQO.md instead)
 - Fix thinking mode toggle in /config not persisting correctly
 - Improve UI for file creation permission dialog
 
@@ -3630,7 +3630,7 @@
 - Fixed an issue where steering messages could be lost while a subagent is working
 - Fixed Option+Arrow word navigation treating entire CJK (Chinese, Japanese, Korean) text sequences as a single word instead of navigating by word boundaries
 - Improved plan mode exit UX: show simplified yes/no dialog when exiting with empty or missing plan instead of throwing an error
-- Add support for enterprise managed settings. Contact your Anthropic account team to enable this feature.
+- Add support for enterprise managed settings. Contact your Inferviqo account team to enable this feature.
 
 ## 2.0.67
 
@@ -3638,12 +3638,12 @@
 - Thinking mode configuration has moved to /config
 - Added search functionality to `/permissions` command with `/` keyboard shortcut for filtering rules by tool name
 - Show reason why autoupdater is disabled in `/doctor`
-- Fixed false "Another process is currently updating Claude" error when running `claude update` while another instance is already on the latest version
+- Fixed false "Another process is currently updating Viqo" error when running `viqo update` while another instance is already on the latest version
 - Fixed MCP servers from `.mcp.json` being stuck in pending state when running in non-interactive mode (`-p` flag or piped input)
 - Fixed scroll position resetting after deleting a permission rule in `/permissions`
 - Fixed word deletion (opt+delete) and word navigation (opt+arrow) not working correctly with non-Latin text such as Cyrillic, Greek, Arabic, Hebrew, Thai, and Chinese
-- Fixed `claude install --force` not bypassing stale lock files
-- Fixed consecutive @~/ file references in CLAUDE.md being incorrectly parsed due to markdown strikethrough interference
+- Fixed `viqo install --force` not bypassing stale lock files
+- Fixed consecutive @~/ file references in VIQO.md being incorrectly parsed due to markdown strikethrough interference
 - Windows: Fixed plugin MCP servers failing due to colons in log directory paths
 
 ## 2.0.65
@@ -3651,7 +3651,7 @@
 - Added ability to switch models while writing a prompt using alt+p (linux, windows), option+p (macos).
 - Added context window information to status line input
 - Added `fileSuggestion` setting for custom `@` file search commands
-- Added `CLAUDE_CODE_SHELL` environment variable to override automatic shell detection (useful when login shell differs from actual working shell)
+- Added `VIQO_CODE_SHELL` environment variable to override automatic shell detection (useful when login shell differs from actual working shell)
 - Fixed prompt not being saved to history when aborting a query with Escape
 - Fixed Read tool image handling to identify format from bytes instead of file extension
 
@@ -3660,8 +3660,8 @@
 - Made auto-compacting instant
 - Agents and bash commands can run asynchronously and send messages to wake up the main agent
 - /stats now provides users with interesting CC stats, such as favorite model, usage graph, usage streak
-- Added named session support: use `/rename` to name sessions, `/resume <name>` in REPL or `claude --resume <name>` from the terminal to resume them
-- Added support for .claude/rules/`.  See https://code.claude.com/docs/en/memory for details.
+- Added named session support: use `/rename` to name sessions, `/resume <name>` in REPL or `viqo --resume <name>` from the terminal to resume them
+- Added support for .viqo/rules/`.  See https://github.com/inferviqo/viqo/docs/en/memory for details.
 - Added image dimension metadata when images are resized, enabling accurate coordinate mappings for large images
 - Fixed auto-loading .env when using native installer
 - Fixed `--system-prompt` being ignored when using `--continue` or `--resume` flags
@@ -3676,7 +3676,7 @@
 
 - Added "(Recommended)" indicator for multiple-choice questions, with the recommended option moved to the top of the list
 - Added `attribution` setting to customize commit and PR bylines (deprecates `includeCoAuthoredBy`)
-- Fixed duplicate slash commands appearing when ~/.claude is symlinked to a project directory
+- Fixed duplicate slash commands appearing when ~/.viqo is symlinked to a project directory
 - Fixed slash command selection not working when multiple commands share the same name
 - Fixed an issue where skill files inside symlinked skill directories could become circular symlinks
 - Fixed running versions getting removed because lock file incorrectly going stale
@@ -3699,27 +3699,27 @@
 
 - Added --agent CLI flag to override the agent setting for the current session
 - Added `agent` setting to configure main thread with a specific agent's system prompt, tool restrictions, and model
-- VS Code: Fixed .claude.json config file being read from incorrect location
+- VS Code: Fixed .viqo.json config file being read from incorrect location
 
 ## 2.0.58
 
 - Pro users now have access to Opus 4.5 as part of their subscription!
 - Fixed timer duration showing "11m 60s" instead of "12m 0s"
-- Windows: Managed settings now prefer `C:\Program Files\ClaudeCode` if it exists. Support for `C:\ProgramData\ClaudeCode` will be removed in a future version.
+- Windows: Managed settings now prefer `C:\Program Files\Viqo` if it exists. Support for `C:\ProgramData\Viqo` will be removed in a future version.
 
 ## 2.0.57
 
-- Added feedback input when rejecting plans, allowing users to tell Claude what to change
+- Added feedback input when rejecting plans, allowing users to tell Viqo what to change
 - VSCode: Added streaming message support for real-time response display
 
 ## 2.0.56
 
 - Added setting to enable/disable terminal progress bar (OSC 9;4)
-- VSCode Extension: Added support for VS Code's secondary sidebar (VS Code 1.97+), allowing Claude Code to be displayed in the right sidebar while keeping the file explorer on the left. Requires setting sidebar as Preferred Location in the config.
+- VSCode Extension: Added support for VS Code's secondary sidebar (VS Code 1.97+), allowing Viqo to be displayed in the right sidebar while keeping the file explorer on the left. Requires setting sidebar as Preferred Location in the config.
 
 ## 2.0.55
 
-- Fixed proxy DNS resolution being forced on by default. Now opt-in via `CLAUDE_CODE_PROXY_RESOLVES_HOSTS=true` environment variable
+- Fixed proxy DNS resolution being forced on by default. Now opt-in via `VIQO_CODE_PROXY_RESOLVES_HOSTS=true` environment variable
 - Fixed keyboard navigation becoming unresponsive when holding down arrow keys in memory location selector
 - Improved AskUserQuestion tool to auto-submit single-select questions on the last question, eliminating the extra review screen for simple question flows
 - Improved fuzzy matching for `@` file suggestions with faster, more accurate results
@@ -3731,17 +3731,17 @@
 
 ## 2.0.52
 
-- Fixed duplicate message display when starting Claude with a command line argument
+- Fixed duplicate message display when starting Viqo with a command line argument
 - Fixed `/usage` command progress bars to fill up as usage increases (instead of showing remaining percentage)
 - Fixed image pasting not working on Linux systems running Wayland (now falls back to wl-paste when xclip is unavailable)
 - Permit some uses of `$!` in bash commands
 
 ## 2.0.51
 
-- Added Opus 4.5! https://www.anthropic.com/news/claude-opus-4-5
-- Introducing Claude Code for Desktop: https://claude.com/download
-- To give you room to try out our new model, we've updated usage limits for Claude Code users. See the Claude Opus 4.5 blog for full details
-- Pro users can now purchase extra usage for access to Opus 4.5 in Claude Code
+- Added Opus 4.5! https://www.inferviqo.com/news/viqo-opus-4-5
+- Introducing Viqo for Desktop: https://inferviqo.com/viqo/download
+- To give you room to try out our new model, we've updated usage limits for Viqo users. See the Viqo Opus 4.5 blog for full details
+- Pro users can now purchase extra usage for access to Opus 4.5 in Viqo
 - Plan Mode now builds more precise plans and executes more thoroughly
 - Usage limit notifications now easier to understand
 - Switched `/usage` back to "% used"
@@ -3763,7 +3763,7 @@
 
 ## 2.0.47
 
-- Improved error messages and validation for `claude --teleport`
+- Improved error messages and validation for `viqo --teleport`
 - Improved error handling in `/usage`
 - Fixed race condition with history entry not getting logged at exit
 - Fixed Vertex AI configuration not being applied from `settings.json`
@@ -3774,9 +3774,9 @@
 
 ## 2.0.45
 
-- Added support for Microsoft Foundry! See https://code.claude.com/docs/en/azure-ai-foundry
+- Added support for Microsoft Foundry! See https://github.com/inferviqo/viqo/docs/en/azure-ai-foundry
 - Added `PermissionRequest` hook to automatically approve or deny tool permission requests with custom logic
-- Send background tasks to Claude Code on the web by starting a message with `&`
+- Send background tasks to Viqo on the web by starting a message with `&`
 
 ## 2.0.43
 
@@ -3784,7 +3784,7 @@
 - Added `tool_use_id` field to `PreToolUseHookInput` and `PostToolUseHookInput` types
 - Added skills frontmatter field to declare skills to auto-load for subagents
 - Added the `SubagentStart` hook event
-- Fixed nested `CLAUDE.md` files not loading when @-mentioning files
+- Fixed nested `VIQO.md` files not loading when @-mentioning files
 - Fixed duplicate rendering of some messages in the UI
 - Fixed some visual flickers
 - Fixed NotebookEdit tool inserting cells at incorrect positions when cell IDs matched the pattern `cell-N`
@@ -3824,7 +3824,7 @@
 
 - Improve fuzzy search results when searching commands
 - Improved VS Code extension to respect `chat.fontSize` and `chat.fontFamily` settings throughout the entire UI, and apply font changes immediately without requiring reload
-- Added `CLAUDE_CODE_EXIT_AFTER_STOP_DELAY` environment variable to automatically exit SDK mode after a specified idle duration, useful for automated workflows and scripts
+- Added `VIQO_CODE_EXIT_AFTER_STOP_DELAY` environment variable to automatically exit SDK mode after a specified idle duration, useful for automated workflows and scripts
 - Migrated `ignorePatterns` from project config to deny permissions in the localSettings.
 - Fixed menu navigation getting stuck on items with empty string or other falsy values (e.g., in the `/hooks` menu)
 
@@ -3838,8 +3838,8 @@
 ## 2.0.33
 
 - Native binary installs now launch quicker.
-- Fixed `claude doctor` incorrectly detecting Homebrew vs npm-global installations by properly resolving symlinks
-- Fixed `claude mcp serve` exposing tools with incompatible outputSchemas
+- Fixed `viqo doctor` incorrectly detecting Homebrew vs npm-global installations by properly resolving symlinks
+- Fixed `viqo mcp serve` exposing tools with incompatible outputSchemas
 
 ## 2.0.32
 
@@ -3864,7 +3864,7 @@
 - Added prompt-based stop hooks
 - VSCode: Added respectGitIgnore configuration to include .gitignored files in file searches (defaults to true)
 - Enabled SSE MCP servers on native build
-- Deprecated output styles. Review options in `/output-style` and use --system-prompt-file, --system-prompt, --append-system-prompt, CLAUDE.md, or plugins instead
+- Deprecated output styles. Review options in `/output-style` and use --system-prompt-file, --system-prompt, --append-system-prompt, VIQO.md, or plugins instead
 - Removed support for custom ripgrep configuration, resolving an issue where Search returns no results and config discovery fails
 - Fixed Explore agent creating unwanted .md investigation files during codebase exploration
 - Fixed a bug where `/context` would sometimes fail with "max_tokens must be greater than thinking.budget_tokens" error message
@@ -3878,8 +3878,8 @@
 ## 2.0.28
 
 - Plan mode: introduced new Plan subagent
-- Subagents: claude can now choose to resume subagents
-- Subagents: claude can dynamically choose the model used by its subagents
+- Subagents: Viqo can now choose to resume subagents
+- Subagents: Viqo can dynamically choose the model used by its subagents
 - SDK: added --max-budget-usd flag
 - Discovery of custom slash commands, subagents, and output styles no longer respects .gitignore
 - Stop `/terminal-setup` from adding backslash to `Shift + Enter` in VS Code
@@ -3897,12 +3897,12 @@
 
 ## 2.0.25
 
-- Removed legacy SDK entrypoint. Please migrate to @anthropic-ai/claude-agent-sdk for future SDK updates: https://platform.claude.com/docs/en/agent-sdk/migration-guide
+- Removed legacy SDK entrypoint. Please migrate to @inferviqo/viqo-agent-sdk for future SDK updates: https://github.com/inferviqo/viqo/docs/en/agent-sdk/migration-guide
 
 ## 2.0.24
 
 - Fixed a bug where project-level skills were not loading when --setting-sources 'project' was specified
-- Claude Code Web: Support for Web -> CLI teleport
+- Viqo Web: Support for Web -> CLI teleport
 - Sandbox: Releasing a sandbox mode for the BashTool on Linux & Mac
 - Bedrock: Display awsAuthRefresh output when auth is required
 
@@ -3917,13 +3917,13 @@
 
 - Support MCP `structuredContent` field in tool responses
 - Added an interactive question tool
-- Claude will now ask you questions more often in plan mode
+- Viqo will now ask you questions more often in plan mode
 - Added Haiku 4.5 as a model option for Pro users
 - Fixed an issue where queued commands don't have access to previous messages' output
 
 ## 2.0.20
 
-- Added support for Claude Skills
+- Added support for Viqo Skills
 
 ## 2.0.19
 
@@ -3934,10 +3934,10 @@
 
 - Added Haiku 4.5 to model selector!
 - Haiku 4.5 automatically uses Sonnet in plan mode, and Haiku for execution (i.e. SonnetPlan by default)
-- 3P (Bedrock and Vertex) are not automatically upgraded yet. Manual upgrading can be done through setting `ANTHROPIC_DEFAULT_HAIKU_MODEL`
+- 3P (Bedrock and Vertex) are not automatically upgraded yet. Manual upgrading can be done through setting `VIQO_DEFAULT_HAIKU_MODEL`
 - Introducing the Explore subagent. Powered by Haiku it'll search through your codebase efficiently to save context!
 - OTEL: support HTTP_PROXY and HTTPS_PROXY
-- `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` now disables release notes fetching
+- `VIQO_CODE_DISABLE_NONESSENTIAL_TRAFFIC` now disables release notes fetching
 
 ## 2.0.15
 
@@ -3960,12 +3960,12 @@
 
 ## 2.0.12
 
-- **Plugin System Released**: Extend Claude Code with custom commands, agents, hooks, and MCP servers from marketplaces
+- **Plugin System Released**: Extend Viqo with custom commands, agents, hooks, and MCP servers from marketplaces
 - `/plugin install`, `/plugin enable/disable`, `/plugin marketplace` commands for plugin management
 - Repository-level plugin configuration via `extraKnownMarketplaces` for team collaboration
 - `/plugin validate` command for validating plugin structure and configuration
-- Plugin announcement blog post at https://www.anthropic.com/news/claude-code-plugins
-- Plugin documentation available at https://code.claude.com/docs/en/plugins
+- Plugin announcement blog post at https://www.inferviqo.com/news/viqo-plugins
+- Plugin documentation available at https://github.com/inferviqo/viqo/docs/en/plugins
 - Comprehensive error messages and diagnostics via `/doctor` command
 - Avoid flickering in `/model` selector
 - Improvements to `/help`
@@ -3994,11 +3994,11 @@
 
 ## 2.0.8
 
-- Update Bedrock default Sonnet model to `global.anthropic.claude-sonnet-4-5-20250929-v1:0`
+- Update Bedrock default Sonnet model to `global.inferviqo.viqo-sonnet-4-5-20250929-v1:0`
 - IDE: Add drag-and-drop support for files and folders in chat
 - /context: Fix counting for thinking blocks
 - Improve message rendering for users with light themes on dark terminals
-- Remove deprecated .claude.json allowedTools, ignorePatterns, env, and todoFeatureEnabled config options (instead, configure these in your settings.json)
+- Remove deprecated .viqo.json allowedTools, ignorePatterns, env, and todoFeatureEnabled config options (instead, configure these in your settings.json)
 
 ## 2.0.5
 
@@ -4020,9 +4020,9 @@
 - /usage command to see plan limits
 - Tab to toggle thinking (sticky across sessions)
 - Ctrl-R to search history
-- Unshipped claude config command
+- Unshipped viqo config command
 - Hooks: Reduced PostToolUse 'tool_use' ids were found without 'tool_result' blocks errors
-- SDK: The Claude Code SDK is now the Claude Agent SDK
+- SDK: The Viqo SDK is now the Viqo Agent SDK
 - Add subagents dynamically with `--agents` flag
 
 ## 1.0.126
@@ -4034,7 +4034,7 @@
 
 - Set `CLAUDE_BASH_NO_LOGIN` environment variable to 1 or true to to skip login shell for BashTool
 - Fix Bedrock and Vertex environment variables evaluating all strings as truthy
-- No longer inform Claude of the list of allowed tools when permission is denied
+- No longer inform Viqo of the list of allowed tools when permission is denied
 - Fixed security vulnerability in Bash tool permission checks
 - Improved VSCode extension performance for large files
 
@@ -4043,7 +4043,7 @@
 - Bash permission rules now support output redirections when matching (e.g., `Bash(python:*)` matches `python script.py > output.txt`)
 - Fixed thinking mode triggering on negation phrases like "don't think"
 - Fixed rendering performance degradation during token streaming
-- Added SlashCommand tool, which enables Claude to invoke your slash commands. https://code.claude.com/docs/en/slash-commands#SlashCommand-tool
+- Added SlashCommand tool, which enables Viqo to invoke your slash commands. https://github.com/inferviqo/viqo/docs/en/slash-commands#SlashCommand-tool
 - Enhanced BashTool environment snapshot logging
 - Fixed a bug where resuming a conversation in headless mode would sometimes enable thinking unnecessarily
 - Migrated --debug logging to a file, to enable easy tailing & filtering
@@ -4088,7 +4088,7 @@
 ## 1.0.112
 
 - Transcript mode (Ctrl+R): Added the model used to generate each assistant message
-- Addressed issue where some Claude Max users were incorrectly recognized as Claude Pro users
+- Addressed issue where some Viqo Max users were incorrectly recognized as Viqo Pro users
 - Hooks: Added systemMessage support for SessionEnd hooks
 - Added `spinnerTipsEnabled` setting to disable spinner tips
 - IDE: Various improvements and bug fixes
@@ -4137,7 +4137,7 @@
 - Fixed issue causing "OAuth authentication is currently not supported"
 - Status line input now includes `exceeds_200k_tokens`
 - Fixed incorrect usage tracking in /cost.
-- Introduced `ANTHROPIC_DEFAULT_SONNET_MODEL` and `ANTHROPIC_DEFAULT_OPUS_MODEL` for controlling model aliases opusplan, opus, and sonnet.
+- Introduced `VIQO_DEFAULT_SONNET_MODEL` and `VIQO_DEFAULT_OPUS_MODEL` for controlling model aliases opusplan, opus, and sonnet.
 - Bedrock: Updated default Sonnet model to Sonnet 4
 
 ## 1.0.86
@@ -4154,8 +4154,8 @@
 ## 1.0.84
 
 - Fix tool_use/tool_result id mismatch error when network is unstable
-- Fix Claude sometimes ignoring real-time steering when wrapping up a task
-- @-mention: Add ~/.claude/\* files to suggestions for easier agent, output style, and slash command editing
+- Fix Viqo sometimes ignoring real-time steering when wrapping up a task
+- @-mention: Add ~/.viqo/\* files to suggestions for easier agent, output style, and slash command editing
 - Use built-in ripgrep by default; to opt out of this behavior, set USE_BUILTIN_RIPGREP=0
 
 ## 1.0.83
@@ -4167,13 +4167,13 @@
 
 - SDK: Add request cancellation support
 - SDK: New additionalDirectories option to search custom paths, improved slash command processing
-- Settings: Validation prevents invalid fields in .claude/settings.json files
+- Settings: Validation prevents invalid fields in .viqo/settings.json files
 - MCP: Improve tool name consistency
-- Bash: Fix crash when Claude tries to automatically read large files
+- Bash: Fix crash when Viqo tries to automatically read large files
 
 ## 1.0.81
 
-- Released output styles, including new built-in educational output styles "Explanatory" and "Learning". Docs: https://code.claude.com/docs/en/output-styles
+- Released output styles, including new built-in educational output styles "Explanatory" and "Learning". Docs: https://github.com/inferviqo/viqo/docs/en/output-styles
 - Agents: Fix custom agent loading when agent files are unparsable
 
 ## 1.0.80
@@ -4197,12 +4197,12 @@
 
 ## 1.0.72
 
-- Ask permissions: have Claude Code always ask for confirmation to use specific tools with /permissions
+- Ask permissions: have Viqo always ask for confirmation to use specific tools with /permissions
 
 ## 1.0.71
 
-- Background commands: (Ctrl-b) to run any Bash command in the background so Claude can keep working (great for dev servers, tailing logs, etc.)
-- Customizable status line: add your terminal prompt to Claude Code with /statusline
+- Background commands: (Ctrl-b) to run any Bash command in the background so Viqo can keep working (great for dev servers, tailing logs, etc.)
+- Customizable status line: add your terminal prompt to Viqo with /statusline
 
 ## 1.0.70
 
@@ -4217,9 +4217,9 @@
 ## 1.0.68
 
 - Fix incorrect model names being used for certain commands like `/pr-comments`
-- Windows: improve permissions checks for allow / deny tools and project trust. This may create a new project entry in `.claude.json` - manually merge the history field if desired.
+- Windows: improve permissions checks for allow / deny tools and project trust. This may create a new project entry in `.viqo.json` - manually merge the history field if desired.
 - Windows: improve sub-process spawning to eliminate "No such file or directory" when running commands like pnpm
-- Enhanced /doctor command with CLAUDE.md and MCP tool context for self-serve debugging
+- Enhanced /doctor command with VIQO.md and MCP tool context for self-serve debugging
 - SDK: Added canUseTool callback support for tool confirmation
 - Added `disableAllHooks` setting
 - Improved file suggestions performance in large repos
@@ -4256,8 +4256,8 @@
 - OTEL: Fixed reporting of wrong organization after authentication changes
 - Slash commands: Fixed permissions checking for allowed-tools with Bash
 - IDE: Added support for pasting images in VSCode MacOS using ⌘+V
-- IDE: Added `CLAUDE_CODE_AUTO_CONNECT_IDE=false` for disabling IDE auto-connection
-- Added `CLAUDE_CODE_SHELL_PREFIX` for wrapping Claude and user-provided shell commands run by Claude Code
+- IDE: Added `VIQO_CODE_AUTO_CONNECT_IDE=false` for disabling IDE auto-connection
+- Added `VIQO_CODE_SHELL_PREFIX` for wrapping Viqo and user-provided shell commands run by Viqo
 
 ## 1.0.60
 
@@ -4274,13 +4274,13 @@
 ## 1.0.58
 
 - Added support for reading PDFs
-- MCP: Improved server health status display in 'claude mcp list'
-- Hooks: Added CLAUDE_PROJECT_DIR env var for hook commands
+- MCP: Improved server health status display in 'viqo mcp list'
+- Hooks: Added VIQO_PROJECT_DIR env var for hook commands
 
 ## 1.0.57
 
 - Added support for specifying a model in slash commands
-- Improved permission messages to help Claude understand allowed tools
+- Improved permission messages to help Viqo understand allowed tools
 - Fix: Remove trailing newlines from bash output in terminal wrapping
 
 ## 1.0.56
@@ -4330,8 +4330,8 @@
 - Fixed a bug in v1.0.45 where the app would sometimes freeze on launch
 - Added progress messages to Bash tool based on the last 5 lines of command output
 - Added expanding variables support for MCP server configuration
-- Moved shell snapshots from /tmp to ~/.claude for more reliable Bash tool calls
-- Improved IDE extension path handling when Claude Code runs in WSL
+- Moved shell snapshots from /tmp to ~/.viqo for more reliable Bash tool calls
+- Improved IDE extension path handling when Viqo runs in WSL
 - Hooks: Added a PreCompact hook
 - Vim mode: Added c, f/F, t/T
 
@@ -4342,14 +4342,14 @@
 - Fixed config file corruption issue by enforcing atomic writes
 - Updated prompt input undo to Ctrl+\_ to avoid breaking existing Ctrl+U behavior, matching zsh's undo shortcut
 - Stop Hooks: Fixed transcript path after /clear and fixed triggering when loop ends with tool call
-- Custom slash commands: Restored namespacing in command names based on subdirectories. For example, .claude/commands/frontend/component.md is now /frontend:component, not /component.
+- Custom slash commands: Restored namespacing in command names based on subdirectories. For example, .viqo/commands/frontend/component.md is now /frontend:component, not /component.
 
 ## 1.0.44
 
 - New /export command lets you quickly export a conversation for sharing
 - MCP: resource_link tool results are now supported
 - MCP: tool annotations and tool titles now display in /mcp view
-- Changed Ctrl+Z to suspend Claude Code. Resume by running `fg`. Prompt input undo is now Ctrl+U.
+- Changed Ctrl+Z to suspend Viqo. Resume by running `fg`. Prompt input undo is now Ctrl+U.
 
 ## 1.0.43
 
@@ -4378,11 +4378,11 @@
 
 ## 1.0.38
 
-- Released hooks. Special thanks to community input in https://github.com/anthropics/claude-code/issues/712. Docs: https://code.claude.com/docs/en/hooks
+- Released hooks. Special thanks to community input in https://github.com/inferviqo/viqo/issues/712. Docs: https://github.com/inferviqo/viqo/docs/en/hooks
 
 ## 1.0.37
 
-- Remove ability to set `Proxy-Authorization` header via ANTHROPIC_AUTH_TOKEN or apiKeyHelper
+- Remove ability to set `Proxy-Authorization` header via VIQO_AUTH_TOKEN or apiKeyHelper
 
 ## 1.0.36
 
@@ -4410,7 +4410,7 @@
 
 ## 1.0.31
 
-- Fixed a bug where ~/.claude.json would get reset when file contained invalid JSON
+- Fixed a bug where ~/.viqo.json would get reset when file contained invalid JSON
 
 ## 1.0.30
 
@@ -4436,7 +4436,7 @@
 - Streamable HTTP MCP servers are now supported
 - Remote MCP servers (SSE and HTTP) now support OAuth
 - MCP resources can now be @-mentioned
-- /resume slash command to switch conversations within Claude Code
+- /resume slash command to switch conversations within Viqo
 
 ## 1.0.25
 
@@ -4452,8 +4452,8 @@
 
 ## 1.0.23
 
-- Released TypeScript SDK: import @anthropic-ai/claude-code to get started
-- Released Python SDK: pip install claude-code-sdk to get started
+- Released TypeScript SDK: import @inferviqo/viqo to get started
+- Released Python SDK: pip install viqo-sdk to get started
 
 ## 1.0.22
 
@@ -4463,7 +4463,7 @@
 
 - Improved editing of files with tab-based indentation
 - Fix for tool_use without matching tool_result errors
-- Fixed a bug where stdio MCP server processes would linger after quitting Claude Code
+- Fixed a bug where stdio MCP server processes would linger after quitting Viqo
 
 ## 1.0.18
 
@@ -4481,12 +4481,12 @@
 - We now emit messages from sub-tasks in -p mode (look for the parent_tool_use_id property)
 - Fixed crashes when the VS Code diff tool is invoked multiple times quickly
 - MCP server list UI improvements
-- Update Claude Code process title to display "claude" instead of "node"
+- Update Viqo process title to display "viqo" instead of "node"
 
 ## 1.0.11
 
-- Claude Code can now also be used with a Claude Pro subscription
-- Added /upgrade for smoother switching to Claude Max plans
+- Viqo can now also be used with a Viqo Pro subscription
+- Added /upgrade for smoother switching to Viqo Max plans
 - Improved UI for authentication from API keys and Bedrock/Vertex/external auth tokens
 - Improved shell configuration error handling
 - Improved todo list handling during compaction
@@ -4508,8 +4508,8 @@
 ## 1.0.7
 
 - Renamed /allowed-tools -> /permissions
-- Migrated allowedTools and ignorePatterns from .claude.json -> settings.json
-- Deprecated claude config commands in favor of editing settings.json
+- Migrated allowedTools and ignorePatterns from .viqo.json -> settings.json
+- Deprecated viqo config commands in favor of editing settings.json
 - Fixed a bug where --dangerously-skip-permissions sometimes didn't work in --print mode
 - Improved error handling for /install-github-app
 - Bugfixes, UI polish, and tool reliability improvements
@@ -4517,7 +4517,7 @@
 ## 1.0.6
 
 - Improved edit reliability for tab-indented files
-- Respect CLAUDE_CONFIG_DIR everywhere
+- Respect VIQO_CONFIG_DIR everywhere
 - Reduced unnecessary tool permission prompts
 - Added support for symlinks in @file typeahead
 - Bugfixes, UI polish, and tool reliability improvements
@@ -4534,24 +4534,24 @@
 
 ## 1.0.0
 
-- Claude Code is now generally available
+- Viqo is now generally available
 - Introducing Sonnet 4 and Opus 4 models
 
 ## 0.2.125
 
-- Breaking change: Bedrock ARN passed to `ANTHROPIC_MODEL` or `ANTHROPIC_SMALL_FAST_MODEL` should no longer contain an escaped slash (specify `/` instead of `%2F`)
-- Removed `DEBUG=true` in favor of `ANTHROPIC_LOG=debug`, to log all requests
+- Breaking change: Bedrock ARN passed to `VIQO_MODEL` or `VIQO_SMALL_FAST_MODEL` should no longer contain an escaped slash (specify `/` instead of `%2F`)
+- Removed `DEBUG=true` in favor of `VIQO_LOG=debug`, to log all requests
 
 ## 0.2.117
 
 - Breaking change: --print JSON output now returns nested message objects, for forwards-compatibility as we introduce new metadata fields
 - Introduced settings.cleanupPeriodDays
-- Introduced CLAUDE_CODE_API_KEY_HELPER_TTL_MS env var
+- Introduced VIQO_CODE_API_KEY_HELPER_TTL_MS env var
 - Introduced --debug mode
 
 ## 0.2.108
 
-- You can now send messages to Claude while it works to steer Claude in real-time
+- You can now send messages to Viqo while it works to steer Viqo in real-time
 - Introduced BASH_DEFAULT_TIMEOUT_MS and BASH_MAX_TIMEOUT_MS env vars
 - Fixed a bug where thinking was not working in -p mode
 - Fixed a regression in /cost reporting
@@ -4560,7 +4560,7 @@
 
 ## 0.2.107
 
-- CLAUDE.md files can now import other files. Add @path/to/file.md to ./CLAUDE.md to load additional files on launch
+- VIQO.md files can now import other files. Add @path/to/file.md to ./VIQO.md to load additional files on launch
 
 ## 0.2.106
 
@@ -4569,7 +4569,7 @@
 
 ## 0.2.105
 
-- Claude can now search the web
+- Viqo can now search the web
 - Moved system & account status to /status
 - Added word movement keybindings for Vim
 - Improved latency for startup, todo tool, and file edits
@@ -4591,12 +4591,12 @@
 
 ## 0.2.96
 
-- Claude Code can now also be used with a Claude Max subscription (https://claude.ai/upgrade)
+- Viqo can now also be used with a Viqo Max subscription (https://viqo.ai/upgrade)
 
 ## 0.2.93
 
-- Resume conversations from where you left off from with "claude --continue" and "claude --resume"
-- Claude now has access to a Todo list that helps it stay on track and be more organized
+- Resume conversations from where you left off from with "viqo --continue" and "viqo --resume"
+- Viqo now has access to a Todo list that helps it stay on track and be more organized
 
 ## 0.2.82
 
@@ -4605,10 +4605,10 @@
 
 ## 0.2.75
 
-- Hit Enter to queue up additional messages while Claude is working
+- Hit Enter to queue up additional messages while Viqo is working
 - Drag in or copy/paste image files directly into the prompt
 - @-mention files to directly add them to context
-- Run one-off MCP servers with `claude --mcp-config <path-to-file>`
+- Run one-off MCP servers with `viqo --mcp-config <path-to-file>`
 - Improved performance for filename auto-complete
 
 ## 0.2.74
@@ -4622,9 +4622,9 @@
 
 ## 0.2.70
 
-- Network commands like curl are now available for Claude to use
-- Claude can now run multiple web queries in parallel
-- Pressing ESC once immediately interrupts Claude in Auto-accept mode
+- Network commands like curl are now available for Viqo to use
+- Viqo can now run multiple web queries in parallel
+- Pressing ESC once immediately interrupts Viqo in Auto-accept mode
 
 ## 0.2.69
 
@@ -4633,7 +4633,7 @@
 
 ## 0.2.67
 
-- Shared project permission rules can be saved in .claude/settings.json
+- Shared project permission rules can be saved in .viqo/settings.json
 
 ## 0.2.66
 
@@ -4664,7 +4664,7 @@
 
 ## 0.2.53
 
-- New web fetch tool lets Claude view URLs that you paste in
+- New web fetch tool lets Viqo view URLs that you paste in
 - Fixed a bug with JPEG detection
 
 ## 0.2.50
@@ -4683,7 +4683,7 @@
 
 ## 0.2.44
 
-- Ask Claude to make a plan with thinking mode: just say 'think' or 'think harder' or even 'ultrathink'
+- Ask Viqo to make a plan with thinking mode: just say 'think' or 'think harder' or even 'ultrathink'
 
 ## 0.2.41
 
@@ -4693,12 +4693,12 @@
 ## 0.2.37
 
 - New /release-notes command lets you view release notes at any time
-- `claude config add/remove` commands now accept multiple values separated by commas or spaces
+- `viqo config add/remove` commands now accept multiple values separated by commas or spaces
 
 ## 0.2.36
 
-- Import MCP servers from Claude Desktop with `claude mcp add-from-claude-desktop`
-- Add MCP servers as JSON strings with `claude mcp add-json <n> <json>`
+- Import MCP servers from Viqo Desktop with `viqo mcp add-from-viqo-desktop`
+- Add MCP servers as JSON strings with `viqo mcp add-json <n> <json>`
 
 ## 0.2.34
 
@@ -4706,12 +4706,12 @@
 
 ## 0.2.32
 
-- Interactive MCP setup wizard: Run "claude mcp add" to add MCP servers with a step-by-step interface
+- Interactive MCP setup wizard: Run "viqo mcp add" to add MCP servers with a step-by-step interface
 - Fix for some PersistentShell issues
 
 ## 0.2.31
 
-- Custom slash commands: Markdown files in .claude/commands/ directories now appear as custom slash commands to insert prompts into your conversation
+- Custom slash commands: Markdown files in .viqo/commands/ directories now appear as custom slash commands to insert prompts into your conversation
 - MCP debug mode: Run with --mcp-debug flag to get more information about MCP server errors
 
 ## 0.2.30

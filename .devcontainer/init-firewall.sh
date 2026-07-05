@@ -66,9 +66,9 @@ done < <(echo "$gh_ranges" | jq -r '(.web + .api + .git)[]' | aggregate -q)
 # Resolve and add other allowed domains
 for domain in \
     "registry.npmjs.org" \
-    "api.anthropic.com" \
+    "api.inferviqo.com" \
     "sentry.io" \
-    "statsig.anthropic.com" \
+    "statsig.inferviqo.com" \
     "statsig.com" \
     "marketplace.visualstudio.com" \
     "vscode.blob.core.windows.net" \

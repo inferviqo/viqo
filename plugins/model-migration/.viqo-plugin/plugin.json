@@ -1,0 +1,9 @@
+{
+  "name": "model-migration",
+  "version": "1.0.0",
+  "description": "Migrate your code and prompts between model versions.",
+  "author": {
+    "name": "Inferviqo",
+    "email": "support@inferviqo.com"
+  }
+}

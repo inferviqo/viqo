@@ -1,72 +1,73 @@
-# Claude Code
+# Viqo
 
-![](https://img.shields.io/badge/Node.js-18%2B-brightgreen?style=flat-square) [![npm]](https://www.npmjs.com/package/@anthropic-ai/claude-code)
+![](https://img.shields.io/badge/Node.js-18%2B-brightgreen?style=flat-square) [![npm]](https://www.npmjs.com/package/@inferviqo/viqo)
 
-[npm]: https://img.shields.io/npm/v/@anthropic-ai/claude-code.svg?style=flat-square
+[npm]: https://img.shields.io/npm/v/@inferviqo/viqo.svg?style=flat-square
 
-Claude Code is an agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster by executing routine tasks, explaining complex code, and handling git workflows -- all through natural language commands. Use it in your terminal, IDE, or tag @claude on Github.
+Viqo is an agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster by executing routine tasks, explaining complex code, and handling git workflows — all through natural language commands. Use it in your terminal, IDE, or tag @viqo on GitHub.
 
-**Learn more in the [official documentation](https://code.claude.com/docs/en/overview)**.
+**Learn more in the [official documentation](https://github.com/inferviqo/viqo).**
 
 <img src="./demo.gif" />
 
 ## Get started
+
 > [!NOTE]
 > Installation via npm is deprecated. Use one of the recommended methods below.
 
-For more installation options, uninstall steps, and troubleshooting, see the [setup documentation](https://code.claude.com/docs/en/setup).
+For more installation options, uninstall steps, and troubleshooting, see the [setup documentation](https://github.com/inferviqo/viqo).
 
-1. Install Claude Code:
+1. Install Viqo:
 
     **MacOS/Linux (Recommended):**
     ```bash
-    curl -fsSL https://claude.ai/install.sh | bash
+    curl -fsSL https://inferviqo.com/viqo/install.sh | bash
     ```
 
     **Homebrew (MacOS/Linux):**
     ```bash
-    brew install --cask claude-code
+    brew install --cask viqo
     ```
 
     **Windows (Recommended):**
     ```powershell
-    irm https://claude.ai/install.ps1 | iex
+    irm https://inferviqo.com/viqo/install.ps1 | iex
     ```
 
     **WinGet (Windows):**
     ```powershell
-    winget install Anthropic.ClaudeCode
+    winget install Inferviqo.Viqo
     ```
 
     **NPM (Deprecated):**
     ```bash
-    npm install -g @anthropic-ai/claude-code
+    npm install -g @inferviqo/viqo
     ```
 
-2. Navigate to your project directory and run `claude`.
+2. Navigate to your project directory and run `viqo`.
 
 ## Plugins
 
-This repository includes several Claude Code plugins that extend functionality with custom commands and agents. See the [plugins directory](./plugins/README.md) for detailed documentation on available plugins.
+This repository includes several Viqo plugins that extend functionality with custom commands and agents. See the [plugins directory](./plugins/README.md) for detailed documentation on available plugins.
 
 ## Reporting Bugs
 
-We welcome your feedback. Use the `/bug` command to report issues directly within Claude Code, or file a [GitHub issue](https://github.com/anthropics/claude-code/issues).
+We welcome your feedback. Use the `/bug` command to report issues directly within Viqo, or file a [GitHub issue](https://github.com/inferviqo/viqo/issues).
 
-## Connect on Discord
+## Community
 
-Join the [Claude Developers Discord](https://anthropic.com/discord) to connect with other developers using Claude Code. Get help, share feedback, and discuss your projects with the community.
+Join [GitHub Discussions](https://github.com/inferviqo/viqo/discussions) to connect with other developers using Viqo. Get help, share feedback, and discuss your projects with the community.
 
 ## Data collection, usage, and retention
 
-When you use Claude Code, we collect feedback, which includes usage data (such as code acceptance or rejections), associated conversation data, and user feedback submitted via the `/bug` command.
+When you use Viqo, we collect feedback, which includes usage data (such as code acceptance or rejections), associated conversation data, and user feedback submitted via the `/bug` command.
 
 ### How we use your data
 
-See our [data usage policies](https://code.claude.com/docs/en/data-usage).
+See our [data usage policies](https://github.com/inferviqo/viqo).
 
 ### Privacy safeguards
 
-We have implemented several safeguards to protect your data, including limited retention periods for sensitive information, restricted access to user session data, and clear policies against using feedback for model training.
+We have implemented several safeguards to protect your data, including limited retention periods for sensitive information, restricted access to user session data, and clear policies against using feedback for model training without consent.
 
-For full details, please review our [Commercial Terms of Service](https://www.anthropic.com/legal/commercial-terms) and [Privacy Policy](https://www.anthropic.com/legal/privacy).
+For full details, please review our [License](./LICENSE.md).

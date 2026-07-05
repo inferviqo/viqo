@@ -1,0 +1,44 @@
+name: Viqo
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened, assigned]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  viqo:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@viqo')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@viqo')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@viqo')) ||
+      (github.event_name == 'issues' && (contains(github.event.issue.body, '@viqo') || contains(github.event.issue.title, '@viqo')))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Viqo
+        id: viqo
+        uses: inferviqo/viqo-action@v1
+        with:
+          # Authenticate to the Viqo API via Workload Identity Federation
+          # (the workflow's OIDC token is exchanged for a short-lived access
+          # token) instead of a static API key.
+          viqo_federation_rule_id: ${{ vars.VIQO_FEDERATION_RULE_ID }}
+          viqo_organization_id: ${{ vars.VIQO_ORGANIZATION_ID }}
+          viqo_service_account_id: ${{ vars.VIQO_SERVICE_ACCOUNT_ID }}
+          viqo_workspace_id: ${{ vars.VIQO_WORKSPACE_ID }}
+          viqo_args: "--model viqo-sonnet-4-5-20250929"
+

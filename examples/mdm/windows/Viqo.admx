@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<policyDefinitions xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions"
+                   revision="1.0" schemaVersion="1.0">
+  <policyNamespaces>
+    <target prefix="viqo" namespace="Inferviqo.Policies.Viqo" />
+    <using prefix="windows" namespace="Microsoft.Policies.Windows" />
+  </policyNamespaces>
+  <resources minRequiredRevision="1.0" />
+  <categories>
+    <category name="Cat_Viqo" displayName="$(string.Cat_Viqo)" />
+  </categories>
+  <policies>
+    <policy name="ManagedSettings"
+            class="Machine"
+            displayName="$(string.ManagedSettings)"
+            explainText="$(string.ManagedSettings_Explain)"
+            presentation="$(presentation.ManagedSettings)"
+            key="SOFTWARE\Policies\Viqo">
+      <parentCategory ref="Cat_Viqo" />
+      <supportedOn ref="windows:SUPPORTED_Windows_10_0" />
+      <elements>
+        <text id="SettingsJson" valueName="Settings" maxLength="1000000" required="true" />
+      </elements>
+    </policy>
+  </policies>
+</policyDefinitions>

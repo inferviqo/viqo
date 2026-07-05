@@ -1,14 +1,14 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 💬 Discord Community
-    url: https://anthropic.com/discord
-    about: Get help, ask questions, and chat with other Claude Code users
+  - name: 💬 Community
+    url: https://github.com/inferviqo/viqo/discussions
+    about: Get help, ask questions, and chat with other Viqo users
   - name: 📖 Documentation
-    url: https://docs.claude.com/en/docs/claude-code
+    url: https://github.com/inferviqo/viqo
     about: Read the official documentation and guides
   - name: 🎓 Getting Started Guide
-    url: https://docs.claude.com/en/docs/claude-code/quickstart
-    about: New to Claude Code? Start here
+    url: https://github.com/inferviqo/viqo#readme
+    about: New to Viqo? Start here
   - name: 🔧 Troubleshooting Guide
-    url: https://docs.claude.com/en/docs/claude-code/troubleshooting
+    url: https://github.com/inferviqo/viqo/issues
     about: Common issues and how to fix them

@@ -9,4 +9,4 @@ client_secret_*.json
 
 # Release binary and pinned version — setup.sh downloads/writes these per release
 claude
-.claude-version
+.viqo-version

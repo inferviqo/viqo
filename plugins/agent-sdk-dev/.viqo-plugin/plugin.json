@@ -1,0 +1,9 @@
+{
+  "name": "agent-sdk-dev",
+  "description": "Viqo Agent SDK Development Plugin",
+  "version": "1.0.0",
+  "author": {
+    "name": "Inferviqo",
+    "email": "support@inferviqo.com"
+  }
+}

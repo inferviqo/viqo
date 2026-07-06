@@ -33,6 +33,20 @@ This directory contains detailed context about the **Viqo** repository (`infervi
 - **Contributors**: Start with `development.md` for local setup; use `plugins.md` when working on plugins.
 - **Maintainers**: See `github-automation.md` for issue/PR automation and `scripts/`.
 
+## viqo-developer agent
+
+This repo includes a project agent at `.viqo/agents/viqo-developer.md` that:
+
+1. **Reads `context/` first** before implementing or answering questions about this repo.
+2. **Keeps `context/` in sync** when code, plugins, workflows, or config change.
+
+**Automation:** `.viqo/settings.json` registers hooks that:
+
+- **SessionStart** — prints the context index summary via `.viqo/hooks/session-load-context.sh`
+- **PostToolUse (git commit)** — after `git commit`, runs `.viqo/hooks/post-commit-update-context.sh` and prompts a context update via the viqo-developer workflow
+
+Invoke explicitly when working on the repo: *"Use the viqo-developer agent to …"*
+
 ## Repository type
 
 This repo is **not** the full Viqo CLI source. It is a **distribution and extension layer**:

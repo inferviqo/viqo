@@ -14,7 +14,12 @@ viqo/
 ├── feed.xml
 │
 ├── .viqo/                      # Project-level Viqo config
-│   ├── settings.json           # Env defaults for this repo
+│   ├── settings.json           # Env defaults + SessionStart/PostToolUse hooks
+│   ├── agents/
+│   │   └── viqo-developer.md   # Repo developer agent (reads & maintains context/)
+│   ├── hooks/
+│   │   ├── session-load-context.sh
+│   │   └── post-commit-update-context.sh
 │   └── commands/               # Repo-specific slash commands
 │       ├── triage-issue.md
 │       ├── dedupe.md

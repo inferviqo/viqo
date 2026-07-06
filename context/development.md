@@ -151,3 +151,22 @@ Recommended extensions in `.vscode/extensions.json`. Project uses Prettier + ESL
 - Never commit `viqo.config.local.json` (gitignored)
 - Use restricted `gh.sh` in automation commands, not raw `gh`
 - GitHub workflows rely on OIDC federation, not long-lived API keys in YAML
+
+## viqo-developer agent
+
+Project agent: `.viqo/agents/viqo-developer.md`
+
+Use for all work on this repository (plugins, scripts, workflows, config). The agent reads `context/` before acting and updates context docs when the repo changes.
+
+### Hooks (`.viqo/settings.json`)
+
+| Event | Script | Behavior |
+|-------|--------|----------|
+| `SessionStart` | `.viqo/hooks/session-load-context.sh` | Surfaces context index at session start |
+| `PostToolUse` | `.viqo/hooks/post-commit-update-context.sh` | After `git commit`, lists changed files and which `context/*.md` files to update |
+
+After a commit touching non-`context/` paths, Viqo async-rewakes with a reminder to run the viqo-developer context sync workflow.
+
+### Manual context update
+
+Ask Viqo: *"Use the viqo-developer agent to update context/ for recent changes"* or review `git show --name-only HEAD` against the mapping table in the agent definition.

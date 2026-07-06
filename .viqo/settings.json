@@ -2,5 +2,31 @@
   "env": {
     "ANTHROPIC_BASE_URL": "https://api.inferviqo.com",
     "VIQO_BASE_URL": "https://api.inferviqo.com"
-  }
+  },
+  "SessionStart": [
+    {
+      "matcher": "*",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash .viqo/hooks/session-load-context.sh"
+        }
+      ]
+    }
+  ],
+  "PostToolUse": [
+    {
+      "matcher": "Bash",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "bash .viqo/hooks/post-commit-update-context.sh",
+          "if": "Bash(git commit:*)",
+          "asyncRewake": true,
+          "rewakeMessage": "A git commit just completed. Use the viqo-developer agent to update context/ for the changed files listed below. Update the relevant context/*.md files, then continue with the user's original request or wait for their reply.",
+          "rewakeSummary": "Update context/ after commit"
+        }
+      ]
+    }
+  ]
 }

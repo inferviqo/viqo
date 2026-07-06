@@ -1,6 +1,9 @@
 {
+  "model": "accounts/fireworks/models/gpt-oss-20b",
+  "availableModels": ["accounts/fireworks/models/gpt-oss-20b"],
   "env": {
-    "ANTHROPIC_BASE_URL": "https://api.inferviqo.com",
-    "VIQO_BASE_URL": "https://api.inferviqo.com"
+    "ANTHROPIC_BASE_URL": "https://g4418e6kzc.execute-api.us-east-1.amazonaws.com",
+    "VIQO_BASE_URL": "https://g4418e6kzc.execute-api.us-east-1.amazonaws.com",
+    "VIQO_MODEL": "accounts/fireworks/models/gpt-oss-20b"
   }
 }

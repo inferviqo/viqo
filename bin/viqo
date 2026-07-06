@@ -19,6 +19,16 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 source "$REPO_ROOT/scripts/load-config.sh"
 load_viqo_config "$REPO_ROOT"
 
+if [[ -z "${ANTHROPIC_BASE_URL:-}" ]]; then
+  echo "viqo: missing apiBaseUrl — set it in viqo.config.json (install dir or cwd)." >&2
+  exit 1
+fi
+
+if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
+  echo "viqo: missing apiKey — set it in viqo.config.local.json (install dir or cwd)." >&2
+  exit 1
+fi
+
 CLAUDE_BIN="$REPO_ROOT/node_modules/.bin/claude"
 if [[ ! -x "$CLAUDE_BIN" ]]; then
   CLAUDE_BIN="$(command -v claude || true)"
@@ -30,4 +40,22 @@ if [[ -z "$CLAUDE_BIN" || ! -x "$CLAUDE_BIN" ]]; then
 fi
 
 export VIQO_REPO_ROOT="$REPO_ROOT"
-exec "$CLAUDE_BIN" "$@"
+
+if [[ -n "${VIQO_DEBUG:-}" ]]; then
+  echo "viqo config:" >&2
+  echo "  config dir: ${VIQO_CONFIG_DIR:-$(pwd)}" >&2
+  echo "  ANTHROPIC_BASE_URL=${ANTHROPIC_BASE_URL}" >&2
+  echo "  VIQO_MODEL=${VIQO_MODEL:-}" >&2
+  echo "  ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:0:8}...${ANTHROPIC_API_KEY: -8}" >&2
+fi
+
+claude_args=()
+settings_override="$(build_viqo_settings_override || true)"
+if [[ -n "$settings_override" ]]; then
+  claude_args+=(--settings "$settings_override")
+fi
+if [[ -n "${VIQO_MODEL:-}" ]]; then
+  claude_args+=(--model "$VIQO_MODEL")
+fi
+
+exec "$CLAUDE_BIN" "${claude_args[@]}" "$@"

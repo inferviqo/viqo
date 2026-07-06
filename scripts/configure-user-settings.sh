@@ -8,35 +8,55 @@ CONFIG="$ROOT/viqo.config.json"
 
 mkdir -p "$(dirname "$SETTINGS")"
 
-python3 - "$SETTINGS" "$CONFIG" <<'PY'
-import json
-import sys
-from pathlib import Path
+node - "$SETTINGS" "$CONFIG" <<'NODE'
+const fs = require("fs");
+const path = require("path");
 
-settings_path = Path(sys.argv[1])
-config_path = Path(sys.argv[2])
+const settingsPath = process.argv[2];
+const configPath = process.argv[3];
 
-api_url = "https://api.inferviqo.com"
-if config_path.is_file():
-    try:
-        api_url = json.loads(config_path.read_text()).get("apiBaseUrl") or api_url
-    except json.JSONDecodeError:
-        pass
+let apiUrl = "https://api.inferviqo.com";
+let model = "accounts/fireworks/models/gpt-oss-20b";
 
-if settings_path.is_file():
-    data = json.loads(settings_path.read_text())
-else:
-    data = {}
+if (fs.existsSync(configPath)) {
+  try {
+    const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+    apiUrl = config.apiBaseUrl || apiUrl;
+    model = config.model || model;
+  } catch {
+    // keep defaults
+  }
+}
 
-data.setdefault("env", {})
-data["env"]["ANTHROPIC_BASE_URL"] = api_url
-data["env"]["VIQO_BASE_URL"] = api_url
+apiUrl = apiUrl.replace(/\/+$/, "");
+while (apiUrl.endsWith("/v1")) {
+  apiUrl = apiUrl.slice(0, -3);
+}
 
-settings_path.write_text(json.dumps(data, indent=2) + "\n")
-print(f"Updated {settings_path}")
-print(f"  ANTHROPIC_BASE_URL={api_url}")
-print(f"  VIQO_BASE_URL={api_url}")
-PY
+let data = {};
+if (fs.existsSync(settingsPath)) {
+  data = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
+}
+
+data.env = data.env || {};
+data.env.ANTHROPIC_BASE_URL = apiUrl;
+data.env.VIQO_BASE_URL = apiUrl;
+data.env.VIQO_MODEL = model;
+data.model = model;
+data.availableModels = [model];
+delete data.modelOverrides;
+for (const key of Object.keys(data.env)) {
+  if (key.startsWith("VIQO_DEFAULT_")) {
+    delete data.env[key];
+  }
+}
+
+fs.writeFileSync(settingsPath, JSON.stringify(data, null, 2) + "\n");
+console.log(`Updated ${settingsPath}`);
+console.log(`  ANTHROPIC_BASE_URL=${apiUrl}`);
+console.log(`  VIQO_BASE_URL=${apiUrl}`);
+console.log(`  VIQO_MODEL=${model}`);
+NODE
 
 echo ""
 echo "Add your API key:"
